@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>*SC SIGNAL STAR - Portfolio Showcase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f3ff',
+                            100: '#e1e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#1e1b4b',
+                            accent: '#06b6d4',
+                            quantum: '#8b5cf6'
+                        },
+                        darkbg: '#0b0f19',
+                        cardbg: '#111827',
+                        cardborder: '#1f2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .glow-effect {
+            box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.25);
+        }
+        .glow-effect:hover {
+            box-shadow: 0 0 30px 0px rgba(139, 92, 246, 0.4);
+        }
+        .quantum-gradient-text {
+            background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 50%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <header class="sticky top-0 z-50 glass-panel border-b border-gray-800/80 px-4 lg:px-8 py-3.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-quantum to-brand-accent flex items-center justify-center font-bold text-white text-xl shadow-lg shadow-indigo-500/30">
+                    *SC
+                </div>
+                <div>
+                    <h1 class="font-extrabold tracking-tight text-lg text-white flex items-center gap-2">
+                        SIGNAL STAR <span class="text-xs px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-accent border border-brand-500/30 font-mono">PORTFOLIO v53-68</span>
+                    </h1>
+                    <p class="text-xs text-gray-400">One Spark, Infinite Galaxifying Biz</p>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-300">
+                <a href="#overview" class="hover:text-brand-accent transition-colors">개요</a>
+                <a href="#structure" class="hover:text-brand-accent transition-colors">조직 & 제어</a>
+                <a href="#matrix" class="hover:text-brand-accent transition-colors">실행 스케일</a>
+                <a href="#intelligence" class="hover:text-brand-accent transition-colors">AI & 자동화</a>
+                <a href="#ecosystem" class="hover:text-brand-accent transition-colors">생태계 & 브랜드</a>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <a href="#search" onclick="focusSearch()" class="p-2 rounded-lg bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 transition">
+                    <i class="fas fa-search"></i>
+                </a>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-400 animate-pulse"></span> 24h AI Operating
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <section class="relative py-16 px-4 lg:px-8 overflow-hidden bg-gradient-to-b from-brand-900/40 via-darkbg to-darkbg">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(99,102,241,0.15),transparent_50%)]"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center max-w-3xl mx-auto space-y-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/60 border border-indigo-800/50 text-indigo-300 text-xs font-mono">
+                    <i class="fas fa-microchip text-brand-accent"></i> 학술논문 D.Ku 기반 portfolio
+                </div>
+                <h2 class="text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
+                    *SC <span class="quantum-gradient-text">Qubit Algorithm</span> & Portfolio
+                </h2>
+                <p class="text-gray-400 text-base lg:text-lg">
+                    단 하나의 스파크로 무한한 비즈니스 은하계를 확장합니다. 24시간 완전 자동화 프로세스와 데이터 기반 가치 창출 플랫폼입니다.
+                </p>
+                <div class="pt-2 flex flex-wrap justify-center gap-4 text-xs font-mono text-gray-300">
+                    <div class="px-3 py-2 rounded-lg glass-panel flex items-center gap-2 border-brand-500/30">
+                        <i class="fas fa-bolt text-amber-400"></i> One Spark, Infinite Galaxifying
+                    </div>
+                    <div class="px-3 py-2 rounded-lg glass-panel flex items-center gap-2 border-brand-500/30">
+                        <i class="fas fa-sync text-brand-accent"></i> Infinite Synergetic Loop
+                    </div>
+                    <div class="px-3 py-2 rounded-lg glass-panel flex items-center gap-2 border-brand-500/30">
+                        <i class="fas fa-tasks text-emerald-400"></i> One Task, Multi Outcomes
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
+                <div class="p-5 rounded-2xl glass-panel glow-effect border border-gray-800 text-center">
+                    <div class="text-3xl font-extrabold text-brand-accent font-mono">100+</div>
+                    <div class="text-xs text-gray-400 mt-1">App-Flipping & Platforms</div>
+                </div>
+                <div class="p-5 rounded-2xl glass-panel glow-effect border border-gray-800 text-center">
+                    <div class="text-3xl font-extrabold text-brand-quantum font-mono">100+</div>
+                    <div class="text-xs text-gray-400 mt-1">Patents & Brands</div>
+                </div>
+                <div class="p-5 rounded-2xl glass-panel glow-effect border border-gray-800 text-center">
+                    <div class="text-3xl font-extrabold text-emerald-400 font-mono">24 / 7</div>
+                    <div class="text-xs text-gray-400 mt-1">Full AI Multi-Workings</div>
+                </div>
+                <div class="p-5 rounded-2xl glass-panel glow-effect border border-gray-800 text-center">
+                    <div class="text-3xl font-extrabold text-indigo-400 font-mono">+10/day</div>
+                    <div class="text-xs text-gray-400 mt-1">Daily Projects & Contents</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="search" class="px-4 lg:px-8 py-6 sticky top-[65px] z-40 bg-darkbg/90 backdrop-blur-md border-y border-gray-800/60">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 justify-between items-center">
+            <!-- Search Bar -->
+            <div class="relative w-full md:w-96">
+                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                <input type="text" id="searchInput" placeholder="프로젝트, 브랜드, AI 솔루션 검색..." 
+                    class="w-full pl-10 pr-4 py-2 bg-gray-900 border border-gray-700/70 rounded-xl text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition">
+            </div>
+
+            <!-- Category Filter Buttons -->
+            <div class="flex flex-wrap gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0" id="filterContainer">
+                <button onclick="filterCategory('all')" class="filter-btn active px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 text-white transition">전체</button>
+                <button onclick="filterCategory('architecture')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 transition">본부&조직</button>
+                <button onclick="filterCategory('scale')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 transition">병렬 스케일</button>
+                <button onclick="filterCategory('automation')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 transition">AI & 자동화</button>
+                <button onclick="filterCategory('qubit')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 transition">Qubit & Scarlet</button>
+                <button onclick="filterCategory('products')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 transition">제품&헬스케어</button>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 lg:px-8 py-10 space-y-12 flex-grow">
+
+        <!-- 1. SC Head Quarter & Control Towers (Slide 54) -->
+        <section id="structure" class="portfolio-card space-y-4" data-category="architecture">
+            <div class="flex items-center space-x-3 border-b border-gray-800 pb-3">
+                <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                    <i class="fas fa-sitemap text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white">*SC Head Quarter & Control Towers</h3>
+                    <p class="text-xs text-gray-400">글로벌 비즈니스 연합 및 통합 제어 센터 (Slide 54)</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="p-4 rounded-xl bg-cardbg border border-cardborder">
+                    <span class="text-xs font-mono text-brand-accent">CORE DIVISIONS</span>
+                    <h4 class="font-bold text-white mt-1 mb-2">Signal Star Universe</h4>
+                    <ul class="text-xs text-gray-300 space-y-1.5 list-disc list-inside">
+                        <li><span class="font-semibold text-indigo-300">[SCI] [*SC Int’l]</span> - 글로벌 법인 연합</li>
+                        <li><span class="font-semibold text-indigo-300">[SCK] [Co., Ltd.]</span> - 한국 거점 핵심 분사</li>
+                        <li><span class="font-semibold text-indigo-300">[SCV] [SCJ] [SCC] [SCU]</span> - 영역별 지사 네트워크</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cardbg border border-cardborder">
+                    <span class="text-xs font-mono text-brand-quantum">CONTROL TOWERS</span>
+                    <h4 class="font-bold text-white mt-1 mb-2">3대 통합 컨트롤 타워</h4>
+                    <ul class="text-xs text-gray-300 space-y-1.5">
+                        <li class="flex items-center gap-2"><i class="fas fa-building text-brand-quantum"></i> [*SC Head Quarter] - 본부</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-terminal text-brand-quantum"></i> [*SC Command Center] - 지휘 센터</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-chart-line text-brand-quantum"></i> [*SC Analysis Center] - 분석 센터</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cardbg border border-cardborder">
+                    <span class="text-xs font-mono text-emerald-400">ASSOCIATIONS & WORK CULTURE</span>
+                    <h4 class="font-bold text-white mt-1 mb-2">글로벌 협회 & 바이브 워킹</h4>
+                    <ul class="text-xs text-gray-300 space-y-1.5">
+                        <li><strong>[IATA]</strong> Int’l Ai-Trade Association</li>
+                        <li><strong>[IADA]</strong> Int’l Ai-Data Association</li>
+                        <li><strong>[SISTAR Vibe Works]</strong> & Challengers Int'l</li>
+                        <li><strong>[SISTAR Members KKIRI]</strong> 커뮤니티</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Matrix Scale & Projects (Slide 55) -->
+        <section id="matrix" class="portfolio-card space-y-4" data-category="scale">
+            <div class="flex items-center space-x-3 border-b border-gray-800 pb-3">
+                <div class="p-2 rounded-lg bg-brand-accent/10 text-brand-accent border border-brand-accent/20">
+                    <i class="fas fa-cubes text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white">Massive Expansion Matrix (100 Scale)</h3>
+                    <p class="text-xs text-gray-400">초병렬 실행 및 일간 성장 지표 (Slide 55)</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-4 rounded-xl bg-cardbg border border-cardborder">
+                    <div class="text-brand-accent text-xs font-mono mb-1">FINAL GOAL</div>
+                    <h4 class="font-bold text-white text-sm">24hrs Full Automation</h4>
+                    <p class="text-xs text-gray-400 mt-2">Digital Nomad & Studio Works를 기반으로 24시간 쉬지 않는 자동화 실행 체계</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cardbg border border-cardborder">
+                    <div class="text-brand-quantum text-xs font-mono mb-1">TARGET MATRIX</div>
+                    <h4 class="font-bold text-white text-sm">100 Scale Targets</h4>
+                    <p class="text-xs text-gray-300 mt-1">100 App-Flipping / 100 Patents / 100 Brands / 100 Platforms / 100 Partners / 100 Challengers</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cardbg border border-cardborder">
+                    <div class="text-emerald-400 text-xs font-mono mb-1">DAILY MILESTONES</div>
+                    <h4 class="font-bold text-white text-sm">일일 연속 생성 목표</h4>
+                    <ul class="text-xs text-gray-300 mt-1 space-y-1">
+                        <li>• +10 Projects Dvmp. / day</li>
+                        <li>• +10 Contents-making / day</li>
+                        <li>• +10 Curriculum-updating / day</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 rounded-xl bg-cardbg border border-cardborder">
+                    <div class="text-amber-400 text-xs font-mono mb-1">FINANCIAL GOAL</div>
+                    <h4 class="font-bold text-white text-sm">Phase I. Cashflow</h4>
+                    <p class="text-xs text-gray-400 mt-2">Short Money Making 메커니즘과 수익 중심 개발로 즉각적 현금 흐름 창출</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. AI Automation & Tech Engine (Slide 56, 58, 59) -->
+        <section id="intelligence" class="portfolio-card space-y-4" data-category="automation">
+            <div class="flex items-center space-x-3 border-b border-gray-800 pb-3">
+                <div class="p-2 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                    <i class="fas fa-brain text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white">Intelligence Core & Agentic Automation</h3>
+                    <p class="text-xs text-gray-400">AI 에이전트, Data Factory 및 자동화 파이프라인 (Slide 56, 58, 59)</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <!-- Automation Stack -->
+                <div class="p-4 rounded-xl bg-cardbg border border-cardborder space-y-2">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-white text-sm"><i class="fas fa-robot text-purple-400 mr-1.5"></i> Agentic AI Stack</h4>
+                        <span class="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded">Infra</span>
+                    </div>
+                    <p class="text-xs text-gray-300">Google Ecosystem, Nvidia Ecosystem 기반 AI 자동화 툴 구축.</p>
+                    <div class="flex flex-wrap gap-1 pt-1">
+                        <span class="text-[10px] bg-gray-800 text-gray-300 px-2 py-0.5 rounded">Vibe Coding</span>
+                        <span class="text-[10px] bg-gray-800 text-gray-300 px-2 py-0.5 rounded">Web Scraping</span>
+                        <span class="text-[10px] bg-gray-800 text-gray-300 px-2 py-0.5 rounded">Gemini Enterprise</span>
+                        <span class="text-[10px] bg-gray-800 text-gray-300 px-2 py-0.5 rounded">Claude AI</span>
+                        <span class="text-[10px] bg-gray-800 text-gray-300 px-2 py-0.5 rounded">App Script</span>
+                    </div>
+                </div>
+
+                <!-- Intelligence Services -->
+                <div class="p-4 rounded-xl bg-cardbg border border-cardborder space-y-2">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-white text-sm"><i class="fas fa-chart-pie text-brand-accent mr-1.5"></i> SISTAR BI & Agencies</h4>
+                        <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded">Core</span>
+                    </div>
+                    <ul class="text-xs text-gray-300 space-y-1">
+                        <li>• <strong>SISTAR BI:</strong> AI Business Intelligence (Web/App)</li>
+                        <li>• <strong>SISTAR MA:</strong> AI Marketing Agency</li>
+                        <li>• <strong>SISTAR AB:</strong> AI Agent Builder</li>
+                        <li>• <strong>SISTAR WA:</strong> AI Work Automation</li>
+                    </ul>
+                </div>
+
+                <!-- Data Factory & Robotics -->
+                <div class="p-4 rounded-xl bg-cardbg border border-cardborder space-y-2">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-white text-sm"><i class="fas fa-database text-emerald-400 mr-1.5"></i> Data Factory & Physical AI</h4>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded">Operations</span>
+                    </div>
+                    <ul class="text-xs text-gray-300 space-y-1">
+                        <li>• <strong>Data Factory (DF):</strong> "Data For All" 야간 자동 스크레이핑 (10pm-8am)</li>
+                        <li>• <strong>SISTAR SR:</strong> Robotics (Robot Qubit, Lego Robot)</li>
+                        <li>• <strong>SISTAR ERP:</strong> AI ERP System & Space Sharing</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Qubit Engine & Scarlet AI Subdomains (Slide 57, 62, 63) -->
+        <section id="qubit" class="portfolio-card space-y-4" data-category="qubit">
+            <div class="flex items-center space-x-3 border-b border-gray-800 pb-3">
+                <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                    <i class="fas fa-atom text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white">Qubit Engine & Scarlet AI Domain Matrix</h3>
+                    <p class="text-xs text-gray-400">COSMO SEED™ Biz 모델 기반 서브 도메인 플랫폼 네트워크 (Slide 57, 62, 63)</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Qubit Series Card -->
+                <div class="p-5 rounded-2xl bg-cardbg border border-gray-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-white flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono text-xs">*.cubit.sistarcompany.com</span>
+                        </h4>
+                        <span class="text-xs text-indigo-400">Qubit Algorithm</span>
+                    </div>
+                    <p class="text-xs text-gray-400">Qubit Coins, Cubit Trading, Qubit Bank (Time/Space/Idea/Petfood Bank) 및 결제 플랫폼</p>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs text-gray-300 font-mono">
+                        <div class="p-2 rounded bg-gray-900/80 border border-gray-800">Qubit Star / Ads</div>
+                        <div class="p-2 rounded bg-gray-900/80 border border-gray-800">Qubit Games / Robot</div>
+                        <div class="p-2 rounded bg-gray-900/80 border border-gray-800">Qubit Pay / Open Account</div>
+                        <div class="p-2 rounded bg-gray-900/80 border border-gray-800">Qubit App Factory Int'l</div>
+                        <div class="p-2 rounded bg-gray-900/80 border border-gray-800">Qubit VAT Automator</div>
+                        <div class="p-2 rounded bg-gray-900/80 border border-gray-800">Qubit Bartering / Trade</div>
+                    </div>
+                </div>
+
+                <!-- Scarlet AI Series Card -->
+                <div class="p-5 rounded-2xl bg-cardbg border border-gray-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-white flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 font-mono text-xs">*.scarlet.sistarcompany.com</span>
+                        </h4>
+                        <span class="text-xs text-pink-400">"I'm Not Fool"</span>
+                    </div>
+                    <p class="text-xs text-gray-400">글로벌 허브, 커머스 미디어 및 특화 산업용 Vertical AI 모듈 네트워크</p>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs text-gray-300 font-mono">
+                        <div class="p-2 rounded bg-gray-900/80 border border-gray-800">intl / kr / ind.scarlet</div>
+                        <div class="p-2 rounded bg-gray-900/80 border border-gray-800">b2b / on-demand / resell</div>
+                        <div class="p-2 rounded bg-gray-900/80 border border-gray-800">sistv / scarlettv (Shoppable)</div>
+                        <div class="p-2 rounded bg-gray-900/80 border border-gray-800">petfoodbank / sisRun / s-Yoga</div>
+                        <div class="p-2 rounded bg-gray-900/80 border border-gray-800">ai-tech / mind / ayurvedic</div>
+                        <div class="p-2 rounded bg-gray-900/80 border border-gray-800">sismii / dynamicpricing</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Industry Divisions, Products & Manufacturing (Slide 60, 61, 64-68) -->
+        <section id="products" class="portfolio-card space-y-4" data-category="products">
+            <div class="flex items-center space-x-3 border-b border-gray-800 pb-3">
+                <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <i class="fas fa-boxes-stacked text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white">Biz Galaxy, Brands & Manufacturing</h3>
+                    <p class="text-xs text-gray-400">실물 제조, 미디어 컨텐츠, 헬스케어 및 프랜차이즈 (Slide 60, 61, 64-68)</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <!-- Pet & Health -->
+                <div class="p-4 rounded-xl bg-cardbg border border-cardborder">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-paw text-amber-400"></i>
+                        <h4 class="font-bold text-white text-sm">SISPet & Healthcare</h4>
+                    </div>
+                    <ul class="text-xs text-gray-300 space-y-1.5">
+                        <li>• <strong>SISPet:</strong> Petfood (Dazzle, CA Kr), Catlitter</li>
+                        <li>• <strong>SISTAR MedIX:</strong> 수의 진단 앱 & CHD / SungBo</li>
+                        <li>• <strong>Scarlet AI:</strong> 수의 진단 보조 앱 (BD)</li>
+                        <li>• <strong>Campaign:</strong> Forever Young Dog (FYD)</li>
+                    </ul>
+                </div>
+
+                <!-- Products & Beauty -->
+                <div class="p-4 rounded-xl bg-cardbg border border-cardborder">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-spa text-pink-400"></i>
+                        <h4 class="font-bold text-white text-sm">Beauty, Herbal & Manufacturing</h4>
+                    </div>
+                    <ul class="text-xs text-gray-300 space-y-1.5">
+                        <li>• <strong>SISMii & Java Nature Premium:</strong> 뷰티 브랜드</li>
+                        <li>• <strong>SISTAR AT:</strong> Indo-Kr Ayurvedic Therapy & Indian Herbs (Vital Seeds)</li>
+                        <li>• <strong>SISLoa:</strong> Apparel 브랜드</li>
+                        <li>• <strong>SISTAR Mfg:</strong> Botanical Edition, FloralGlow, AI Ayurvedic NRT</li>
+                    </ul>
+                </div>
+
+                <!-- Content & Franchise -->
+                <div class="p-4 rounded-xl bg-cardbg border border-cardborder">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-video text-brand-accent"></i>
+                        <h4 class="font-bold text-white text-sm">Contents & Franchise Partners</h4>
+                    </div>
+                    <ul class="text-xs text-gray-300 space-y-1.5">
+                        <li>• <strong>The SISTAR Post:</strong> 90s' News & NFQ Stories</li>
+                        <li>• <strong>SISTAR Studio:</strong> Hong GilDong Project AI, Superstar Project</li>
+                        <li>• <strong>SISTAR Partners:</strong> Mint-Colored Shop, My Neighb. Lifestyle Platform</li>
+                        <li>• <strong>SISTAR SD:</strong> Re:D (Reduce & Discount 배달앱)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-gray-800 bg-cardbg py-8 px-4 lg:px-8 mt-12">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center font-bold text-white text-sm">
+                    *SC
+                </div>
+                <div>
+                    <div class="text-sm font-bold text-white">*SC SIGNAL STAR Company Universe</div>
+                    <div class="text-xs text-gray-500">Play, Make Money, Do Biz Int’l, and Onboard *SC</div>
+                </div>
+            </div>
+            <div class="text-xs text-gray-400 font-mono">
+                Powered by Qubit Algorithm™ | Extract Slides 53-68
+            </div>
+            <div class="flex items-center space-x-4 text-gray-400 text-sm">
+                <a href="#" class="hover:text-white transition"><i class="fab fa-github"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function filterCategory(category) {
+            // Update active button styling
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active', 'bg-brand-600', 'text-white');
+                btn.classList.add('bg-gray-800', 'text-gray-300');
+            });
+            event.target.classList.add('active', 'bg-brand-600', 'text-white');
+            event.target.classList.remove('bg-gray-800', 'text-gray-300');
+
+            // Show/Hide Portfolio Cards
+            const cards = document.querySelectorAll('.portfolio-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function focusSearch() {
+            document.getElementById('searchInput').focus();
+        }
+
+        // Real-time Search Handler
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.portfolio-card');
+
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
