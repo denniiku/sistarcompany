@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTAR Qubit Automation Flow Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            950: '#030712'
+                        },
+                        quantum: {
+                            purple: '#8b5cf6',
+                            cyan: '#06b6d4',
+                            emerald: '#10b981',
+                            rose: '#f43f5e'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: #030712;
+        }
+        /* Custom glow effects */
+        .glow-cyan {
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.25);
+        }
+        .glow-purple {
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
+        }
+        .glow-emerald {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+        }
+        /* Continuous pulse animations */
+        @keyframes flowPulse {
+            0%, 100% { opacity: 0.3; stroke-width: 2px; }
+            50% { opacity: 1; stroke-width: 4px; }
+        }
+        .flow-line {
+            stroke-dasharray: 8, 8;
+            animation: dash 30s linear infinite;
+        }
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -1000;
+            }
+        }
+        /* Card transitions */
+        .step-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .step-card:hover {
+            transform: translateY(-4px) scale(1.01);
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen selection:bg-cyan-500 selection:text-slate-900 overflow-x-hidden">
+
+    <!-- Global Top Bar -->
+    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50 px-4 lg:px-8 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="relative w-10 h-10 rounded-lg bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center font-black text-white text-lg glow-cyan">
+                    SC
+                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full animate-ping"></div>
+                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full"></div>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-cyan-400 bg-clip-text text-transparent">
+                        SISTAR Company & Co.
+                    </h1>
+                    <p class="text-xs text-slate-400 font-mono">QUANTUM CONTROL PANEL v2.6.0</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3 flex-wrap">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-900 border border-slate-800">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    24H Auto Loop
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-900 border border-slate-800">
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                    Qubit Algorithm: Connected
+                </span>
+                <button id="btn-simulation" onclick="startFullSimulation()" class="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-bold text-xs px-4 py-2 rounded-lg transition-all shadow-lg hover:shadow-cyan-500/20 active:scale-95 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    24시간 루프 시뮬레이터 가동
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8">
+        
+        <!-- Dashboard Headings -->
+        <div class="mb-10 text-center lg:text-left">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-950/40 text-cyan-400 border border-cyan-800/50 mb-3">
+                <span class="flex h-2 w-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                </span>
+                One Spark, Infinite Galaxifying
+            </div>
+            <h2 class="text-3xl lg:text-5xl font-black tracking-tight mb-2">
+                Qubit Enterprise Automation Flow
+            </h2>
+            <p class="text-slate-400 text-sm lg:text-lg max-w-3xl">
+                구글 에코시스템과 초지성 자율 AI 모델을 결합한 1인 데카콘 최적화 인공지능 은하계. 데이터 수집에서 상시 비즈니스 다중 실현까지의 6단계 아키텍처.
+            </p>
+        </div>
+
+        <!-- 3-Column Modern Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- LEFT: Core Interactive Timeline Flow (7 Cols) -->
+            <div class="lg:col-span-7 space-y-4 relative">
+                
+                <!-- SVG Connection Lines Background (Decorative & Status Indicator) -->
+                <div class="absolute left-[34px] top-6 bottom-6 w-1 bg-gradient-to-b from-cyan-500 via-purple-500 to-emerald-500 opacity-20 -z-10 rounded-full"></div>
+                
+                <!-- STEP 1 -->
+                <div id="card-1" onclick="selectStep(1)" class="step-card bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 rounded-xl p-5 cursor-pointer flex gap-5 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-2xl group-hover:bg-cyan-500/10 transition-all"></div>
+                    <div class="flex-shrink-0 flex flex-col items-center">
+                        <div id="badge-1" class="w-12 h-12 rounded-xl bg-cyan-950 text-cyan-400 font-bold flex items-center justify-center text-lg border border-cyan-800/50 transition-all">01</div>
+                        <div class="text-xs text-slate-500 font-mono mt-2 uppercase tracking-widest">DATA</div>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-lg text-white group-hover:text-cyan-400 transition-all">Data Factory & Centralization</h3>
+                            <span class="text-xs font-mono bg-cyan-950 text-cyan-400 border border-cyan-900 px-2 py-0.5 rounded">Browse AI / Spark</span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-3 line-clamp-2">외부 지식, B2B 도매가격 및 마켓 트렌드를 상시 데이터 팩토리로 수집하여 중앙화합니다.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded">📂 Drive / Docs</span>
+                            <span class="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded">🌐 External Web Scraping</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2 -->
+                <div id="card-2" onclick="selectStep(2)" class="step-card bg-slate-900/60 border border-slate-800 hover:border-purple-500/50 rounded-xl p-5 cursor-pointer flex gap-5 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl group-hover:bg-purple-500/10 transition-all"></div>
+                    <div class="flex-shrink-0 flex flex-col items-center">
+                        <div id="badge-2" class="w-12 h-12 rounded-xl bg-slate-950 text-slate-400 font-bold flex items-center justify-center text-lg border border-slate-800 transition-all">02</div>
+                        <div class="text-xs text-slate-500 font-mono mt-2 uppercase tracking-widest">KNOWLEDGE</div>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-lg text-white group-hover:text-purple-400 transition-all">Processing & Making [Project]</h3>
+                            <span class="text-xs font-mono bg-purple-950 text-purple-400 border border-purple-900 px-2 py-0.5 rounded">Notebook LM</span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-3 line-clamp-2">날것의 데이터를 기반으로 구조화된 비즈니스 아이디어를 기획하고 각 전용 프로젝트 지식 백서로 조율합니다.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded">📂 Project Folder / Docs</span>
+                            <span class="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded">🧠 Subsystem RAG Engine</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3 -->
+                <div id="card-3" onclick="selectStep(3)" class="step-card bg-slate-900/60 border border-slate-800 hover:border-violet-500/50 rounded-xl p-5 cursor-pointer flex gap-5 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-violet-500/5 rounded-full blur-2xl group-hover:bg-violet-500/10 transition-all"></div>
+                    <div class="flex-shrink-0 flex flex-col items-center">
+                        <div id="badge-3" class="w-12 h-12 rounded-xl bg-slate-950 text-slate-400 font-bold flex items-center justify-center text-lg border border-slate-800 transition-all">03</div>
+                        <div class="text-xs text-slate-500 font-mono mt-2 uppercase tracking-widest">TACTICS</div>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-lg text-white group-hover:text-violet-400 transition-all">Making [Project] _Action</h3>
+                            <span class="text-xs font-mono bg-violet-950 text-violet-400 border border-violet-900 px-2 py-0.5 rounded">Gemini Gems / Spark</span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-3 line-clamp-2">각 개별 프로젝트별로 타겟, 타임라인, 프로세스를 세분화하여 정교한 액션 플랜을 도출합니다.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded">📂 [Project]_Master Folder</span>
+                            <span class="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded">📊 Individual Action Sheets</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 4 -->
+                <div id="card-4" onclick="selectStep(4)" class="step-card bg-slate-900/60 border border-slate-800 hover:border-pink-500/50 rounded-xl p-5 cursor-pointer flex gap-5 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-pink-500/5 rounded-full blur-2xl group-hover:bg-pink-500/10 transition-all"></div>
+                    <div class="flex-shrink-0 flex flex-col items-center">
+                        <div id="badge-4" class="w-12 h-12 rounded-xl bg-slate-950 text-slate-400 font-bold flex items-center justify-center text-lg border border-slate-800 transition-all">04</div>
+                        <div class="text-xs text-slate-500 font-mono mt-2 uppercase tracking-widest">AGREGATE</div>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-lg text-white group-hover:text-pink-400 transition-all">Making [Projects] _Master - Raw Data</h3>
+                            <span class="text-xs font-mono bg-pink-950 text-pink-400 border border-pink-900 px-2 py-0.5 rounded">Workspace Studio</span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-3 line-clamp-2">100개 개별 프로젝트 시트에 분산 기록된 액션들을 하나의 마스터 대장으로 완전 자동 통합 수집합니다.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded">📂 [Project]_Master Folder</span>
+                            <span class="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded">📋 Unified Task Pool Sheet</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 5 -->
+                <div id="card-5" onclick="selectStep(5)" class="step-card bg-slate-900/60 border border-slate-800 hover:border-emerald-500/50 rounded-xl p-5 cursor-pointer flex gap-5 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-all"></div>
+                    <div class="flex-shrink-0 flex flex-col items-center">
+                        <div id="badge-5" class="w-12 h-12 rounded-xl bg-slate-950 text-slate-400 font-bold flex items-center justify-center text-lg border border-slate-800 transition-all">05</div>
+                        <div class="text-xs text-slate-500 font-mono mt-2 uppercase tracking-widest">QUANTUM</div>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-lg text-white group-hover:text-emerald-400 transition-all">Tuning [Projects] _Master (Qubit Alignment)</h3>
+                            <span class="text-xs font-mono bg-emerald-950 text-emerald-400 border border-emerald-900 px-2 py-0.5 rounded">AI Studio (System Prompt)</span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-3 line-clamp-2">큐비트 알고리즘 프롬프트로 전체 태스크를 얽어내어, 단일 실행으로 멀티 성과를 내는 얽힘 순서로 마스터 대장을 튜닝합니다.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded">📂 [Project]_Master Folder</span>
+                            <span class="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded">🧬 Qubit Matrix Refined Sheet</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 6 -->
+                <div id="card-6" onclick="selectStep(6)" class="step-card bg-slate-900/60 border border-slate-800 hover:border-rose-500/50 rounded-xl p-5 cursor-pointer flex gap-5 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-2xl group-hover:bg-rose-500/10 transition-all"></div>
+                    <div class="flex-shrink-0 flex flex-col items-center">
+                        <div id="badge-6" class="w-12 h-12 rounded-xl bg-slate-950 text-slate-400 font-bold flex items-center justify-center text-lg border border-slate-800 transition-all">06</div>
+                        <div class="text-xs text-slate-500 font-mono mt-2 uppercase tracking-widest">RUN</div>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-lg text-white group-hover:text-rose-400 transition-all">Actions & 24Hrs Full Automation</h3>
+                            <span class="text-xs font-mono bg-rose-950 text-rose-400 border border-rose-900 px-2 py-0.5 rounded">Gemini Spark Agent</span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-3 line-clamp-2">최종 튜닝된 큐비트 마스터 액션 지시에 근거하여 마케팅, 온라인 세일즈, 코드 개발 배포 등을 자율적으로 상시 실행합니다.</p>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded">🤖 Autonomous Agent Engine</span>
+                            <span class="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded">🚀 Real-time Live Launching</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT: Detailed Deep-Dive Portal & Context Panel (5 Cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- Dynamic Spec Panel -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 glow-cyan" id="panel-container">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div id="panel-icon-box" class="w-10 h-10 rounded-lg bg-cyan-950 text-cyan-400 flex items-center justify-center font-bold">
+                            01
+                        </div>
+                        <div>
+                            <h4 id="panel-heading" class="font-black text-lg text-white tracking-tight">Data Factory & Centralization</h4>
+                            <p class="text-xs text-slate-400 font-mono" id="panel-id">SYSTEM PHASE: 01 / 06</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-800/80 my-4"></div>
+
+                    <!-- Details Section -->
+                    <div class="space-y-4">
+                        <div>
+                            <span class="text-xs text-slate-500 font-mono uppercase tracking-wider block mb-1">비즈니스 목표 (Core Mission)</span>
+                            <p id="panel-mission" class="text-slate-300 text-sm">
+                                시장 내 존재하는 잠재 고객, 경쟁사 단가, 신규 원료 트렌드 등 비구조화된 모든 종류의 날것 데이터를 수집하여 SISTAR 클라우드의 통합 '데이터 팩토리'에 축적하는 작업입니다.
+                            </p>
+                        </div>
+
+                        <div>
+                            <span class="text-xs text-slate-500 font-mono uppercase tracking-wider block mb-1">데이터 흐름 및 저장소 (I/O & Repository)</span>
+                            <div class="bg-slate-950 border border-slate-800 rounded-lg p-3 space-y-2">
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-slate-500">INPUT SOURCE:</span>
+                                    <span id="panel-input" class="text-cyan-400 font-mono">SNS / 도매가 웹 / API</span>
+                                </div>
+                                <div class="h-[1px] bg-slate-900"></div>
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-slate-500">OUTPUT REPO:</span>
+                                    <span id="panel-output" class="text-cyan-400 font-mono">구글 드라이브 / Docs</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-xs text-slate-500 font-mono uppercase tracking-wider block mb-2">활용 무기 상세 (SISTAR Tech Stack)</span>
+                            <div class="grid grid-cols-2 gap-2" id="panel-tech-grid">
+                                <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-center">
+                                    <p class="text-xs text-slate-400 font-semibold mb-0.5">Browse AI</p>
+                                    <span class="text-[10px] text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded">웹 스크래핑</span>
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-center">
+                                    <p class="text-xs text-slate-400 font-semibold mb-0.5">Workspace Studio</p>
+                                    <span class="text-[10px] text-purple-400 bg-purple-950/40 px-1.5 py-0.5 rounded">자동 드라이브 정렬</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <span class="text-xs text-slate-500 font-mono uppercase tracking-wider block mb-1">SISTAR 경영자 권고 (Strategic Advisory)</span>
+                            <p id="panel-advisory" class="text-xs text-slate-400 italic border-l-2 border-cyan-500 pl-3 leading-relaxed">
+                                "데이터가 모이지 않으면 인텔리전스는 시작될 수 없습니다. 단순 수동 기입을 끝내고 Browse AI를 통해 야간에 수집된 정보를 구글 드라이브 지정 폴더로 즉시 밀어내며 리스크 제로의 'Zero-Wastage 데이터 흐름'을 만들어야 합니다."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Logs / Operation Monitor -->
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 font-mono text-xs">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-slate-400 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                            SYSTEM CONSOLE MONITOR
+                        </span>
+                        <span class="text-[10px] text-slate-500">REFRESHING: AUTO</span>
+                    </div>
+                    <div id="console-logs" class="space-y-1.5 max-h-[180px] overflow-y-auto text-slate-300">
+                        <p class="text-slate-500">[2026-07-05 23:20:00] Initializing Quantum Core Console...</p>
+                        <p class="text-cyan-400">[SYSTEM] All Google Ecosystem modules connected successfully.</p>
+                        <p class="text-slate-400">[INFO] Standing instruction verified for Gemini Spark Agent.</p>
+                        <p class="text-purple-400">[QUBIT] Loaded 100 enterprise projects maps into memory pool.</p>
+                        <p class="text-slate-500">> Ready for 24-Hour Autonomous Simulation.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-8 px-4 mt-12 text-center text-slate-500 text-xs font-mono">
+        <div class="max-w-7xl mx-auto space-y-2">
+            <p>© 2026 PT SISTAR International & SC Group. All rights reserved.</p>
+            <p>Empowered by Qubit Algorithm & Cosmo Seed Business Architecture. Designed for One-Man Decacorn Scale.</p>
+        </div>
+    </footer>
+
+    <!-- Interactive JS logic -->
+    <script>
+        // Steps Database
+        const stepsData = {
+            1: {
+                id: "SYSTEM PHASE: 01 / 06",
+                heading: "Data Factory & Centralization",
+                mission: "시장 내 존재하는 리셀러 정보, 경쟁사 도매 단가, 트렌드 토픽 등 비구조화된 날것의 글로벌 데이터 자원을 수집하여 드라이브 통합 폴더에 적재하는 단계입니다.",
+                input: "SNS / 도매 웹 / API",
+                output: "📂 Drive / Docs / Sheets",
+                techs: [
+                    { name: "Browse AI", desc: "웹 스크래핑 로봇" },
+                    { name: "Workspace Studio", desc: "드라이브 자동 분류" },
+                    { name: "Gemini Spark", desc: "자율 이메일/데이터 분류" }
+                ],
+                color: "cyan",
+                advisory: "데이터가 모이지 않으면 인텔리전스는 존재할 수 없습니다. 인간의 수동 탐색과 복사 노동을 0으로 수렴시켜 원천 소스 기지(Data Factory)를 구축하는 기반입니다."
+            },
+            2: {
+                id: "SYSTEM PHASE: 02 / 06",
+                heading: "Processing & Making [Project]",
+                mission: "수집된 데이터 및 연쇄 아이디어를 결합하여, 주제별로 분류된 '구체화된 사업 기획서(Project Document)'를 도출하고 격리된 지식베이스 RAG로 연동하는 과정입니다.",
+                input: "📂 1단계 raw 데이터 파일",
+                output: "📂 [Project] 폴더 내 지식 백서",
+                techs: [
+                    { name: "Notebook LM", desc: "주제별 지식 학습 RAG" },
+                    { name: "Drive Docs", desc: "비즈니스 기획 문서" }
+                ],
+                color: "purple",
+                advisory: "아무리 훌륭한 날것의 정보라도 정제되지 않으면 가치가 없습니다. Notebook LM을 통해 각 비즈니스 도메인(예: 펫푸드, B2B 매칭)별로 전문 지식을 철저히 독점 아카이빙해야 합니다."
+            },
+            3: {
+                id: "SYSTEM PHASE: 03 / 06",
+                heading: "Making [Project] _Action",
+                mission: "기획 완료된 [Project] 문서를 기반으로 실제 수행해야 할 현실적인 '타겟, 타임라인, 프로세스(TTP)'를 정교하게 도출하여 개별 마스터 시트에 자동 등록하는 태스크입니다.",
+                input: "📂 [Project] 지식 백서",
+                output: "📋 [Project]_Action Sheets",
+                techs: [
+                    { name: "Gemini Gems", desc: "자율 맞춤 프롬프트 봇" },
+                    { name: "Gemini Spark", desc: "TTP 자동 스캐폴더" }
+                ],
+                color: "violet",
+                advisory: "비즈니스는 대화가 아니라 수행(Action)입니다. 기획에서 실질적으로 처리 가능한 하루 단위의 실무 업무 목록으로 즉시 변환되어야 다음 단계의 결합이 가능합니다."
+            },
+            4: {
+                id: "SYSTEM PHASE: 04 / 06",
+                heading: "Making [Projects] _Master - Raw Data",
+                mission: "100개 개별 프로젝트 폴더 안에 흩어져 기록된 각각의 [Project]_Action 시트 데이터를 정기 스케줄에 따라 하나의 마스터 통섭 대장으로 취합하는 완전 무코드 취합 레이어입니다.",
+                input: "📋 100개 개별 Action 시트",
+                output: "📋 [Projects]_Master 시트 원시풀",
+                techs: [
+                    { name: "Workspace Studio", desc: "무코드 플로우 취합" },
+                    { name: "Drive Files Hub", desc: "실시간 파일 스트리밍" }
+                ],
+                color: "pink",
+                advisory: "모든 프로젝트를 각각 따로 바라보면 자원의 낭비가 생깁니다. 마우스 클릭만으로 구현하는 구글 워크스페이스 스튜디오 플로우를 활용해 하나의 중앙 매트릭스로 통합합니다."
+            },
+            5: {
+                id: "SYSTEM PHASE: 05 / 06",
+                heading: "Tuning [Projects] _Master (Qubit Alignment)",
+                mission: "중앙에 모인 100개 프로젝트의 할 일 전체에 '큐비트 알고리즘 프롬프트'를 가동, 단일 실행으로 3개 이상의 비즈니스 플랫폼에 파장을 미치는 '동시 중첩 이익 태스크' 위주로 대장을 자동 튜닝합니다.",
+                input: "📋 [Projects]_Master 시트 원시풀",
+                output: "🧬 Qubit Matrix Refined Sheet",
+                techs: [
+                    { name: "AI Studio", desc: "큐비트 프롬프트 튜너" },
+                    { name: "Gemini 1.5 Pro", desc: "대용량 컨텍스트 추론" }
+                ],
+                color: "emerald",
+                advisory: "선형적 물리법칙은 1을 투입해 1을 얻습니다. 양자 얽힘 아키텍처는 하나의 잘 짜인 원 테스크로 3개 이상의 프로젝트에 매출, 브랜딩, 특허 등 연쇄 성과(One Task, Multi Outcomes)를 자동 트리거합니다."
+            },
+            6: {
+                id: "SYSTEM PHASE: 06 / 06",
+                heading: "Actions & 24Hrs Full Automation",
+                mission: "마지막으로 튜닝된 큐비트 실행 대장에 맞추어, 제미나이 스파크 자율 요원이 사용자가 자거나 이동 중일 때도 24시간 백그라운드에서 마케팅 배포, 제안 메일 아웃리치, 실시간 웹앱 배포를 집행합니다.",
+                input: "🧬 Qubit Matrix Refined Sheet",
+                output: "🚀 자율 메일/콘텐츠/웹앱 실시간 런칭",
+                techs: [
+                    { name: "Gemini Spark Agent", desc: "24H 클라우드 구동 에이전트" },
+                    { name: "Vibe Coding (HTML)", desc: "즉시 작동하는 WebApp 배포" }
+                ],
+                color: "rose",
+                advisory: "24시간 잠들지 않는 인공지능이 인간의 확인 없이도 스스로 코드를 짜서 배포하고, 세일즈 메일을 보내 계약을 따옵니다. 당신의 물리적 육체는 오직 최종 YES/NO 통제만을 담당하는 유니콘 시대입니다."
+            }
+        };
+
+        let currentActive = 1;
+
+        // Function to handle step selection
+        function selectStep(stepNum) {
+            // Remove previous focus effects
+            for(let i=1; i<=6; i++) {
+                const card = document.getElementById(`card-${i}`);
+                const badge = document.getElementById(`badge-${i}`);
+                card.classList.remove('border-cyan-500/50', 'border-purple-500/50', 'border-violet-500/50', 'border-pink-500/50', 'border-emerald-500/50', 'border-rose-500/50', 'glow-cyan', 'glow-purple', 'glow-emerald', 'bg-slate-800/80');
+                card.classList.add('border-slate-800');
+                badge.className = "w-12 h-12 rounded-xl bg-slate-950 text-slate-400 font-bold flex items-center justify-center text-lg border border-slate-800 transition-all";
+            }
+
+            currentActive = stepNum;
+            const activeStep = stepsData[stepNum];
+            
+            // Apply new focus visual
+            const card = document.getElementById(`card-${stepNum}`);
+            const badge = document.getElementById(`badge-${stepNum}`);
+            card.classList.remove('border-slate-800');
+            
+            // Color Mapping
+            let glowClass = "glow-cyan";
+            let borderClass = "border-cyan-500/50";
+            let badgeClass = "bg-cyan-950 text-cyan-400 border border-cyan-800/50";
+            if (activeStep.color === 'purple') {
+                glowClass = "glow-purple"; borderClass = "border-purple-500/50"; badgeClass = "bg-purple-950 text-purple-400 border border-purple-800/50";
+            } else if (activeStep.color === 'violet') {
+                glowClass = "glow-purple"; borderClass = "border-violet-500/50"; badgeClass = "bg-violet-950 text-violet-400 border border-violet-800/50";
+            } else if (activeStep.color === 'pink') {
+                glowClass = "glow-purple"; borderClass = "border-pink-500/50"; badgeClass = "bg-pink-950 text-pink-400 border border-pink-800/50";
+            } else if (activeStep.color === 'emerald') {
+                glowClass = "glow-emerald"; borderClass = "border-emerald-500/50"; badgeClass = "bg-emerald-950 text-emerald-400 border border-emerald-800/50";
+            } else if (activeStep.color === 'rose') {
+                glowClass = "glow-emerald"; borderClass = "border-rose-500/50"; badgeClass = "bg-rose-950 text-rose-400 border border-rose-800/50";
+            }
+
+            card.classList.add(borderClass, 'bg-slate-800/80');
+            badge.className = `w-12 h-12 rounded-xl font-bold flex items-center justify-center text-lg transition-all ${badgeClass}`;
+
+            // Update Panel details dynamically with high transition feel
+            const panel = document.getElementById('panel-container');
+            panel.className = `bg-slate-900/80 border border-slate-800 rounded-2xl p-6 transition-all ${glowClass}`;
+
+            document.getElementById('panel-icon-box').className = `w-10 h-10 rounded-lg flex items-center justify-center font-bold ${badgeClass}`;
+            document.getElementById('panel-icon-box').innerText = stepNum < 10 ? `0${stepNum}` : stepNum;
+            document.getElementById('panel-heading').innerText = activeStep.heading;
+            document.getElementById('panel-id').innerText = activeStep.id;
+            document.getElementById('panel-mission').innerText = activeStep.mission;
+            document.getElementById('panel-input').innerText = activeStep.input;
+            document.getElementById('panel-output').innerText = activeStep.output;
+            document.getElementById('panel-advisory').innerText = `"${activeStep.advisory}"`;
+
+            // Update Dynamic tech grid
+            const techGrid = document.getElementById('panel-tech-grid');
+            techGrid.innerHTML = '';
+            activeStep.techs.forEach(tech => {
+                const badgeColor = activeStep.color === 'cyan' ? 'text-cyan-400 bg-cyan-950/40' : 
+                                   activeStep.color === 'purple' ? 'text-purple-400 bg-purple-950/40' :
+                                   activeStep.color === 'violet' ? 'text-violet-400 bg-violet-950/40' :
+                                   activeStep.color === 'pink' ? 'text-pink-400 bg-pink-950/40' :
+                                   activeStep.color === 'emerald' ? 'text-emerald-400 bg-emerald-950/40' : 'text-rose-400 bg-rose-950/40';
+                
+                techGrid.innerHTML += `
+                    <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-center">
+                        <p class="text-xs text-slate-400 font-semibold mb-0.5">${tech.name}</p>
+                        <span class="text-[10px] ${badgeColor} px-1.5 py-0.5 rounded">${tech.desc}</span>
+                    </div>
+                `;
+            });
+
+            // Log selection in console
+            writeConsoleLog(`Activated detailed matrix view: Phase ${stepNum} - ${activeStep.heading}`);
+        }
+
+        // Console logger helper
+        function writeConsoleLog(message, type = 'normal') {
+            const consoleBox = document.getElementById('console-logs');
+            const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+            let colorClass = 'text-slate-400';
+            if (type === 'success') colorClass = 'text-emerald-400';
+            if (type === 'warning') colorClass = 'text-pink-400';
+            if (type === 'api') colorClass = 'text-cyan-400';
+            if (type === 'qubit') colorClass = 'text-purple-400';
+
+            consoleBox.innerHTML += `<p class="${colorClass}">[${now}] ${message}</p>`;
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
+
+        // Full Interactive Automation Simulator Loop
+        let simInterval;
+        function startFullSimulation() {
+            const btn = document.getElementById('btn-simulation');
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                시뮬레이션 러닝 중...
+            `;
+
+            writeConsoleLog("⚠️ Starting full 24-Hour Autonomous Loop simulation!", "warning");
+            
+            let currentSimStep = 1;
+            selectStep(1);
+
+            simInterval = setInterval(() => {
+                currentSimStep++;
+                if (currentSimStep > 6) {
+                    clearInterval(simInterval);
+                    btn.disabled = false;
+                    btn.innerHTML = `
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        24시간 루프 시뮬레이터 가동
+                    `;
+                    writeConsoleLog("✅ Full loop simulated with 100% execution score. Qubit equilibrium met.", "success");
+                    return;
+                }
+
+                selectStep(currentSimStep);
+
+                // Log fun contextual events
+                if (currentSimStep === 2) {
+                    writeConsoleLog("Browse AI extraction completed. Transferred 4.2 MB raw transcripts to NotebookLM.", "api");
+                } else if (currentSimStep === 3) {
+                    writeConsoleLog("Subject-wise RAG complete. Generated 10 new individual Project Action files.", "success");
+                } else if (currentSimStep === 4) {
+                    writeConsoleLog("Workspace Studio compiled 100 individual spreadsheets into Master Row Data.", "success");
+                } else if (currentSimStep === 5) {
+                    writeConsoleLog("AI Studio system prompt executed. Recalculated qubit cross-trigger weightings.", "qubit");
+                } else if (currentSimStep === 6) {
+                    writeConsoleLog("Gemini Spark: Pushing 10 active landing pages to production domains. Dispatching 250 warm sales proposals.", "warning");
+                }
+
+            }, 2500);
+        }
+
+        // Initialize with Step 1 focus
+        window.onload = function() {
+            selectStep(1);
+        }
+    </script>
+</body>
+</html>
