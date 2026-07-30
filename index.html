@@ -1,18 +1,1216 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <title>*SC Ref.Site</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>*SC. STAR Company | Signal Star Universe</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            900: '#030712',
+                            800: '#0b0f19',
+                            700: '#111827',
+                            card: 'rgba(15, 23, 42, 0.75)'
+                        },
+                        cyan: {
+                            glow: '#00f3ff',
+                            400: '#22d3ee'
+                        },
+                        purple: {
+                            glow: '#b026ff',
+                            500: '#a855f7'
+                        },
+                        gold: {
+                            glow: '#ffd700',
+                            400: '#facc15'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 3s infinite ease-in-out',
+                        'float': 'float 6s infinite ease-in-out',
+                        'spin-slow': 'spin 20s linear infinite'
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: 0.8, filter: 'drop-shadow(0 0 15px rgba(0,243,255,0.6))' },
+                            '50%': { opacity: 1, filter: 'drop-shadow(0 0 30px rgba(176,38,255,0.9))' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js Library for 3D Cosmic Background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Glassmorphism card effects */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 243, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-panel-interactive {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-panel-interactive:hover {
+            border-color: rgba(0, 243, 255, 0.6);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px 0 rgba(0, 243, 255, 0.25);
+        }
+
+        /* Neon Text Effects */
+        .neon-text-cyan {
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.7), 0 0 20px rgba(0, 243, 255, 0.4);
+        }
+
+        .neon-text-purple {
+            text-shadow: 0 0 10px rgba(176, 38, 255, 0.7), 0 0 20px rgba(176, 38, 255, 0.4);
+        }
+
+        .neon-border-cyan {
+            border-color: #00f3ff;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f3ff;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
 </head>
-<body>
+<body class="relative min-h-screen">
 
-    <!-- 상단 여백을 주어 5번째 줄 위치로 내린 메뉴바 -->
-    <nav style="margin-top: 4em;">
-        <a href="automationflow.html">Automation Flow</a> | 
-        <a href="portfolio.html">Portfolio</a> | 
-        <a href="paper-qubit.html">Paper Qubit Algorithm</a> | 
-        <a href="qubitalgorithm.html">Qubit Algorithm</a>
-    </nav>
+    <!-- 3D Three.js Starfield Canvas -->
+    <canvas id="bg-canvas"></canvas>
 
+    <!-- App Container -->
+    <div class="relative z-10 flex flex-col min-h-screen">
+
+        <!-- Top Navigation Bar -->
+        <header class="sticky top-0 z-40 glass-panel border-b border-cyan-500/20 px-4 lg:px-8 py-3">
+            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+                <!-- Brand Logo & Identity -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="navigateToSection('hero')">
+                    <div class="relative w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-tr from-cyan-500 via-purple-600 to-yellow-400 p-[2px] animate-pulse-glow">
+                        <div class="w-full h-full bg-space-900 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-atom text-cyan-glow text-lg"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="font-orbitron font-extrabold text-lg tracking-wider text-white flex items-center gap-2">
+                            *SC <span class="text-xs px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/30">SIGNAL STAR</span>
+                        </div>
+                        <div class="text-[10px] tracking-widest text-gray-400 uppercase">Signal Star Universe</div>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+                    <button onclick="navigateToSection('sec-1')" class="nav-btn px-3 py-1.5 rounded-lg text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-rocket text-xs"></i> HeadQuarter
+                    </button>
+                    <button onclick="navigateToSection('sec-2')" class="nav-btn px-3 py-1.5 rounded-lg text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-microchip text-xs"></i> Qubit Algorithm
+                    </button>
+                    <button onclick="navigateToSection('sec-3')" class="nav-btn px-3 py-1.5 rounded-lg text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs"></i> Scarlet AI
+                    </button>
+                    <button onclick="navigateToSection('sec-4')" class="nav-btn px-3 py-1.5 rounded-lg text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-network text-xs"></i> Qubit Biz
+                    </button>
+                    <button onclick="navigateToSection('sec-5')" class="nav-btn px-3 py-1.5 rounded-lg text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-brain text-xs"></i> Intelligence Core
+                    </button>
+                    <button onclick="navigateToSection('sec-6')" class="nav-btn px-3 py-1.5 rounded-lg text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-globe text-xs"></i> Biz Galaxy
+                    </button>
+                </nav>
+
+                <!-- Action CTA & Universe Navigator Trigger -->
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleUniverseNavigatorModal()" class="px-3.5 py-1.5 rounded-lg bg-cyan-950/80 border border-cyan-500/50 text-cyan-300 text-xs font-semibold hover:bg-cyan-900 transition flex items-center gap-2">
+                        <i class="fa-solid fa-compass text-cyan-glow animate-spin-slow"></i>
+                        <span>Universe Navigator</span>
+                    </button>
+                    <button onclick="openOnboardModal()" class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-purple-600 text-white text-xs font-bold shadow-lg shadow-cyan-500/20 hover:opacity-90 transition transform active:scale-95">
+                        <i class="fa-solid fa-user-astronaut mr-1"></i> OnBoard *SC
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-grow max-w-7xl w-full mx-auto px-4 lg:px-8 py-8 space-y-16">
+
+            <!-- FIRST SCREEN / HERO SECTION -->
+            <section id="hero" class="relative min-h-[80vh] flex flex-col justify-center items-center text-center pt-8 pb-12">
+                <!-- Cosmic Glow Circle -->
+                <div class="absolute -z-10 w-[350px] h-[350px] md:w-[600px] md:h-[600px] bg-gradient-to-br from-cyan-500/20 via-purple-600/10 to-yellow-500/10 rounded-full filter blur-[100px]"></div>
+
+                <!-- Main Tagline Badge -->
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border-cyan-500/40 text-cyan-300 text-xs md:text-sm font-medium mb-6 animate-float">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                    <span>Do Biz Int’l • Play • Make Money</span>
+                </div>
+
+                <!-- Main Hero Headline -->
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold font-orbitron tracking-tight text-white mb-6 leading-tight">
+                    *SC. <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-yellow-300 neon-text-cyan">STAR Company</span><br>
+                    <span class="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-300">Signal Star Universe</span>
+                </h1>
+
+                <!-- Secondary Sub-Slogan -->
+                <p class="max-w-2xl text-lg sm:text-xl text-gray-300 font-light mb-8 leading-relaxed">
+                    <span class="text-cyan-300 font-medium">‘OnBoard *SC, for *SC Astronaut &amp; for Biz Galaxy’</span><br>
+                    Autonomous AI Multi-Workings, Quantum Mechanics Business Architecture &amp; Global Enterprise Pipelines.
+                </p>
+
+                <!-- Hero Interactive Metrics Bar -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl mb-10">
+                    <div class="glass-panel p-4 rounded-xl text-center border-cyan-500/20">
+                        <div class="text-2xl lg:text-3xl font-extrabold text-cyan-400 font-orbitron">100+</div>
+                        <div class="text-xs text-gray-400 mt-1">Parallel Matrix Projects</div>
+                    </div>
+                    <div class="glass-panel p-4 rounded-xl text-center border-purple-500/20">
+                        <div class="text-2xl lg:text-3xl font-extrabold text-purple-400 font-orbitron">24/7</div>
+                        <div class="text-xs text-gray-400 mt-1">AI Multi-Working Engine</div>
+                    </div>
+                    <div class="glass-panel p-4 rounded-xl text-center border-yellow-500/20">
+                        <div class="text-2xl lg:text-3xl font-extrabold text-yellow-400 font-orbitron">1,000+</div>
+                        <div class="text-xs text-gray-400 mt-1">Global Biz Pipelines</div>
+                    </div>
+                    <div class="glass-panel p-4 rounded-xl text-center border-green-500/20">
+                        <div class="text-2xl lg:text-3xl font-extrabold text-green-400 font-orbitron">0 RISK</div>
+                        <div class="text-xs text-gray-400 mt-1">Quantum Offsetting Trade</div>
+                    </div>
+                </div>
+
+                <!-- Hero CTA Buttons -->
+                <div class="flex flex-wrap items-center justify-center gap-4">
+                    <button onclick="triggerWarpSpeed(); navigateToSection('sec-1')" class="px-8 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white font-bold font-orbitron tracking-wider text-sm shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/50 hover:scale-105 transition transform active:scale-95">
+                        <i class="fa-solid fa-space-shuttle mr-2"></i> ENTER SPACESHIP HEADQUARTER
+                    </button>
+                    <button onclick="toggleUniverseNavigatorModal()" class="px-8 py-3.5 rounded-xl glass-panel text-cyan-300 border-cyan-500/50 hover:bg-cyan-950/40 font-bold font-orbitron text-sm transition hover:scale-105">
+                        <i class="fa-solid fa-compass mr-2"></i> UNIVERSE NAVIGATOR
+                    </button>
+                </div>
+            </section>
+
+            <!-- SECTION 1: *SC HeadQuarter -->
+            <section id="sec-1" class="scroll-mt-24 space-y-6">
+                <!-- Section Header -->
+                <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-cyan-400">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-xs font-bold uppercase tracking-widest text-cyan-400">Section 1</div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold font-orbitron text-white flex items-center gap-3 mt-1">
+                                <i class="fa-solid fa-space-shuttle text-cyan-glow"></i> *SC HeadQuarter
+                            </h2>
+                            <p class="text-sm text-gray-300 mt-1">
+                                <span class="font-semibold text-cyan-300">*SC Space Ship</span> | <span class="text-purple-300">*SC Astronaut: SISTAR Challengers Int'l</span>
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs px-3 py-1 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-500/30">Triple Control Towers</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Filters for Section 1 -->
+                <div class="flex flex-wrap gap-2" id="sec1-cat-filters">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Cards Grid for Section 1 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="sec1-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- SECTION 2: *SC Qubit Algorithm -->
+            <section id="sec-2" class="scroll-mt-24 space-y-6">
+                <!-- Section Header -->
+                <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-purple-500">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-xs font-bold uppercase tracking-widest text-purple-400">Section 2</div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold font-orbitron text-white flex items-center gap-3 mt-1">
+                                <i class="fa-solid fa-microchip text-purple-glow"></i> *SC Qubit Algorithm
+                            </h2>
+                            <p class="text-sm text-gray-300 mt-1">
+                                <span class="font-semibold text-purple-300">*SC Spaceship Engine</span> | Quantum Mechanics Applied to Global Business
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs px-3 py-1 rounded-full bg-purple-950 text-purple-300 border border-purple-500/30">Cosmo Seed™ Engine</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Physics Principles Banner -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="glass-panel p-4 rounded-xl border-purple-500/30">
+                        <div class="text-xs text-purple-400 font-bold uppercase">Quantum Superposition</div>
+                        <div class="text-sm text-gray-200 mt-1 font-light">Intent modeled in complex Hilbert space, collapsing into binding contracts upon data measurement.</div>
+                    </div>
+                    <div class="glass-panel p-4 rounded-xl border-cyan-500/30">
+                        <div class="text-xs text-cyan-400 font-bold uppercase">Quantum Entanglement</div>
+                        <div class="text-sm text-gray-200 mt-1 font-light">Empirical verification in Node A instantly triggers approvals in Node B and orders in Node C.</div>
+                    </div>
+                    <div class="glass-panel p-4 rounded-xl border-yellow-500/30">
+                        <div class="text-xs text-yellow-400 font-bold uppercase">Quantum Tunneling</div>
+                        <div class="text-sm text-gray-200 mt-1 font-light">Aggregated advance intent reduces barrier thickness, enabling zero-capital market entry.</div>
+                    </div>
+                </div>
+
+                <!-- Category Filters for Section 2 -->
+                <div class="flex flex-wrap gap-2" id="sec2-cat-filters"></div>
+
+                <!-- Cards Grid for Section 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="sec2-grid"></div>
+            </section>
+
+            <!-- SECTION 3: Scarlet AI Command Center -->
+            <section id="sec-3" class="scroll-mt-24 space-y-6">
+                <!-- Section Header -->
+                <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-pink-500">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-xs font-bold uppercase tracking-widest text-pink-400">Section 3</div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold font-orbitron text-white flex items-center gap-3 mt-1">
+                                <i class="fa-solid fa-wand-magic-sparkles text-pink-400"></i> *SC Command Center: Scarlet Ai
+                            </h2>
+                            <p class="text-sm text-gray-300 mt-1">
+                                <span class="font-semibold text-pink-300">"I'm not fool"</span> | <span class="text-yellow-300 font-italic">Where magic happens with a spell</span>
+                            </p>
+                        </div>
+                        <div>
+                            <span class="text-xs px-3 py-1 rounded-full bg-pink-950 text-pink-300 border border-pink-500/30">Agentic AI &amp; Shoppable Media</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Spell Command Sandbox -->
+                <div class="glass-panel p-6 rounded-2xl border-pink-500/30 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-orbitron font-bold text-pink-300 flex items-center gap-2">
+                            <i class="fa-solid fa-terminal text-yellow-400"></i> Scarlet Spell Executor Sandbox
+                        </h3>
+                        <span class="text-xs text-gray-400">Try a Magic Spell Prompt</span>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="spell-input" placeholder="Enter a spell e.g., 'Deploy 100 App-Flipping SaaS in Bahasa Indonesia'" 
+                               class="flex-grow bg-space-900/90 border border-pink-500/40 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-pink-400">
+                        <button onclick="executeScarletSpell()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-xs font-orbitron hover:opacity-90 transition whitespace-nowrap">
+                            <i class="fa-solid fa-bolt mr-1"></i> CAST SPELL
+                        </button>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <span class="text-gray-400">Preset Spells:</span>
+                        <button onclick="setSpell('Automate RAG Data Factory for Taxation &amp; Medical DB')" class="px-2.5 py-1 rounded bg-white/5 text-gray-300 hover:text-pink-300 transition border border-white/10">Taxation &amp; Medical RAG</button>
+                        <button onclick="setSpell('Launch Petfoodbank &amp; Ayurvedic NRT Therapy Store')" class="px-2.5 py-1 rounded bg-white/5 text-gray-300 hover:text-pink-300 transition border border-white/10">Petfood &amp; Ayurvedic</button>
+                        <button onclick="setSpell('Create 10 Shoppable Shorts Videos with HeyGen Avatar')" class="px-2.5 py-1 rounded bg-white/5 text-gray-300 hover:text-pink-300 transition border border-white/10">Shoppable Shorts</button>
+                    </div>
+
+                    <!-- Output Console -->
+                    <div id="spell-output" class="hidden bg-space-900 border border-pink-500/30 rounded-xl p-4 font-mono text-xs text-cyan-300 overflow-x-auto">
+                    </div>
+                </div>
+
+                <!-- Category Filters for Section 3 -->
+                <div class="flex flex-wrap gap-2" id="sec3-cat-filters"></div>
+
+                <!-- Cards Grid for Section 3 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="sec3-grid"></div>
+            </section>
+
+            <!-- SECTION 4: *SC Qubit Biz -->
+            <section id="sec-4" class="scroll-mt-24 space-y-6">
+                <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-yellow-400">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-xs font-bold uppercase tracking-widest text-yellow-400">Section 4</div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold font-orbitron text-white flex items-center gap-3 mt-1">
+                                <i class="fa-solid fa-chart-network text-yellow-glow"></i> *SC Command Center: Qubit Biz
+                            </h2>
+                            <p class="text-sm text-gray-300 mt-1">
+                                <span class="font-semibold text-yellow-300">Biz on Quantum Mechanics</span> | Qubit Algorithm &amp; Cosmo Seed™ Business Architecture
+                            </p>
+                        </div>
+                        <div>
+                            <span class="text-xs px-3 py-1 rounded-full bg-yellow-950 text-yellow-300 border border-yellow-500/30">Bartering &amp; Arbitrage</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2" id="sec4-cat-filters"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="sec4-grid"></div>
+            </section>
+
+            <!-- SECTION 5: *SC Intelligence Core -->
+            <section id="sec-5" class="scroll-mt-24 space-y-6">
+                <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-blue-400">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-xs font-bold uppercase tracking-widest text-blue-400">Section 5</div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold font-orbitron text-white flex items-center gap-3 mt-1">
+                                <i class="fa-solid fa-brain text-blue-400"></i> *SC Intelligence Core
+                            </h2>
+                            <p class="text-sm text-gray-300 mt-1">
+                                <span class="font-semibold text-blue-300">*SC Spaceship Intelligence Core</span> | AI Business Intelligence, Int'l &amp; Data Factory
+                            </p>
+                        </div>
+                        <div>
+                            <span class="text-xs px-3 py-1 rounded-full bg-blue-950 text-blue-300 border border-blue-500/30">MCA &amp; PPAa Automation</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2" id="sec5-cat-filters"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="sec5-grid"></div>
+            </section>
+
+            <!-- SECTION 6: *SC Biz Galaxy -->
+            <section id="sec-6" class="scroll-mt-24 space-y-6">
+                <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-emerald-400">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="text-xs font-bold uppercase tracking-widest text-emerald-400">Section 6</div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold font-orbitron text-white flex items-center gap-3 mt-1">
+                                <i class="fa-solid fa-globe text-emerald-400"></i> *SC Biz Galaxy
+                            </h2>
+                            <p class="text-sm text-gray-300 mt-1">
+                                <span class="font-semibold text-emerald-300">*SC Biz Showcase</span> | Industry Multi-Brand Vertical Ecosystems
+                            </p>
+                        </div>
+                        <div>
+                            <span class="text-xs px-3 py-1 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/30">Multi-Brand Ecosystems</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2" id="sec6-cat-filters"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="sec6-grid"></div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-20 glass-panel border-t border-cyan-500/20 py-10 px-4 lg:px-8">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                    <div class="font-orbitron font-extrabold text-lg text-white flex items-center gap-2">
+                        *SC <span class="text-cyan-400 text-xs font-normal">SIGNAL STAR UNIVERSE</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1 max-w-md">
+                        Quantum Mechanics Business Architecture, Full-Stack Agentic AI &amp; Global Cross-Border Enterprises.
+                    </p>
+                </div>
+
+                <!-- Contact & Onboard Links -->
+                <div class="flex flex-col sm:flex-row items-center gap-4">
+                    <div class="text-right sm:text-left text-xs">
+                        <div class="text-gray-400">Contact Commander:</div>
+                        <a href="mailto:denniiku@sistarcompany.com" class="text-cyan-300 font-medium hover:underline flex items-center gap-1.5">
+                            <i class="fa-solid fa-envelope"></i> denniiku@sistarcompany.com
+                        </a>
+                    </div>
+                    <button onclick="openOnboardModal()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white text-xs font-bold font-orbitron hover:opacity-90 transition">
+                        OnBoard *SC
+                    </button>
+                </div>
+            </div>
+            <div class="max-w-7xl mx-auto text-center text-[11px] text-gray-500 mt-8 pt-6 border-t border-white/5">
+                © 2026 *SC. STAR Company / Signal Star Universe. All Quantum Rights Reserved.
+            </div>
+        </footer>
+    </div>
+
+    <!-- UNIVERSE NAVIGATOR MODAL -->
+    <div id="navigator-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-4xl max-h-[85vh] rounded-2xl border-cyan-500/50 flex flex-col overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-cyan-500/20 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-cyan-950 border border-cyan-500/40 text-cyan-400">
+                        <i class="fa-solid fa-compass text-xl animate-spin-slow"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold font-orbitron text-white">Universe Navigator</h3>
+                        <p class="text-xs text-gray-400">Search across 6 Sections, 30+ Categories, Companies, and Projects</p>
+                    </div>
+                </div>
+                <button onclick="toggleUniverseNavigatorModal()" class="text-gray-400 hover:text-white text-xl p-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="p-4 bg-space-900/60 border-b border-white/5">
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-sm"></i>
+                    <input type="text" id="nav-search-input" onkeyup="handleUniverseSearch()" placeholder="Type to search (e.g., 'Qubit', 'Flex Kids', 'Scarlet', 'Petfood', 'Indo', 'RAG')..." 
+                           class="w-full pl-11 pr-4 py-3 bg-space-900 border border-cyan-500/30 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400">
+                </div>
+            </div>
+
+            <!-- Search Results List -->
+            <div class="p-6 overflow-y-auto flex-grow space-y-4" id="nav-results-container">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- DETAIL ITEM MODAL -->
+    <div id="detail-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-3xl max-h-[90vh] rounded-2xl border-cyan-500/50 flex flex-col overflow-hidden">
+            <div class="p-6 border-b border-cyan-500/20 flex items-center justify-between">
+                <div>
+                    <span id="modal-category-badge" class="text-[10px] font-bold px-2.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-500/30 uppercase">Category</span>
+                    <h3 id="modal-title" class="text-2xl font-bold font-orbitron text-white mt-1">Item Title</h3>
+                </div>
+                <button onclick="closeDetailModal()" class="text-gray-400 hover:text-white text-xl p-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-6 text-sm text-gray-300" id="modal-body">
+                <!-- Populated dynamically -->
+            </div>
+
+            <div class="p-4 bg-space-900/80 border-t border-white/5 flex items-center justify-between">
+                <span class="text-xs text-gray-400">*SC Universe System Verified</span>
+                <button onclick="openOnboardModal()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-bold text-xs font-orbitron">
+                    Execute Project / Partner <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ONBOARD *SC ASTRONAUT MODAL -->
+    <div id="onboard-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-lg rounded-2xl border-purple-500/50 p-6 space-y-6">
+            <div class="flex items-center justify-between border-b border-purple-500/20 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-purple-950 border border-purple-500/40 text-purple-400">
+                        <i class="fa-solid fa-user-astronaut text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold font-orbitron text-white">OnBoard *SC Universe</h3>
+                        <p class="text-xs text-gray-400">Join as *SC Astronaut &amp; Explore Biz Galaxy</p>
+                    </div>
+                </div>
+                <button onclick="closeOnboardModal()" class="text-gray-400 hover:text-white text-xl p-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Target Contact Email</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" readonly value="denniiku@sistarcompany.com" id="contact-email-val"
+                               class="flex-grow bg-space-900 border border-purple-500/30 rounded-xl px-4 py-2 text-sm text-cyan-300 font-mono">
+                        <button onclick="copyContactEmail()" class="px-3 py-2 rounded-xl bg-purple-900/80 hover:bg-purple-800 text-purple-200 text-xs font-semibold">
+                            <i class="fa-solid fa-copy mr-1"></i> Copy
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Your Name / Entity</label>
+                    <input type="text" id="onboard-name" placeholder="Enter your name or business name"
+                           class="w-full bg-space-900 border border-purple-500/30 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-400">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Interested Sector / Proposal</label>
+                    <select id="onboard-sector" class="w-full bg-space-900 border border-purple-500/30 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-400">
+                        <option value="HeadQuarter">SISTAR Challengers Int'l / Vibe Works</option>
+                        <option value="Qubit Engine">Qubit Algorithm &amp; Cosmo Seed™ Models</option>
+                        <option value="Scarlet AI">Scarlet AI &amp; Agentic Automation</option>
+                        <option value="Qubit Biz">Qubit Bartering, Trade &amp; Arbitrage</option>
+                        <option value="Intelligence Core">SISTAR Data Factory &amp; BI Solutions</option>
+                        <option value="Biz Galaxy">Flex Kids / PetCare / Medical / Franchise</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Message / Proposal Details</label>
+                    <textarea id="onboard-message" rows="3" placeholder="Describe your collaboration proposal..." 
+                              class="w-full bg-space-900 border border-purple-500/30 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-400"></textarea>
+                </div>
+
+                <div id="onboard-toast" class="hidden text-xs text-green-400 font-medium p-2 bg-green-950/50 rounded border border-green-500/30 text-center">
+                    Proposal initialized! Mail client opening for denniiku@sistarcompany.com
+                </div>
+
+                <button onclick="submitOnboardForm()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 text-white font-bold font-orbitron text-xs shadow-lg shadow-purple-500/30 hover:opacity-90 transition">
+                    SEND ONBOARDING TRANSMISSION
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // COMPLETE UNIVERSE DATA STRUCTURE (NO EMPTY CLICKS)
+        const UNIVERSE_DATA = {
+            sec1: {
+                title: "*SC HeadQuarter",
+                subtitle: "*SC Space Ship | *SC Astronaut: SISTAR challengers int’l",
+                categories: ["Vibe Working", "Int’l Bases", "Associations Int’l", "Identity/ Signatures", "Principals"],
+                items: [
+                    {
+                        title: "[SCI] SC International & [SCK] Korea Co., Ltd.",
+                        category: "Int’l Bases",
+                        desc: "Global scale operational hubs anchored by SCK Co., Ltd. in South Korea with regional hubs across international territories.",
+                        metrics: "6 Global Divisions | Triple Control Towers",
+                        details: "Coordinates SCI, SCK, SCV (Vietnam), SCJ (Japan), SCC (China), and SCU (USA). Synchronized via HQ, Command Center, and Analysis Center."
+                    },
+                    {
+                        title: "[IATA] Int’l AI-Trade Association",
+                        category: "Associations Int’l",
+                        desc: "Global association establishing standardized AI-driven cross-border trade protocols and automated compliance frameworks.",
+                        metrics: "Global Standardization | AI Trade Charter",
+                        details: "Formulates automated import/export compliance rules, AI tariff optimization, and global agentic trade standards."
+                    },
+                    {
+                        title: "[IADA] Int’l AI-Data Association",
+                        category: "Associations Int’l",
+                        desc: "International data governance entity facilitating secure, cross-border RAG data sharing and privacy preservation.",
+                        metrics: "Privacy Compliant | RAG Data Protocol",
+                        details: "Manages ethical AI data ingestion, anonymization benchmarks, and localized data sovereignty compliance."
+                    },
+                    {
+                        title: "SISTAR Vibe Works & Challengers Int'l",
+                        category: "Vibe Working",
+                        desc: "High-synergy agile working culture uniting global AI freelancers, digital nomads, and SISTAR Astronaut members.",
+                        metrics: "24/7 Global Freelancer Pool | Vibe Culture",
+                        details: "Powers non-stop project execution worldwide via SISTAR Members KKIRI network and decentralized studio hubs."
+                    },
+                    {
+                        title: "Triple Control Towers",
+                        category: "Identity/ Signatures",
+                        desc: "Unified governance architecture balancing *SC Head Quarter, *SC Command Center, and *SC Analysis Center.",
+                        metrics: "100% Operational Velocity | Real-time Analytics",
+                        details: "Centralizes project status, daily briefing automated scripts, and dynamic pricing models across all sub-companies."
+                    },
+                    {
+                        title: "100 Matrix Scale Parallel Execution",
+                        category: "Principals",
+                        desc: "Unprecedented parallel volume strategy: 100 App-Flipping, 100 Brands, 100 Patents, 100 Commercial Platforms.",
+                        metrics: "+10 Devs/Day | +10 Contents/Day | +10 Curriculums/Day",
+                        details: "Transforms continuous data feeding into active revenue streams through 24-hour full automation."
+                    }
+                ]
+            },
+            sec2: {
+                title: "*SC Qubit Algorithm",
+                subtitle: "*SC Spaceship Engine | Quantum Mechanics Business Architecture",
+                categories: ["Qubit Algorithm", "COSMOSEED Biz Model, powered by Qubit Algorithm"],
+                items: [
+                    {
+                        title: "Qubit Algorithm™ Core Engine",
+                        category: "Qubit Algorithm",
+                        desc: "Proprietary mathematical framework translating quantum mechanics operators into hyper-efficient business processes.",
+                        metrics: "Zero Inventory | Zero Upfront Capital | Superposition",
+                        details: "Models business intent in complex Hilbert space. A single task event ('One Spark') triggers automated cross-project actions instantly."
+                    },
+                    {
+                        title: "COSMO SEED™ Business Models",
+                        category: "COSMOSEED Biz Model, powered by Qubit Algorithm",
+                        desc: "Infinite synergetic loop architecture where one single spark generates infinite multi-dimensional business outcomes.",
+                        metrics: "Infinite Galaxifying | Cross-Project Workflow",
+                        details: "Synchronizes contract terms, logistics routing, dynamic marketing, and trade finance without operational drag."
+                    },
+                    {
+                        title: "Qubit Coins & Cubit Trading Engine",
+                        category: "Qubit Algorithm",
+                        desc: "Integrated tokenomics and automated arbitrage trading system across multi-dimensional value assets.",
+                        metrics: "Prop-Trading Loop | Asset Offsetting",
+                        details: "Facilitates seamless value exchange between digital tokens, physical goods, and knowledge assets."
+                    },
+                    {
+                        title: "Qubit Bank (Time, Space, Idea, Petfood)",
+                        category: "COSMOSEED Biz Model, powered by Qubit Algorithm",
+                        desc: "Multi-dimensional banking protocol allowing bartering and value quantization across non-traditional assets.",
+                        metrics: "4-Way Barter Protocol | Zero Liquidity Friction",
+                        details: "Allows businesses to settle accounts using idle warehouse space, IT services, or pet food inventory."
+                    },
+                    {
+                        title: "Qubit Planet Games & Earning Programs",
+                        category: "COSMOSEED Biz Model, powered by Qubit Algorithm",
+                        desc: "Ad-supported interactive gaming ecosystem and affiliate earning network (Qubit Partners).",
+                        metrics: "High Conversion | Gamified Monetization",
+                        details: "Engages users with rewarded gameplay, instantly feeding user intent signals back into the RAG Data Factory."
+                    }
+                ]
+            },
+            sec3: {
+                title: "*SC Command Center: Scarlet Ai",
+                subtitle: "I'm not fool | Where magic happens with a spell",
+                categories: ["Agentic AI", "Shoppable Media", "Localized LLMs", "AI Marketing Agency"],
+                items: [
+                    {
+                        title: "Scarlet AI Engine (intl / kr / ind)",
+                        category: "Agentic AI",
+                        desc: "Multi-region specialized LLM deployment running customized AI agents and automated workflow systems (WA).",
+                        metrics: "24/7 Agentic Execution | Localized Models",
+                        details: "Supports international, Korean, and Indonesian markets with localized prompt tuning and zero hallucination guardrails."
+                    },
+                    {
+                        title: "SISTAR MA (AI Marketing Agency) & AB (Agent Builder)",
+                        category: "AI Marketing Agency",
+                        desc: "Automated business intelligence and custom AI agent creation platform adapting to real-time market shifts.",
+                        metrics: "Custom Agent Builders | Instant Deployment",
+                        details: "Allows clients to build specialized customer support, sales, and data extraction agents in minutes."
+                    },
+                    {
+                        title: "Shoppable Media Hub (sistv & scarlettv)",
+                        category: "Shoppable Media",
+                        desc: "Immersive video commerce network combining automated AI video creation with QR-code direct checkout.",
+                        metrics: "Automated Video Shorts | Direct Checkout",
+                        details: "Converts viral TikTok and YouTube trends into shippable goods using automated AI avatars and scripts."
+                    },
+                    {
+                        title: "Deep Tech & Mind Wellness (ai-tech & mind.scarlet.ai)",
+                        category: "Localized LLMs",
+                        desc: "Dedicated AI domains for deep robotics control, specialized LLM fine-tuning, and mental wellness counseling.",
+                        metrics: "Deep Tech | Mind Care RAG",
+                        details: "Runs privacy-preserved RAG DBs for mental health tracking, cognitive screening, and robotics orchestration."
+                    }
+                ]
+            },
+            sec4: {
+                title: "*SC Command Center: Qubit Biz",
+                subtitle: "Qubit Algorithm | Cosmo Seed Biz Models on Quantum Mechanics",
+                categories: ["Quantum Commercialization", "100 Matrix Scale", "Bartering Protocols", "Open Account Finance"],
+                items: [
+                    {
+                        title: "Qubit App Factory Int'l",
+                        category: "100 Matrix Scale",
+                        desc: "24/7 autonomous micro-SaaS replication and reskinning engine deploying 100+ global apps.",
+                        metrics: "100 App-Flipping | Automated Reskinning",
+                        details: "Scrapes trending software demands and deploys localized app variants using Vibe Coding and GCP infra."
+                    },
+                    {
+                        title: "Qubit Trade Int'l & Cubit Arbitrage",
+                        category: "Quantum Commercialization",
+                        desc: "Cross-border 3-party simultaneous trade platform eliminating linear trade friction.",
+                        metrics: "Zero Inventory Risk | Arbitrage Engine",
+                        details: "Traps wholesale price gaps between international platforms and executes instant risk-free trade loops."
+                    },
+                    {
+                        title: "Qubit Offsetting & Bartering Protocol",
+                        category: "Bartering Protocols",
+                        desc: "4-way debt and asset cancellation matrix balancing physical goods, IT solutions, and logistics space.",
+                        metrics: "Multi-Lateral Offsetting | 100% Debt Clearance",
+                        details: "Allows *SC to supply AI platforms to buyers in exchange for raw materials or warehouse capacity."
+                    },
+                    {
+                        title: "Dynamic Pricing Engine & Open Account Quantization",
+                        category: "Open Account Finance",
+                        desc: "Demand-driven slider UI offering real-time volume-tiered margin discounts for enterprise buyers.",
+                        metrics: "Automated Credit 준위 | Real-time Discounting",
+                        details: "Quantizes open account credit levels using energy state equations to ensure secure trade financing."
+                    }
+                ]
+            },
+            sec5: {
+                title: "*SC Intelligence Core",
+                subtitle: "*SC Spaceship Intelligence Core | AI Business Intelligence & Data Factory",
+                categories: ["AI Biz Intelligence, Int'l", "Data Factory (DF)", "MCA & PPAa Automation"],
+                items: [
+                    {
+                        title: "SISTAR BI (AI Business Intelligence) & Analysis",
+                        category: "AI Biz Intelligence, Int'l",
+                        desc: "Real-time enterprise dashboard providing deep market trend extraction and predictive analytics.",
+                        metrics: "Real-Time BI | Automated Reporting",
+                        details: "Scrapes global marketplaces 24/7, providing instant competitive intelligence to *SC Command Center."
+                    },
+                    {
+                        title: "SISTAR DF (Data Factory & Data Centralizer AI)",
+                        category: "Data Factory (DF)",
+                        desc: "'Data For All' overnight data processing engine (10pm-8am) feeding RAG knowledge bases.",
+                        metrics: "Overnight Ingestion | Tax & Medical RAG",
+                        details: "Collects targeted data streams (e.g., taxation, medical regulations) to train localized NotebookLM models."
+                    },
+                    {
+                        title: "SISTAR B/D (BrandNew Online Delights & Vibe Coding)",
+                        category: "MCA & PPAa Automation",
+                        desc: "High-speed Web, App, and Video generation pipeline leveraging GCP Infra and Local LLMs.",
+                        metrics: "Vibe Coding | Rapid Web Building",
+                        details: "Transforms prompt ideas into fully functioning WebApps and micro-SaaS platforms in hours."
+                    },
+                    {
+                        title: "SISTAR ERP & SCM Systems (Space Sharing & Deliver Together)",
+                        category: "MCA & PPAa Automation",
+                        desc: "AI-managed logistics ecosystem incorporating video counting, shared warehousing, and smart delivery.",
+                        metrics: "Smart Logistics | Reduced Shipping OPEX",
+                        details: "Optimizes delivery routes and warehouse utilization across partner networks in Korea and Indonesia."
+                    }
+                ]
+            },
+            sec6: {
+                title: "*SC Biz Galaxy",
+                subtitle: "*SC Biz Showcase | Multi-Brand Industry Vertical Ecosystems",
+                categories: ["Pet & Vet", "Deep Tech & AI", "Mind & Health", "Bio & Ayurvedic", "Entertainment & Content", "Franchise & Retail"],
+                items: [
+                    {
+                        title: "Flex Kids & SISTAR EI",
+                        category: "Mind & Health",
+                        desc: "Multimodal psychological assessment and mental care platform for children mapped to K-CBCL diagnostic scales.",
+                        metrics: "Multimodal Vector Mapping | Parent/Teacher Dashboard",
+                        details: "Converts child play, drawings (HTP), and voice journals into validated psychological scores and LLM-curated book/game recommendations."
+                    },
+                    {
+                        title: "SISPet & SISTAR MedIX (RxVet Diagnostic Apps)",
+                        category: "Pet & Vet",
+                        desc: "Comprehensive pet wellness ecosystem featuring AI veterinary diagnostic assistance, Dazzle petfood, and medical shampoos.",
+                        metrics: "AI Vet Assistant | Botanical Formulas",
+                        details: "Pairs veterinary AI image analysis with prescription pet care products and raw protein D2C stores."
+                    },
+                    {
+                        title: "Indian Herbs & AI Ayurvedic Therapy",
+                        category: "Bio & Ayurvedic",
+                        desc: "Bulk import and repackaging hub for Indian herbal raw materials and AI-guided Ayurvedic Nicotine Replacement Therapy (NRT).",
+                        metrics: "Bulk Import | Herbal Vital Seeds",
+                        details: "Combines ancient Ayurvedic formulations with AI health monitoring for holistic wellness."
+                    },
+                    {
+                        title: "SISTAR Studio (Hong GilDong AI & The SISTAR Post)",
+                        category: "Entertainment & Content",
+                        desc: "Automated content creation studio generating 10+ videos, news articles, and curriculums daily.",
+                        metrics: "Daily 10+ Videos | Global Syndication",
+                        details: "Operates automated YouTube channels, viral shorts editing, and digital publication platforms."
+                    },
+                    {
+                        title: "SISTAR Mint Shop & Rooftop Project",
+                        category: "Franchise & Retail",
+                        desc: "Self-service ultra-low-cost pet aesthetic spaces and community lifestyle franchise platform.",
+                        metrics: "Proven Franchise Path | Neighborhood Hubs",
+                        details: "Blends physical space sharing with digital QR payments and community engagement."
+                    },
+                    {
+                        title: "SISTAR Re:D (Reduce & Discount Delivery App)",
+                        category: "Franchise & Retail",
+                        desc: "Smart delivery algorithm app promoting zero-wastage movements and discounted eco-friendly delivery.",
+                        metrics: "Zero Wastage | Smart Logistics",
+                        details: "Connects local merchants with nearby consumers to clear surplus inventory efficiently."
+                    }
+                ]
+            }
+        };
+
+        // State Management
+        let activeFilters = {
+            sec1: 'ALL', sec2: 'ALL', sec3: 'ALL', sec4: 'ALL', sec5: 'ALL', sec6: 'ALL'
+        };
+
+        // Initialize Page on Load
+        window.onload = function() {
+            initThreeJSStarfield();
+            renderAllSections();
+        };
+
+        // Render All Sections
+        function renderAllSections() {
+            for (let i = 1; i <= 6; i++) {
+                const secKey = `sec${i}`;
+                renderCategoryFilters(secKey);
+                renderGridItems(secKey);
+            }
+        }
+
+        // Render Category Filter Chips
+        function renderCategoryFilters(secKey) {
+            const container = document.getElementById(`${secKey}-cat-filters`);
+            if (!container) return;
+
+            const categories = ['ALL', ...UNIVERSE_DATA[secKey].categories];
+            container.innerHTML = categories.map(cat => {
+                const isActive = activeFilters[secKey] === cat;
+                return `
+                    <button onclick="setCategoryFilter('${secKey}', '${cat}')" 
+                            class="px-3 py-1 rounded-full text-xs font-medium transition ${
+                                isActive 
+                                ? 'bg-cyan-500 text-black font-bold shadow-md shadow-cyan-500/30' 
+                                : 'glass-panel text-gray-300 hover:text-white border-cyan-500/20'
+                            }">
+                        ${cat}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // Filter Category Click
+        function setCategoryFilter(secKey, category) {
+            activeFilters[secKey] = category;
+            renderCategoryFilters(secKey);
+            renderGridItems(secKey);
+        }
+
+        // Render Card Items for Section Grid
+        function renderGridItems(secKey) {
+            const container = document.getElementById(`${secKey}-grid`);
+            if (!container) return;
+
+            const selectedCat = activeFilters[secKey];
+            const allItems = UNIVERSE_DATA[secKey].items;
+
+            const filteredItems = selectedCat === 'ALL' 
+                ? allItems 
+                : allItems.filter(item => item.category === selectedCat);
+
+            container.innerHTML = filteredItems.map(item => `
+                <div class="glass-panel glass-panel-interactive p-5 rounded-2xl flex flex-col justify-between cursor-pointer"
+                     onclick="openDetailModal('${item.title.replace(/'/g, "\\'")}')">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-500/30 uppercase">
+                                ${item.category}
+                            </span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gray-500 hover:text-cyan-400"></i>
+                        </div>
+                        <h4 class="text-base font-bold font-orbitron text-white mb-2 leading-snug">${item.title}</h4>
+                        <p class="text-xs text-gray-300 font-light line-clamp-3 mb-4">${item.desc}</p>
+                    </div>
+
+                    <div class="pt-3 border-t border-white/10 flex items-center justify-between text-[11px]">
+                        <span class="text-purple-300 font-medium">${item.metrics}</span>
+                        <span class="text-cyan-400 font-semibold hover:underline">Explore <i class="fa-solid fa-chevron-right text-[9px]"></i></span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Universe Navigator Search & Filter
+        function toggleUniverseNavigatorModal() {
+            const modal = document.getElementById('navigator-modal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                document.getElementById('nav-search-input').focus();
+                handleUniverseSearch();
+            }
+        }
+
+        function handleUniverseSearch() {
+            const query = document.getElementById('nav-search-input').value.toLowerCase().trim();
+            const container = document.getElementById('nav-results-container');
+
+            let results = [];
+            for (let i = 1; i <= 6; i++) {
+                const sec = UNIVERSE_DATA[`sec${i}`];
+                sec.items.forEach(item => {
+                    if (query === '' || 
+                        item.title.toLowerCase().includes(query) || 
+                        item.category.toLowerCase().includes(query) || 
+                        item.desc.toLowerCase().includes(query) || 
+                        sec.title.toLowerCase().includes(query)) {
+                        results.push({ ...item, secTitle: sec.title });
+                    }
+                });
+            }
+
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="fa-solid fa-satellite-dish text-3xl mb-2 text-cyan-500"></i>
+                        <p>No quantum signals matched "${query}". Try another keyword!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = results.map(res => `
+                <div class="glass-panel p-4 rounded-xl hover:border-cyan-400 cursor-pointer transition flex items-center justify-between gap-4"
+                     onclick="toggleUniverseNavigatorModal(); openDetailModal('${res.title.replace(/'/g, "\\'")}')">
+                    <div>
+                        <div class="text-[10px] text-cyan-400 font-semibold">${res.secTitle} • ${res.category}</div>
+                        <div class="text-sm font-bold text-white font-orbitron">${res.title}</div>
+                        <div class="text-xs text-gray-300 line-clamp-1 mt-0.5">${res.desc}</div>
+                    </div>
+                    <button class="px-3 py-1.5 rounded-lg bg-cyan-950 border border-cyan-500/40 text-cyan-300 text-xs font-medium whitespace-nowrap">
+                        Launch <i class="fa-solid fa-rocket ml-1"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Open Detail Modal
+        function openDetailModal(itemTitle) {
+            let foundItem = null;
+            for (let i = 1; i <= 6; i++) {
+                const item = UNIVERSE_DATA[`sec${i}`].items.find(it => it.title === itemTitle);
+                if (item) { foundItem = item; break; }
+            }
+
+            if (!foundItem) return;
+
+            document.getElementById('modal-category-badge').innerText = foundItem.category;
+            document.getElementById('modal-title').innerText = foundItem.title;
+
+            document.getElementById('modal-body').innerHTML = `
+                <div>
+                    <h5 class="text-xs font-bold uppercase text-cyan-400 mb-1">Executive Summary</h5>
+                    <p class="text-base text-gray-200 font-light leading-relaxed">${foundItem.desc}</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="glass-panel p-3.5 rounded-xl border-purple-500/30">
+                        <div class="text-xs text-purple-400 font-bold uppercase">Performance Metrics</div>
+                        <div class="text-sm text-white font-medium mt-1">${foundItem.metrics}</div>
+                    </div>
+                    <div class="glass-panel p-3.5 rounded-xl border-cyan-500/30">
+                        <div class="text-xs text-cyan-400 font-bold uppercase">Status &amp; Verification</div>
+                        <div class="text-sm text-white font-medium mt-1">Active in *SC Universe Pipeline</div>
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="text-xs font-bold uppercase text-cyan-400 mb-1">Architecture &amp; Execution Details</h5>
+                    <p class="text-xs text-gray-300 leading-relaxed">${foundItem.details}</p>
+                </div>
+
+                <div class="bg-space-900/90 border border-cyan-500/20 rounded-xl p-4 font-mono text-xs text-cyan-300">
+                    <div>// *SC Quantum Execution Logs</div>
+                    <div>&gt; System: Initializing ${foundItem.title}...</div>
+                    <div>&gt; Qubit Algorithm Check: 100% Superposition Verified</div>
+                    <div>&gt; RAG Pipeline: Data Centralizer Synchronized</div>
+                    <div>&gt; Ready for Deployment in Global Galaxy</div>
+                </div>
+            `;
+
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+        }
+
+        // Onboard Modal
+        function openOnboardModal() {
+            document.getElementById('onboard-modal').classList.remove('hidden');
+        }
+
+        function closeOnboardModal() {
+            document.getElementById('onboard-modal').classList.add('hidden');
+        }
+
+        function copyContactEmail() {
+            const email = "denniiku@sistarcompany.com";
+            const tempInput = document.createElement("input");
+            tempInput.value = email;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            alert("Contact email (denniiku@sistarcompany.com) copied to clipboard!");
+        }
+
+        function submitOnboardForm() {
+            const name = document.getElementById('onboard-name').value || 'SISTAR Challenger';
+            const sector = document.getElementById('onboard-sector').value;
+            const message = document.getElementById('onboard-message').value;
+
+            const toast = document.getElementById('onboard-toast');
+            toast.classList.remove('hidden');
+
+            setTimeout(() => {
+                const mailtoUrl = `mailto:denniiku@sistarcompany.com?subject=*SC Onboarding Proposal from ${encodeURIComponent(name)}&body=Sector: ${encodeURIComponent(sector)}%0D%0A%0D%0A${encodeURIComponent(message)}`;
+                window.location.href = mailtoUrl;
+                toast.classList.add('hidden');
+                closeOnboardModal();
+            }, 1200);
+        }
+
+        // Scarlet AI Sandbox Spell Executor
+        function setSpell(spellText) {
+            document.getElementById('spell-input').value = spellText;
+            executeScarletSpell();
+        }
+
+        function executeScarletSpell() {
+            const input = document.getElementById('spell-input').value.trim();
+            if (!input) return;
+
+            const output = document.getElementById('spell-output');
+            output.classList.remove('hidden');
+            output.innerHTML = `<span class="text-yellow-400">&gt; Casting Magic Spell: "${input}"...</span><br>`;
+
+            setTimeout(() => {
+                const responseJSON = {
+                    "spell_status": "EXECUTED_WITH_MAGIC",
+                    "scarlet_ai_agent": "SISTAR MA & Agent Builder",
+                    "qubit_matrix_output": {
+                        "superposition_states": ["PROPOSAL_EMAIL", "VIBE_CODING", "RAG_DATA_FEED"],
+                        "data_factory_harvest": "Taxation & Mental Care DB Synchronized",
+                        "target_territory": "International & Indonesia Hub",
+                        "estimated_cashflow_cycle": "Phase I Active (24/7 Automation)"
+                    },
+                    "command_center_note": "Where magic happens with a spell - 'I'm Not Fool'"
+                };
+
+                output.innerHTML += `
+                    <span class="text-green-400">&gt; Spell Verified! Quantum Engine Triggered.</span><br>
+                    <pre class="mt-2 text-purple-300 font-mono">${JSON.stringify(responseJSON, null, 2)}</pre>
+                `;
+            }, 600);
+        }
+
+        // Navigation Helper
+        function navigateToSection(secId) {
+            const el = document.getElementById(secId);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Three.js Interactive Starfield & Nebula
+        let scene, camera, renderer, starParticles, geometry;
+        let isWarping = false;
+
+        function initThreeJSStarfield() {
+            const canvas = document.getElementById('bg-canvas');
+            scene = new THREE.Scene();
+            
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.z = 1;
+            camera.rotation.x = Math.PI / 2;
+
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Create Star Particles
+            const starCount = 3000;
+            geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(starCount * 3);
+            const velocities = new Float32Array(starCount);
+
+            for (let i = 0; i < starCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 600;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 600;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 600;
+                velocities[i] = 0.2 + Math.random() * 0.5;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 1));
+
+            // Star Texture
+            const material = new THREE.PointsMaterial({
+                color: 0x00f3ff,
+                size: 0.9,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            starParticles = new THREE.Points(geometry, material);
+            scene.add(starParticles);
+
+            // Mouse interaction
+            document.addEventListener('mousemove', (e) => {
+                if (!isWarping) {
+                    camera.position.x = (e.clientX / window.innerWidth - 0.5) * 20;
+                    camera.position.y = -(e.clientY / window.innerHeight - 0.5) * 20;
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            animateStarfield();
+        }
+
+        function animateStarfield() {
+            requestAnimationFrame(animateStarfield);
+
+            const positions = geometry.attributes.position.array;
+            const velocities = geometry.attributes.velocity.array;
+            const speed = isWarping ? 8.0 : 0.4;
+
+            for (let i = 0; i < positions.length / 3; i++) {
+                positions[i * 3 + 1] -= velocities[i] * speed;
+
+                if (positions[i * 3 + 1] < -300) {
+                    positions[i * 3 + 1] = 300;
+                }
+            }
+
+            geometry.attributes.position.needsUpdate = true;
+            starParticles.rotation.y += 0.0008;
+
+            renderer.render(scene, camera);
+        }
+
+        function triggerWarpSpeed() {
+            isWarping = true;
+            setTimeout(() => {
+                isWarping = false;
+            }, 1200);
+        }
+    </script>
 </body>
 </html>
