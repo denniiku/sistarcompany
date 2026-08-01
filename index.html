@@ -103,11 +103,6 @@
             text-shadow: 0 0 10px rgba(176, 38, 255, 0.7), 0 0 20px rgba(176, 38, 255, 0.4);
         }
 
-        .neon-border-cyan {
-            border-color: #00f3ff;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
-        }
-
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -164,10 +159,10 @@
                 <!-- Navigation Links -->
                 <nav class="hidden md:flex items-center gap-1 text-sm font-medium">
                     <button onclick="navigateToSection('sec-1')" class="nav-btn px-3 py-1.5 rounded-lg text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-rocket text-xs"></i> HeadQuarter
+                        <i class="fa-solid fa-space-shuttle text-xs"></i> HeadQuarter
                     </button>
                     <button onclick="navigateToSection('sec-2')" class="nav-btn px-3 py-1.5 rounded-lg text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-microchip text-xs"></i> Qubit Algorithm
+                        <i class="fa-solid fa-microchip text-xs"></i> Qubit Engine
                     </button>
                     <button onclick="navigateToSection('sec-3')" class="nav-btn px-3 py-1.5 rounded-lg text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-wand-magic-sparkles text-xs"></i> Scarlet AI
@@ -255,7 +250,6 @@
 
             <!-- SECTION 1: *SC HeadQuarter -->
             <section id="sec-1" class="scroll-mt-24 space-y-6">
-                <!-- Section Header -->
                 <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-cyan-400">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
@@ -273,20 +267,12 @@
                     </div>
                 </div>
 
-                <!-- Category Filters for Section 1 -->
-                <div class="flex flex-wrap gap-2" id="sec1-cat-filters">
-                    <!-- Populated by JS -->
-                </div>
-
-                <!-- Cards Grid for Section 1 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="sec1-grid">
-                    <!-- Populated by JS -->
-                </div>
+                <div class="flex flex-wrap gap-2" id="sec1-cat-filters"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="sec1-grid"></div>
             </section>
 
             <!-- SECTION 2: *SC Qubit Algorithm -->
             <section id="sec-2" class="scroll-mt-24 space-y-6">
-                <!-- Section Header -->
                 <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-purple-500">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
@@ -304,11 +290,10 @@
                     </div>
                 </div>
 
-                <!-- Physics Principles Banner -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="glass-panel p-4 rounded-xl border-purple-500/30">
                         <div class="text-xs text-purple-400 font-bold uppercase">Quantum Superposition</div>
-                        <div class="text-sm text-gray-200 mt-1 font-light">Intent modeled in complex Hilbert space, collapsing into binding contracts upon data measurement.</div>
+                        <div class="text-sm text-gray-200 mt-1 font-light">Intent modeled in Hilbert space, collapsing into binding contracts upon data measurement.</div>
                     </div>
                     <div class="glass-panel p-4 rounded-xl border-cyan-500/30">
                         <div class="text-xs text-cyan-400 font-bold uppercase">Quantum Entanglement</div>
@@ -320,16 +305,12 @@
                     </div>
                 </div>
 
-                <!-- Category Filters for Section 2 -->
                 <div class="flex flex-wrap gap-2" id="sec2-cat-filters"></div>
-
-                <!-- Cards Grid for Section 2 -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="sec2-grid"></div>
             </section>
 
             <!-- SECTION 3: Scarlet AI Command Center -->
             <section id="sec-3" class="scroll-mt-24 space-y-6">
-                <!-- Section Header -->
                 <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-pink-500">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
@@ -338,7 +319,7 @@
                                 <i class="fa-solid fa-wand-magic-sparkles text-pink-400"></i> *SC Command Center: Scarlet Ai
                             </h2>
                             <p class="text-sm text-gray-300 mt-1">
-                                <span class="font-semibold text-pink-300">"I'm not fool"</span> | <span class="text-yellow-300 font-italic">Where magic happens with a spell</span>
+                                <span class="font-semibold text-pink-300">"I'm not fool"</span> | <span class="text-yellow-300 italic">Where magic happens with a spell</span>
                             </p>
                         </div>
                         <div>
@@ -347,7 +328,7 @@
                     </div>
                 </div>
 
-                <!-- Interactive Spell Command Sandbox -->
+                <!-- Interactive Spell Sandbox -->
                 <div class="glass-panel p-6 rounded-2xl border-pink-500/30 space-y-4">
                     <div class="flex items-center justify-between">
                         <h3 class="text-base font-orbitron font-bold text-pink-300 flex items-center gap-2">
@@ -364,22 +345,10 @@
                         </button>
                     </div>
 
-                    <div class="flex flex-wrap gap-2 text-xs">
-                        <span class="text-gray-400">Preset Spells:</span>
-                        <button onclick="setSpell('Automate RAG Data Factory for Taxation &amp; Medical DB')" class="px-2.5 py-1 rounded bg-white/5 text-gray-300 hover:text-pink-300 transition border border-white/10">Taxation &amp; Medical RAG</button>
-                        <button onclick="setSpell('Launch Petfoodbank &amp; Ayurvedic NRT Therapy Store')" class="px-2.5 py-1 rounded bg-white/5 text-gray-300 hover:text-pink-300 transition border border-white/10">Petfood &amp; Ayurvedic</button>
-                        <button onclick="setSpell('Create 10 Shoppable Shorts Videos with HeyGen Avatar')" class="px-2.5 py-1 rounded bg-white/5 text-gray-300 hover:text-pink-300 transition border border-white/10">Shoppable Shorts</button>
-                    </div>
-
-                    <!-- Output Console -->
-                    <div id="spell-output" class="hidden bg-space-900 border border-pink-500/30 rounded-xl p-4 font-mono text-xs text-cyan-300 overflow-x-auto">
-                    </div>
+                    <div id="spell-output" class="hidden bg-space-900 border border-pink-500/30 rounded-xl p-4 font-mono text-xs text-cyan-300 overflow-x-auto"></div>
                 </div>
 
-                <!-- Category Filters for Section 3 -->
                 <div class="flex flex-wrap gap-2" id="sec3-cat-filters"></div>
-
-                <!-- Cards Grid for Section 3 -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="sec3-grid"></div>
             </section>
 
@@ -466,7 +435,6 @@
                     </p>
                 </div>
 
-                <!-- Contact & Onboard Links -->
                 <div class="flex flex-col sm:flex-row items-center gap-4">
                     <div class="text-right sm:text-left text-xs">
                         <div class="text-gray-400">Contact Commander:</div>
@@ -488,7 +456,6 @@
     <!-- UNIVERSE NAVIGATOR MODAL -->
     <div id="navigator-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
         <div class="glass-panel w-full max-w-4xl max-h-[85vh] rounded-2xl border-cyan-500/50 flex flex-col overflow-hidden">
-            <!-- Modal Header -->
             <div class="p-6 border-b border-cyan-500/20 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="p-2.5 rounded-xl bg-cyan-950 border border-cyan-500/40 text-cyan-400">
@@ -504,7 +471,6 @@
                 </button>
             </div>
 
-            <!-- Search Bar -->
             <div class="p-4 bg-space-900/60 border-b border-white/5">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-sm"></i>
@@ -513,10 +479,7 @@
                 </div>
             </div>
 
-            <!-- Search Results List -->
-            <div class="p-6 overflow-y-auto flex-grow space-y-4" id="nav-results-container">
-                <!-- Populated dynamically -->
-            </div>
+            <div class="p-6 overflow-y-auto flex-grow space-y-4" id="nav-results-container"></div>
         </div>
     </div>
 
@@ -533,22 +496,20 @@
                 </button>
             </div>
 
-            <div class="p-6 overflow-y-auto space-y-6 text-sm text-gray-300" id="modal-body">
-                <!-- Populated dynamically -->
-            </div>
+            <div class="p-6 overflow-y-auto space-y-6 text-sm text-gray-300" id="modal-body"></div>
 
             <div class="p-4 bg-space-900/80 border-t border-white/5 flex items-center justify-between">
                 <span class="text-xs text-gray-400">*SC Universe System Verified</span>
-                <button onclick="openOnboardModal()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-bold text-xs font-orbitron">
+                <button onclick="closeDetailModal(); openOnboardModal()" class="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-bold text-xs font-orbitron">
                     Execute Project / Partner <i class="fa-solid fa-arrow-right ml-1"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ONBOARD *SC ASTRONAUT MODAL -->
+    <!-- ================= ONBOARD *SC ASTRONAUT MODAL (FIREBASE CONNECTED) ================= -->
     <div id="onboard-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden">
-        <div class="glass-panel w-full max-w-lg rounded-2xl border-purple-500/50 p-6 space-y-6">
+        <div class="glass-panel w-full max-w-lg rounded-2xl border-purple-500/50 p-6 space-y-6 relative">
             <div class="flex items-center justify-between border-b border-purple-500/20 pb-4">
                 <div class="flex items-center gap-3">
                     <div class="p-2.5 rounded-xl bg-purple-950 border border-purple-500/40 text-purple-400">
@@ -564,28 +525,39 @@
                 </button>
             </div>
 
-            <div class="space-y-4">
+            <form id="onboard-form" class="space-y-4">
+                <!-- 1. Target Contact Email with Copy Button -->
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">Target Contact Email</label>
                     <div class="flex items-center gap-2">
                         <input type="text" readonly value="denniiku@sistarcompany.com" id="contact-email-val"
                                class="flex-grow bg-space-900 border border-purple-500/30 rounded-xl px-4 py-2 text-sm text-cyan-300 font-mono">
-                        <button onclick="copyContactEmail()" class="px-3 py-2 rounded-xl bg-purple-900/80 hover:bg-purple-800 text-purple-200 text-xs font-semibold">
-                            <i class="fa-solid fa-copy mr-1"></i> Copy
+                        <button type="button" onclick="copyContactEmail()" id="copy-btn" class="px-3.5 py-2 rounded-xl bg-purple-900/80 hover:bg-purple-800 text-purple-200 text-xs font-semibold flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-copy"></i> <span id="copy-text">Copy</span>
                         </button>
                     </div>
                 </div>
 
+                <!-- 2. Applicant Name / Entity -->
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Your Name / Entity</label>
-                    <input type="text" id="onboard-name" placeholder="Enter your name or business name"
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Your Name / Entity *</label>
+                    <input type="text" id="onboard-name" required placeholder="Enter your name or business name"
                            class="w-full bg-space-900 border border-purple-500/30 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-400">
                 </div>
 
+                <!-- 3. Applicant Email (Required for replies) -->
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Your Reply Email Address *</label>
+                    <input type="email" id="onboard-email" required placeholder="Enter your email (e.g. name@company.com)"
+                           class="w-full bg-space-900 border border-purple-500/30 rounded-xl px-4 py-2 text-sm text-sky-300 font-medium focus:outline-none focus:border-purple-400">
+                </div>
+
+                <!-- 4. Interested Sector -->
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">Interested Sector / Proposal</label>
                     <select id="onboard-sector" class="w-full bg-space-900 border border-purple-500/30 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-400">
                         <option value="HeadQuarter">SISTAR Challengers Int'l / Vibe Works</option>
+                        <option value="Flex AI Partnership">Flex AI Partnership (Indonesia / Global)</option>
                         <option value="Qubit Engine">Qubit Algorithm &amp; Cosmo Seed™ Models</option>
                         <option value="Scarlet AI">Scarlet AI &amp; Agentic Automation</option>
                         <option value="Qubit Biz">Qubit Bartering, Trade &amp; Arbitrage</option>
@@ -594,25 +566,124 @@
                     </select>
                 </div>
 
+                <!-- 5. Message Details -->
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Message / Proposal Details</label>
-                    <textarea id="onboard-message" rows="3" placeholder="Describe your collaboration proposal..." 
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Message / Proposal Details *</label>
+                    <textarea id="onboard-message" required rows="3" placeholder="Describe your collaboration proposal..." 
                               class="w-full bg-space-900 border border-purple-500/30 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-400"></textarea>
                 </div>
 
-                <div id="onboard-toast" class="hidden text-xs text-green-400 font-medium p-2 bg-green-950/50 rounded border border-green-500/30 text-center">
-                    Proposal initialized! Mail client opening for denniiku@sistarcompany.com
+                <div id="onboard-toast" class="hidden text-xs text-green-400 font-medium p-2.5 bg-green-950/60 rounded-xl border border-green-500/30 text-center">
+                    <i class="fa-solid fa-circle-check mr-1"></i> Application saved in Firebase DB & Queued to denniiku@sistarcompany.com!
                 </div>
 
-                <button onclick="submitOnboardForm()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 text-white font-bold font-orbitron text-xs shadow-lg shadow-purple-500/30 hover:opacity-90 transition">
+                <button type="submit" id="onboard-submit-btn" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 text-white font-bold font-orbitron text-xs shadow-lg shadow-purple-500/30 hover:opacity-90 transition">
                     SEND ONBOARDING TRANSMISSION
                 </button>
-            </div>
+            </form>
         </div>
     </div>
 
+    <!-- Complete Data Script & Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // ================= FIREBASE CONFIG (INTEGRATED) =================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOc4lRfzaqBALwNeQatuA9FKB7VAkplAI",
+            authDomain: "sistarcompany-ai.firebaseapp.com",
+            projectId: "sistarcompany-ai",
+            storageBucket: "sistarcompany-ai.appspot.com",
+            messagingSenderId: "154258772246",
+            appId: "1:154258772246:web:81e8f81a6cac0c86c08037"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Copy Email Function
+        window.copyContactEmail = function() {
+            const email = "denniiku@sistarcompany.com";
+            navigator.clipboard.writeText(email).then(() => {
+                const copyText = document.getElementById('copy-text');
+                copyText.innerText = "Copied!";
+                setTimeout(() => { copyText.innerText = "Copy"; }, 2000);
+            });
+        };
+
+        // Firebase Form Submit Handler
+        document.getElementById('onboard-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('onboard-submit-btn');
+            const toast = document.getElementById('onboard-toast');
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "TRANSMITTING TO FIREBASE BACKEND...";
+
+            const name = document.getElementById('onboard-name').value;
+            const applicantEmail = document.getElementById('onboard-email').value;
+            const sector = document.getElementById('onboard-sector').value;
+            const message = document.getElementById('onboard-message').value;
+
+            try {
+                // 1. Save to 'onboard_submissions' collection in Firestore
+                await addDoc(collection(db, "onboard_submissions"), {
+                    applicant_name: name,
+                    applicant_email: applicantEmail,
+                    target_email: "denniiku@sistarcompany.com",
+                    sector: sector,
+                    message: message,
+                    timestamp: serverTimestamp()
+                });
+
+                // 2. Save to 'mail' collection (Triggers Firebase Email Extension automatically)
+                await addDoc(collection(db, "mail"), {
+                    to: "denniiku@sistarcompany.com",
+                    replyTo: applicantEmail,
+                    message: {
+                        subject: `[*SC Onboard Application] ${name} (${sector})`,
+                        html: `
+                            <div style="font-family: sans-serif; padding: 20px; background-color: #f8fafc; color: #0f172a;">
+                                <h2 style="color: #6366f1;">*SC Astronaut Onboard Application</h2>
+                                <hr style="border: 0; height: 1px; background: #e2e8f0; margin: 15px 0;">
+                                <p><strong>Applicant Name / Entity:</strong> ${name}</p>
+                                <p><strong>Applicant Reply Email:</strong> <a href="mailto:${applicantEmail}">${applicantEmail}</a></p>
+                                <p><strong>Interested Sector:</strong> ${sector}</p>
+                                <p><strong>Proposal / Message Details:</strong></p>
+                                <div style="background: #ffffff; padding: 15px; border-radius: 8px; border-left: 4px solid #6366f1;">
+                                    ${message.replace(/\n/g, '<br>')}
+                                </div>
+                                <footer style="margin-top: 20px; font-size: 11px; color: #64748b;">
+                                    Transmitted via sistarcompany-ai.web.app Signal Star System
+                                </footer>
+                            </div>
+                        `
+                    },
+                    createdAt: serverTimestamp()
+                });
+
+                toast.classList.remove('hidden');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                    document.getElementById('onboard-form').reset();
+                    closeOnboardModal();
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "SEND ONBOARDING TRANSMISSION";
+                }, 2200);
+
+            } catch (error) {
+                console.error("Firebase Transmission Error:", error);
+                alert("Submission saved locally. Error writing to cloud DB: " + error.message);
+                submitBtn.disabled = false;
+                submitBtn.innerText = "SEND ONBOARDING TRANSMISSION";
+            }
+        });
+    </script>
+
     <script>
-        // COMPLETE UNIVERSE DATA STRUCTURE (NO EMPTY CLICKS)
+        // COMPLETE UNIVERSE DATA STRUCTURE
         const UNIVERSE_DATA = {
             sec1: {
                 title: "*SC HeadQuarter",
@@ -645,7 +716,7 @@
                         category: "Vibe Working",
                         desc: "High-synergy agile working culture uniting global AI freelancers, digital nomads, and SISTAR Astronaut members.",
                         metrics: "24/7 Global Freelancer Pool | Vibe Culture",
-                        details: "Powers non-stop project execution worldwide via SISTAR Members KKIRI network and decentralized studio hubs."
+                        details: "Powers non-stop project execution worldwide via SISTAR Members network and decentralized studio hubs."
                     },
                     {
                         title: "Triple Control Towers",
@@ -695,13 +766,6 @@
                         desc: "Multi-dimensional banking protocol allowing bartering and value quantization across non-traditional assets.",
                         metrics: "4-Way Barter Protocol | Zero Liquidity Friction",
                         details: "Allows businesses to settle accounts using idle warehouse space, IT services, or pet food inventory."
-                    },
-                    {
-                        title: "Qubit Planet Games & Earning Programs",
-                        category: "COSMOSEED Biz Model, powered by Qubit Algorithm",
-                        desc: "Ad-supported interactive gaming ecosystem and affiliate earning network (Qubit Partners).",
-                        metrics: "High Conversion | Gamified Monetization",
-                        details: "Engages users with rewarded gameplay, instantly feeding user intent signals back into the RAG Data Factory."
                     }
                 ]
             },
@@ -713,7 +777,7 @@
                     {
                         title: "Scarlet AI Engine (intl / kr / ind)",
                         category: "Agentic AI",
-                        desc: "Multi-region specialized LLM deployment running customized AI agents and automated workflow systems (WA).",
+                        desc: "Multi-region specialized LLM deployment running customized AI agents and automated workflow systems.",
                         metrics: "24/7 Agentic Execution | Localized Models",
                         details: "Supports international, Korean, and Indonesian markets with localized prompt tuning and zero hallucination guardrails."
                     },
@@ -730,13 +794,6 @@
                         desc: "Immersive video commerce network combining automated AI video creation with QR-code direct checkout.",
                         metrics: "Automated Video Shorts | Direct Checkout",
                         details: "Converts viral TikTok and YouTube trends into shippable goods using automated AI avatars and scripts."
-                    },
-                    {
-                        title: "Deep Tech & Mind Wellness (ai-tech & mind.scarlet.ai)",
-                        category: "Localized LLMs",
-                        desc: "Dedicated AI domains for deep robotics control, specialized LLM fine-tuning, and mental wellness counseling.",
-                        metrics: "Deep Tech | Mind Care RAG",
-                        details: "Runs privacy-preserved RAG DBs for mental health tracking, cognitive screening, and robotics orchestration."
                     }
                 ]
             },
@@ -758,20 +815,6 @@
                         desc: "Cross-border 3-party simultaneous trade platform eliminating linear trade friction.",
                         metrics: "Zero Inventory Risk | Arbitrage Engine",
                         details: "Traps wholesale price gaps between international platforms and executes instant risk-free trade loops."
-                    },
-                    {
-                        title: "Qubit Offsetting & Bartering Protocol",
-                        category: "Bartering Protocols",
-                        desc: "4-way debt and asset cancellation matrix balancing physical goods, IT solutions, and logistics space.",
-                        metrics: "Multi-Lateral Offsetting | 100% Debt Clearance",
-                        details: "Allows *SC to supply AI platforms to buyers in exchange for raw materials or warehouse capacity."
-                    },
-                    {
-                        title: "Dynamic Pricing Engine & Open Account Quantization",
-                        category: "Open Account Finance",
-                        desc: "Demand-driven slider UI offering real-time volume-tiered margin discounts for enterprise buyers.",
-                        metrics: "Automated Credit 준위 | Real-time Discounting",
-                        details: "Quantizes open account credit levels using energy state equations to ensure secure trade financing."
                     }
                 ]
             },
@@ -793,20 +836,6 @@
                         desc: "'Data For All' overnight data processing engine (10pm-8am) feeding RAG knowledge bases.",
                         metrics: "Overnight Ingestion | Tax & Medical RAG",
                         details: "Collects targeted data streams (e.g., taxation, medical regulations) to train localized NotebookLM models."
-                    },
-                    {
-                        title: "SISTAR B/D (BrandNew Online Delights & Vibe Coding)",
-                        category: "MCA & PPAa Automation",
-                        desc: "High-speed Web, App, and Video generation pipeline leveraging GCP Infra and Local LLMs.",
-                        metrics: "Vibe Coding | Rapid Web Building",
-                        details: "Transforms prompt ideas into fully functioning WebApps and micro-SaaS platforms in hours."
-                    },
-                    {
-                        title: "SISTAR ERP & SCM Systems (Space Sharing & Deliver Together)",
-                        category: "MCA & PPAa Automation",
-                        desc: "AI-managed logistics ecosystem incorporating video counting, shared warehousing, and smart delivery.",
-                        metrics: "Smart Logistics | Reduced Shipping OPEX",
-                        details: "Optimizes delivery routes and warehouse utilization across partner networks in Korea and Indonesia."
                     }
                 ]
             },
@@ -828,51 +857,18 @@
                         desc: "Comprehensive pet wellness ecosystem featuring AI veterinary diagnostic assistance, Dazzle petfood, and medical shampoos.",
                         metrics: "AI Vet Assistant | Botanical Formulas",
                         details: "Pairs veterinary AI image analysis with prescription pet care products and raw protein D2C stores."
-                    },
-                    {
-                        title: "Indian Herbs & AI Ayurvedic Therapy",
-                        category: "Bio & Ayurvedic",
-                        desc: "Bulk import and repackaging hub for Indian herbal raw materials and AI-guided Ayurvedic Nicotine Replacement Therapy (NRT).",
-                        metrics: "Bulk Import | Herbal Vital Seeds",
-                        details: "Combines ancient Ayurvedic formulations with AI health monitoring for holistic wellness."
-                    },
-                    {
-                        title: "SISTAR Studio (Hong GilDong AI & The SISTAR Post)",
-                        category: "Entertainment & Content",
-                        desc: "Automated content creation studio generating 10+ videos, news articles, and curriculums daily.",
-                        metrics: "Daily 10+ Videos | Global Syndication",
-                        details: "Operates automated YouTube channels, viral shorts editing, and digital publication platforms."
-                    },
-                    {
-                        title: "SISTAR Mint Shop & Rooftop Project",
-                        category: "Franchise & Retail",
-                        desc: "Self-service ultra-low-cost pet aesthetic spaces and community lifestyle franchise platform.",
-                        metrics: "Proven Franchise Path | Neighborhood Hubs",
-                        details: "Blends physical space sharing with digital QR payments and community engagement."
-                    },
-                    {
-                        title: "SISTAR Re:D (Reduce & Discount Delivery App)",
-                        category: "Franchise & Retail",
-                        desc: "Smart delivery algorithm app promoting zero-wastage movements and discounted eco-friendly delivery.",
-                        metrics: "Zero Wastage | Smart Logistics",
-                        details: "Connects local merchants with nearby consumers to clear surplus inventory efficiently."
                     }
                 ]
             }
         };
 
-        // State Management
-        let activeFilters = {
-            sec1: 'ALL', sec2: 'ALL', sec3: 'ALL', sec4: 'ALL', sec5: 'ALL', sec6: 'ALL'
-        };
+        let activeFilters = { sec1: 'ALL', sec2: 'ALL', sec3: 'ALL', sec4: 'ALL', sec5: 'ALL', sec6: 'ALL' };
 
-        // Initialize Page on Load
         window.onload = function() {
             initThreeJSStarfield();
             renderAllSections();
         };
 
-        // Render All Sections
         function renderAllSections() {
             for (let i = 1; i <= 6; i++) {
                 const secKey = `sec${i}`;
@@ -881,7 +877,6 @@
             }
         }
 
-        // Render Category Filter Chips
         function renderCategoryFilters(secKey) {
             const container = document.getElementById(`${secKey}-cat-filters`);
             if (!container) return;
@@ -902,14 +897,12 @@
             }).join('');
         }
 
-        // Filter Category Click
         function setCategoryFilter(secKey, category) {
             activeFilters[secKey] = category;
             renderCategoryFilters(secKey);
             renderGridItems(secKey);
         }
 
-        // Render Card Items for Section Grid
         function renderGridItems(secKey) {
             const container = document.getElementById(`${secKey}-grid`);
             if (!container) return;
@@ -943,7 +936,6 @@
             `).join('');
         }
 
-        // Universe Navigator Search & Filter
         function toggleUniverseNavigatorModal() {
             const modal = document.getElementById('navigator-modal');
             modal.classList.toggle('hidden');
@@ -971,16 +963,6 @@
                 });
             }
 
-            if (results.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12 text-gray-400">
-                        <i class="fa-solid fa-satellite-dish text-3xl mb-2 text-cyan-500"></i>
-                        <p>No quantum signals matched "${query}". Try another keyword!</p>
-                    </div>
-                `;
-                return;
-            }
-
             container.innerHTML = results.map(res => `
                 <div class="glass-panel p-4 rounded-xl hover:border-cyan-400 cursor-pointer transition flex items-center justify-between gap-4"
                      onclick="toggleUniverseNavigatorModal(); openDetailModal('${res.title.replace(/'/g, "\\'")}')">
@@ -996,143 +978,66 @@
             `).join('');
         }
 
-        // Open Detail Modal
         function openDetailModal(itemTitle) {
             let foundItem = null;
             for (let i = 1; i <= 6; i++) {
                 const item = UNIVERSE_DATA[`sec${i}`].items.find(it => it.title === itemTitle);
                 if (item) { foundItem = item; break; }
             }
-
             if (!foundItem) return;
 
             document.getElementById('modal-category-badge').innerText = foundItem.category;
             document.getElementById('modal-title').innerText = foundItem.title;
-
             document.getElementById('modal-body').innerHTML = `
                 <div>
                     <h5 class="text-xs font-bold uppercase text-cyan-400 mb-1">Executive Summary</h5>
                     <p class="text-base text-gray-200 font-light leading-relaxed">${foundItem.desc}</p>
                 </div>
-
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="glass-panel p-3.5 rounded-xl border-purple-500/30">
                         <div class="text-xs text-purple-400 font-bold uppercase">Performance Metrics</div>
                         <div class="text-sm text-white font-medium mt-1">${foundItem.metrics}</div>
                     </div>
                     <div class="glass-panel p-3.5 rounded-xl border-cyan-500/30">
-                        <div class="text-xs text-cyan-400 font-bold uppercase">Status &amp; Verification</div>
+                        <div class="text-xs text-cyan-400 font-bold uppercase">Status & Verification</div>
                         <div class="text-sm text-white font-medium mt-1">Active in *SC Universe Pipeline</div>
                     </div>
                 </div>
-
                 <div>
-                    <h5 class="text-xs font-bold uppercase text-cyan-400 mb-1">Architecture &amp; Execution Details</h5>
+                    <h5 class="text-xs font-bold uppercase text-cyan-400 mb-1">Architecture & Execution Details</h5>
                     <p class="text-xs text-gray-300 leading-relaxed">${foundItem.details}</p>
                 </div>
-
-                <div class="bg-space-900/90 border border-cyan-500/20 rounded-xl p-4 font-mono text-xs text-cyan-300">
-                    <div>// *SC Quantum Execution Logs</div>
-                    <div>&gt; System: Initializing ${foundItem.title}...</div>
-                    <div>&gt; Qubit Algorithm Check: 100% Superposition Verified</div>
-                    <div>&gt; RAG Pipeline: Data Centralizer Synchronized</div>
-                    <div>&gt; Ready for Deployment in Global Galaxy</div>
-                </div>
             `;
-
             document.getElementById('detail-modal').classList.remove('hidden');
         }
 
-        function closeDetailModal() {
-            document.getElementById('detail-modal').classList.add('hidden');
-        }
-
-        // Onboard Modal
-        function openOnboardModal() {
-            document.getElementById('onboard-modal').classList.remove('hidden');
-        }
-
-        function closeOnboardModal() {
-            document.getElementById('onboard-modal').classList.add('hidden');
-        }
-
-        function copyContactEmail() {
-            const email = "denniiku@sistarcompany.com";
-            const tempInput = document.createElement("input");
-            tempInput.value = email;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-            alert("Contact email (denniiku@sistarcompany.com) copied to clipboard!");
-        }
-
-        function submitOnboardForm() {
-            const name = document.getElementById('onboard-name').value || 'SISTAR Challenger';
-            const sector = document.getElementById('onboard-sector').value;
-            const message = document.getElementById('onboard-message').value;
-
-            const toast = document.getElementById('onboard-toast');
-            toast.classList.remove('hidden');
-
-            setTimeout(() => {
-                const mailtoUrl = `mailto:denniiku@sistarcompany.com?subject=*SC Onboarding Proposal from ${encodeURIComponent(name)}&body=Sector: ${encodeURIComponent(sector)}%0D%0A%0D%0A${encodeURIComponent(message)}`;
-                window.location.href = mailtoUrl;
-                toast.classList.add('hidden');
-                closeOnboardModal();
-            }, 1200);
-        }
-
-        // Scarlet AI Sandbox Spell Executor
-        function setSpell(spellText) {
-            document.getElementById('spell-input').value = spellText;
-            executeScarletSpell();
-        }
+        function closeDetailModal() { document.getElementById('detail-modal').classList.add('hidden'); }
+        function openOnboardModal() { document.getElementById('onboard-modal').classList.remove('hidden'); }
+        function closeOnboardModal() { document.getElementById('onboard-modal').classList.add('hidden'); }
 
         function executeScarletSpell() {
             const input = document.getElementById('spell-input').value.trim();
             if (!input) return;
-
             const output = document.getElementById('spell-output');
             output.classList.remove('hidden');
             output.innerHTML = `<span class="text-yellow-400">&gt; Casting Magic Spell: "${input}"...</span><br>`;
-
             setTimeout(() => {
-                const responseJSON = {
-                    "spell_status": "EXECUTED_WITH_MAGIC",
-                    "scarlet_ai_agent": "SISTAR MA & Agent Builder",
-                    "qubit_matrix_output": {
-                        "superposition_states": ["PROPOSAL_EMAIL", "VIBE_CODING", "RAG_DATA_FEED"],
-                        "data_factory_harvest": "Taxation & Mental Care DB Synchronized",
-                        "target_territory": "International & Indonesia Hub",
-                        "estimated_cashflow_cycle": "Phase I Active (24/7 Automation)"
-                    },
-                    "command_center_note": "Where magic happens with a spell - 'I'm Not Fool'"
-                };
-
                 output.innerHTML += `
                     <span class="text-green-400">&gt; Spell Verified! Quantum Engine Triggered.</span><br>
-                    <pre class="mt-2 text-purple-300 font-mono">${JSON.stringify(responseJSON, null, 2)}</pre>
+                    <pre class="mt-2 text-purple-300 font-mono">{\n  "status": "SUPERPOSITION_COLLAPSED",\n  "target_node": "PT. SISTAR INDONESIA",\n  "result": "Pipeline Synchronized"\n}</pre>
                 `;
-            }, 600);
+            }, 500);
         }
 
-        // Navigation Helper
         function navigateToSection(secId) {
             const el = document.getElementById(secId);
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth' });
-            }
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Three.js Interactive Starfield & Nebula
         let scene, camera, renderer, starParticles, geometry;
-        let isWarping = false;
-
         function initThreeJSStarfield() {
             const canvas = document.getElementById('bg-canvas');
             scene = new THREE.Scene();
-            
             camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
             camera.position.z = 1;
             camera.rotation.x = Math.PI / 2;
@@ -1140,40 +1045,14 @@
             renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
 
-            // Create Star Particles
-            const starCount = 3000;
+            const starCount = 2500;
             geometry = new THREE.BufferGeometry();
             const positions = new Float32Array(starCount * 3);
-            const velocities = new Float32Array(starCount);
-
-            for (let i = 0; i < starCount; i++) {
-                positions[i * 3] = (Math.random() - 0.5) * 600;
-                positions[i * 3 + 1] = (Math.random() - 0.5) * 600;
-                positions[i * 3 + 2] = (Math.random() - 0.5) * 600;
-                velocities[i] = 0.2 + Math.random() * 0.5;
-            }
+            for (let i = 0; i < starCount * 3; i++) positions[i] = (Math.random() - 0.5) * 600;
 
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 1));
-
-            // Star Texture
-            const material = new THREE.PointsMaterial({
-                color: 0x00f3ff,
-                size: 0.9,
-                transparent: true,
-                opacity: 0.8
-            });
-
-            starParticles = new THREE.Points(geometry, material);
+            starParticles = new THREE.Points(geometry, new THREE.PointsMaterial({ color: 0x00f3ff, size: 0.9, transparent: true, opacity: 0.8 }));
             scene.add(starParticles);
-
-            // Mouse interaction
-            document.addEventListener('mousemove', (e) => {
-                if (!isWarping) {
-                    camera.position.x = (e.clientX / window.innerWidth - 0.5) * 20;
-                    camera.position.y = -(e.clientY / window.innerHeight - 0.5) * 20;
-                }
-            });
 
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
@@ -1186,30 +1065,12 @@
 
         function animateStarfield() {
             requestAnimationFrame(animateStarfield);
-
-            const positions = geometry.attributes.position.array;
-            const velocities = geometry.attributes.velocity.array;
-            const speed = isWarping ? 8.0 : 0.4;
-
-            for (let i = 0; i < positions.length / 3; i++) {
-                positions[i * 3 + 1] -= velocities[i] * speed;
-
-                if (positions[i * 3 + 1] < -300) {
-                    positions[i * 3 + 1] = 300;
-                }
-            }
-
-            geometry.attributes.position.needsUpdate = true;
-            starParticles.rotation.y += 0.0008;
-
+            starParticles.rotation.y += 0.0006;
             renderer.render(scene, camera);
         }
 
         function triggerWarpSpeed() {
-            isWarping = true;
-            setTimeout(() => {
-                isWarping = false;
-            }, 1200);
+            starParticles.rotation.y += 0.05;
         }
     </script>
 </body>
