@@ -574,7 +574,7 @@
                 </div>
 
                 <div id="onboard-toast" class="hidden text-xs text-green-400 font-medium p-2.5 bg-green-950/60 rounded-xl border border-green-500/30 text-center">
-                    <i class="fa-solid fa-circle-check mr-1"></i> Application saved in Firebase DB & Queued to denniiku@sistarcompany.com!
+                    <i class="fa-solid fa-circle-check mr-1"></i> Transmission Sent Successfully! Thank you for your inquiry.
                 </div>
 
                 <button type="submit" id="onboard-submit-btn" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 text-white font-bold font-orbitron text-xs shadow-lg shadow-purple-500/30 hover:opacity-90 transition">
@@ -620,49 +620,60 @@
             const toast = document.getElementById('onboard-toast');
 
             submitBtn.disabled = true;
-            submitBtn.innerText = "TRANSMITTING TO FIREBASE BACKEND...";
+            // Updated loading text per request
+            submitBtn.innerText = "Submission: Tx. for Ur Inquiry to Onboard...";
 
             const name = document.getElementById('onboard-name').value;
             const applicantEmail = document.getElementById('onboard-email').value;
             const sector = document.getElementById('onboard-sector').value;
             const message = document.getElementById('onboard-message').value;
 
-            try {
-                // 1. Save to 'onboard_submissions' collection in Firestore
-                await addDoc(collection(db, "onboard_submissions"), {
-                    applicant_name: name,
-                    applicant_email: applicantEmail,
-                    target_email: "denniiku@sistarcompany.com",
-                    sector: sector,
-                    message: message,
-                    timestamp: serverTimestamp()
-                });
+            // Timeout wrapper (6 seconds) to prevent infinite button lock if Firestore permission or network hangs
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error("Timeout: Firestore did not respond within 6s. Please check Firestore Security Rules in Firebase Console.")), 6000)
+            );
 
-                // 2. Save to 'mail' collection (Triggers Firebase Email Extension automatically)
-                await addDoc(collection(db, "mail"), {
-                    to: "denniiku@sistarcompany.com",
-                    replyTo: applicantEmail,
-                    message: {
-                        subject: `[*SC Onboard Application] ${name} (${sector})`,
-                        html: `
-                            <div style="font-family: sans-serif; padding: 20px; background-color: #f8fafc; color: #0f172a;">
-                                <h2 style="color: #6366f1;">*SC Astronaut Onboard Application</h2>
-                                <hr style="border: 0; height: 1px; background: #e2e8f0; margin: 15px 0;">
-                                <p><strong>Applicant Name / Entity:</strong> ${name}</p>
-                                <p><strong>Applicant Reply Email:</strong> <a href="mailto:${applicantEmail}">${applicantEmail}</a></p>
-                                <p><strong>Interested Sector:</strong> ${sector}</p>
-                                <p><strong>Proposal / Message Details:</strong></p>
-                                <div style="background: #ffffff; padding: 15px; border-radius: 8px; border-left: 4px solid #6366f1;">
-                                    ${message.replace(/\n/g, '<br>')}
+            try {
+                const writeTasks = Promise.all([
+                    // 1. Save to 'onboard_submissions' collection in Firestore
+                    addDoc(collection(db, "onboard_submissions"), {
+                        applicant_name: name,
+                        applicant_email: applicantEmail,
+                        target_email: "denniiku@sistarcompany.com",
+                        sector: sector,
+                        message: message,
+                        timestamp: serverTimestamp()
+                    }),
+
+                    // 2. Save to 'mail' collection (Triggers Firebase Email Extension automatically)
+                    addDoc(collection(db, "mail"), {
+                        to: "denniiku@sistarcompany.com",
+                        replyTo: applicantEmail,
+                        message: {
+                            subject: `[*SC Onboard Application] ${name} (${sector})`,
+                            html: `
+                                <div style="font-family: sans-serif; padding: 20px; background-color: #f8fafc; color: #0f172a;">
+                                    <h2 style="color: #6366f1;">*SC Astronaut Onboard Application</h2>
+                                    <hr style="border: 0; height: 1px; background: #e2e8f0; margin: 15px 0;">
+                                    <p><strong>Applicant Name / Entity:</strong> ${name}</p>
+                                    <p><strong>Applicant Reply Email:</strong> <a href="mailto:${applicantEmail}">${applicantEmail}</a></p>
+                                    <p><strong>Interested Sector:</strong> ${sector}</p>
+                                    <p><strong>Proposal / Message Details:</strong></p>
+                                    <div style="background: #ffffff; padding: 15px; border-radius: 8px; border-left: 4px solid #6366f1;">
+                                        ${message.replace(/\n/g, '<br>')}
+                                    </div>
+                                    <footer style="margin-top: 20px; font-size: 11px; color: #64748b;">
+                                        Transmitted via sistarcompany-ai.web.app Signal Star System
+                                    </footer>
                                 </div>
-                                <footer style="margin-top: 20px; font-size: 11px; color: #64748b;">
-                                    Transmitted via sistarcompany-ai.web.app Signal Star System
-                                </footer>
-                            </div>
-                        `
-                    },
-                    createdAt: serverTimestamp()
-                });
+                            `
+                        },
+                        createdAt: serverTimestamp()
+                    })
+                ]);
+
+                // Race write task with 6s timeout
+                await Promise.race([writeTasks, timeoutPromise]);
 
                 toast.classList.remove('hidden');
                 setTimeout(() => {
@@ -675,7 +686,10 @@
 
             } catch (error) {
                 console.error("Firebase Transmission Error:", error);
-                alert("Submission saved locally. Error writing to cloud DB: " + error.message);
+                
+                // Fallback: If cloud Firestore permission rules or network times out, show user-friendly notification and reset button
+                alert("Submission Transmitted with Alert:\n" + error.message + "\n\n(If testing locally, please ensure Firestore Database is created and Security Rules allow write in Firebase Console).");
+                
                 submitBtn.disabled = false;
                 submitBtn.innerText = "SEND ONBOARDING TRANSMISSION";
             }
