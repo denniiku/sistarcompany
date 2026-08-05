@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qubit AI - UI/UX Design Visualization</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js for real-time B2B graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        qubit: {
+                            50: '#f0fdfa',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            900: '#134e4a',
+                        },
+                        quantum: {
+                            cyan: '#06b6d4',
+                            purple: '#a855f7',
+                            emerald: '#10b981',
+                            amber: '#f59e0b',
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'float': 'float 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { boxShadow: '0 0 10px rgba(6, 182, 212, 0.3)' },
+                            '100%': { boxShadow: '0 0 25px rgba(168, 85, 247, 0.7)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-6px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #030712;
+            color: #f3f4f6;
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(31, 41, 55, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+
+        /* Code editor style */
+        .code-line {
+            counter-increment: line;
+        }
+        .code-line::before {
+            content: counter(line);
+            display: inline-block;
+            width: 2rem;
+            margin-right: 1rem;
+            color: #4b5563;
+            text-align: right;
+            font-size: 0.75rem;
+        }
+
+        /* Canvas Overlay glow */
+        #entanglementCanvas {
+            background: radial-gradient(circle at center, rgba(17, 24, 39, 0.9) 0%, rgba(3, 7, 18, 1) 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500 selection:text-black">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-50 border-b border-gray-800/80 bg-gray-950/80 backdrop-blur-xl px-4 lg:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 p-0.5 shadow-lg shadow-cyan-500/20">
+                    <div class="w-full h-full bg-gray-950 rounded-[10px] flex items-center justify-center">
+                        <i class="fa-solid fa-atom text-cyan-400 text-lg animate-spin" style="animation-duration: 12s;"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold bg-gradient-to-r from-white via-gray-200 to-cyan-300 bg-clip-text text-transparent flex items-center gap-2">
+                        Qubit AI System
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">UI/UX Showcase</span>
+                    </h1>
+                    <p class="text-xs text-gray-400">PWA Landing/Dashboard & B2B Enterprise Portal Visualization</p>
+                </div>
+            </div>
+
+            <!-- View Switcher Tabs -->
+            <div class="flex items-center gap-1.5 bg-gray-900/90 p-1 rounded-xl border border-gray-800 text-xs font-medium">
+                <!-- End-User Tab -->
+                <button onclick="switchPortal('user')" id="btn-portal-user" class="portal-tab px-3.5 py-2 rounded-lg bg-cyan-600 text-white font-semibold transition flex items-center gap-2 shadow-md shadow-cyan-600/20">
+                    <i class="fa-solid fa-user text-xs"></i>
+                    <span>A. 엔드유저 Web/PWA</span>
+                </button>
+                
+                <!-- B2B Tab -->
+                <button onclick="switchPortal('b2b')" id="btn-portal-b2b" class="portal-tab px-3.5 py-2 rounded-lg text-gray-400 hover:text-white transition flex items-center gap-2">
+                    <i class="fa-solid fa-building text-xs"></i>
+                    <span>B. B2B 파트너 전용 포털</span>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Sub Navigation Controls Bar -->
+    <div class="bg-gray-900/50 border-b border-gray-800/60 py-2.5 px-4 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
+            
+            <!-- User Sub-Views Switcher -->
+            <div id="subnav-user" class="flex items-center gap-2">
+                <span class="text-gray-500 font-mono text-[11px] uppercase mr-1">View Mode:</span>
+                <button onclick="switchUserSubView('landing')" id="btn-user-landing" class="px-3 py-1.5 rounded-lg bg-gray-800 text-cyan-300 border border-cyan-500/30 font-medium transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt text-amber-400 text-[11px]"></i>
+                    <span>랜딩 페이지 (MPA)</span>
+                </button>
+                <button onclick="switchUserSubView('dashboard')" id="btn-user-dashboard" class="px-3 py-1.5 rounded-lg text-gray-400 hover:bg-gray-800 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-gauge-high text-cyan-400 text-[11px]"></i>
+                    <span>사용자 대시보드 & My Page (SPA)</span>
+                </button>
+            </div>
+
+            <!-- B2B Sub-Views Switcher (Hidden by default) -->
+            <div id="subnav-b2b" class="hidden flex items-center gap-2">
+                <span class="text-gray-500 font-mono text-[11px] uppercase mr-1">B2B Panel:</span>
+                <button onclick="switchB2bSubView('metering')" id="btn-b2b-metering" class="px-3 py-1.5 rounded-lg bg-gray-800 text-indigo-300 border border-indigo-500/30 font-medium transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-key text-indigo-400 text-[11px]"></i>
+                    <span>API Keys & Metered Billing</span>
+                </button>
+                <button onclick="switchB2bSubView('sandbox')" id="btn-b2b-sandbox" class="px-3 py-1.5 rounded-lg text-gray-400 hover:bg-gray-800 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-terminal text-emerald-400 text-[11px]"></i>
+                    <span>Interactive API Sandbox ($t=0$)</span>
+                </button>
+            </div>
+
+            <!-- Device Target Tag -->
+            <div class="hidden sm:flex items-center gap-2 text-gray-400 font-mono text-[11px]">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Responsive Viewport Active</span>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 relative">
+
+        <!-- ========================================== -->
+        <!-- PORTAL A: END-USER WEB / PWA               -->
+        <!-- ========================================== -->
+        <div id="portal-user-wrapper" class="space-y-6">
+
+            <!-- SUB VIEW 1: LANDING PAGE (MPA) -->
+            <div id="view-user-landing" class="space-y-8">
+                
+                <!-- Performance Speed Banner -->
+                <div class="glass-panel rounded-2xl p-4 border border-cyan-500/20 flex flex-wrap items-center justify-between gap-3 text-xs bg-gradient-to-r from-cyan-950/30 via-gray-900 to-purple-950/20">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-gauge-simple-high"></i>
+                        </span>
+                        <div>
+                            <span class="font-bold text-gray-200">초고속 MPA 랜딩 성능 최적화:</span>
+                            <span class="text-gray-400 ml-1">초기 로딩 속도 <strong class="text-emerald-400 font-mono">0.8초 이내</strong> 달성 (Lightweight Edge SSR)</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 font-mono text-[11px]">
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Lighthouse 99</span>
+                        <span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">Edge CDN</span>
+                    </div>
+                </div>
+
+                <!-- Hero Banner Section -->
+                <div class="glass-panel rounded-3xl p-8 lg:p-12 relative overflow-hidden border border-gray-800 text-center space-y-6">
+                    <!-- Background Glow Elements -->
+                    <div class="absolute -top-24 -left-24 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold">
+                        <i class="fa-solid fa-sparkles text-amber-400"></i>
+                        <span>One Spark AI 비즈니스 연동 엔진</span>
+                    </div>
+
+                    <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white max-w-3xl mx-auto leading-tight">
+                        단 한 줄의 아이디어가 <br/>
+                        <span class="bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">양자 AI 비즈니스</span>가 되는 순간
+                    </h1>
+
+                    <p class="text-sm sm:text-base text-gray-300 max-w-xl mx-auto leading-relaxed">
+                        PWA 웹 앱 설치 없이 즉시 실행 가능한 초경량 AI 백엔드 오케스트레이터. 아이디어 입력부터 Dify AI 에이전트 연동까지 100ms 내에 시작하세요.
+                    </p>
+
+                    <!-- Core CTA Buttons & Interactive Input Box -->
+                    <div class="max-w-2xl mx-auto space-y-4 pt-4">
+                        <!-- Primary CTAs -->
+                        <div class="flex flex-wrap items-center justify-center gap-3">
+                            <!-- PWA Install Button -->
+                            <button onclick="triggerPwaInstallModal()" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-gray-950 font-extrabold text-sm transition shadow-lg shadow-cyan-500/25 flex items-center gap-2.5 animate-pulse-slow">
+                                <i class="fa-solid fa-download text-base"></i>
+                                <span>PWA 앱 설치하기 (Instantly)</span>
+                            </button>
+                            <a href="#spark-test" class="px-5 py-3.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold text-sm border border-gray-700 transition flex items-center gap-2">
+                                <i class="fa-solid fa-play text-xs text-amber-400"></i>
+                                <span>AI 테스트 먼저 둘러보기</span>
+                            </a>
+                        </div>
+
+                        <!-- One Spark AI Business Test Input Box -->
+                        <div id="spark-test" class="mt-8 pt-6 border-t border-gray-800/80 text-left space-y-3">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+                                <i class="fa-solid fa-bolt text-amber-400"></i>
+                                <span>One Spark AI 비즈니스 입수 매개변수 테스트</span>
+                            </label>
+                            
+                            <div class="relative flex items-center">
+                                <input type="text" id="landingSparkInput" placeholder="예: 소상공인 대상 실시간 재무 과금 예측 AI 서비스..." 
+                                       class="w-full bg-gray-950 border border-gray-700 focus:border-cyan-500 rounded-xl px-4 py-3.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 pr-32">
+                                <button onclick="runSparkTest()" class="absolute right-2 px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs transition flex items-center gap-1.5 shadow-md">
+                                    <span>진단 실행</span>
+                                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                </button>
+                            </div>
+                            <p class="text-[11px] text-gray-400 flex items-center justify-between">
+                                <span>* 입력 시 Dify AI Engine이 실시간 사업성 파이프라인 수치를 추산합니다.</span>
+                                <span class="font-mono text-cyan-400">Latency &lt; 120ms</span>
+                            </p>
+                        </div>
+
+                        <!-- Spark Test Result Display Box -->
+                        <div id="sparkResultBox" class="hidden glass-card rounded-xl p-4 border border-cyan-500/30 text-left space-y-3 animate-fade-in">
+                            <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+                                    <span class="text-xs font-bold text-gray-200">Dify AI 에이전트 초기 진단 완료</span>
+                                </div>
+                                <span class="text-[10px] font-mono text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded">Analysis Score: 94/100</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center text-xs font-mono">
+                                <div class="p-2 rounded bg-gray-900/80 border border-gray-800">
+                                    <div class="text-gray-400 text-[10px]">추천 LLM</div>
+                                    <div class="text-emerald-400 font-bold mt-0.5">Qwen 2.5 Coder</div>
+                                </div>
+                                <div class="p-2 rounded bg-gray-900/80 border border-gray-800">
+                                    <div class="text-gray-400 text-[10px]">예상 크레딧</div>
+                                    <div class="text-amber-400 font-bold mt-0.5">1.2 Qubit / call</div>
+                                </div>
+                                <div class="p-2 rounded bg-gray-900/80 border border-gray-800">
+                                    <div class="text-gray-400 text-[10px]">RAG 지식 인덱스</div>
+                                    <div class="text-cyan-400 font-bold mt-0.5">Ready</div>
+                                </div>
+                            </div>
+                            <button onclick="switchUserSubView('dashboard')" class="w-full py-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 rounded-lg text-xs font-bold transition text-center border border-cyan-500/30">
+                                사용자 대시보드(SPA)에서 연결망 노드로 확인하기 ➔
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SUB VIEW 2: USER DASHBOARD & MY PAGE (SPA - NATIVE PWA FEEL) -->
+            <div id="view-user-dashboard" class="hidden space-y-6">
+
+                <!-- TOP HEADER BAR (CREDITS & AI AGENT STATUS) -->
+                <div class="glass-panel rounded-2xl p-4 lg:px-6 border border-gray-800 flex flex-wrap items-center justify-between gap-4">
+                    
+                    <!-- Left User Info -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 p-0.5">
+                            <img src="https://placehold.co/80x80/0f172a/38bdf8?text=USER" alt="User Avatar" class="w-full h-full rounded-[10px] object-cover">
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-sm font-bold text-gray-100">퀀텀 이더 (User Workspace)</h2>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 font-mono border border-cyan-500/20">PWA Native Mode</span>
+                            </div>
+                            <p class="text-xs text-gray-400">양자 얽힘 노드 파이프라인 관리자</p>
+                        </div>
+                    </div>
+
+                    <!-- Right Stats (Qubit Credits + AI Agent Indicator Switch) -->
+                    <div class="flex items-center gap-4 flex-wrap">
+                        
+                        <!-- Qubit Credit Balance Indicator -->
+                        <div class="px-3.5 py-2 rounded-xl bg-gray-900/90 border border-gray-800 flex items-center gap-3 shadow-inner">
+                            <div class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-coins"></i>
+                            </div>
+                            <div>
+                                <div class="text-[10px] text-gray-400 font-mono">Qubit Credit 잔액</div>
+                                <div class="text-xs font-bold text-amber-300 font-mono flex items-center gap-1">
+                                    <span id="qubitCreditBalance">1,280</span>
+                                    <span class="text-[10px] text-amber-500/80">Qubit</span>
+                                </div>
+                            </div>
+                            <button onclick="addQubitCredits()" class="text-[10px] px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 transition font-mono border border-amber-500/30 ml-1">
+                                + 충전
+                            </button>
+                        </div>
+
+                        <!-- AI Agent Status Indicator (Green/Red Toggleable) -->
+                        <div class="px-3.5 py-2 rounded-xl bg-gray-900/90 border border-gray-800 flex items-center gap-3">
+                            <div id="agentStatusPulse" class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></div>
+                            <div>
+                                <div class="text-[10px] text-gray-400 font-mono">AI 에이전트 가동 상태</div>
+                                <div id="agentStatusText" class="text-xs font-bold text-emerald-400 font-mono">
+                                    ACTIVE (Green)
+                                </div>
+                            </div>
+                            <button onclick="toggleAgentStatus()" title="가동 상태 수동 토글" class="text-[10px] px-2 py-1 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 font-mono border border-gray-700 ml-1">
+                                Status Switch
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- MAIN CANVAS: ENTANGLEMENT GRAPH (양자 얽힘 연결망) -->
+                <div class="glass-panel rounded-3xl border border-gray-800 p-4 lg:p-6 relative space-y-3">
+                    
+                    <div class="flex items-center justify-between px-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-diagram-project text-cyan-400 text-sm"></i>
+                            <h3 class="text-sm font-bold text-gray-200">양자 얽힘 연결망 (Entanglement Graph)</h3>
+                            <span class="text-[10px] text-gray-400 font-mono">(노드 클릭으로 상세 정보 확인)</span>
+                        </div>
+                        <div class="flex items-center gap-2 font-mono text-[11px]">
+                            <button onclick="resetGraph()" class="px-2.5 py-1 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 transition">
+                                <i class="fa-solid fa-arrows-rotate text-[10px] mr-1"></i> 그래프 리셋
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Physics Node Canvas Box -->
+                    <div class="relative w-full h-[420px] rounded-2xl overflow-hidden border border-gray-800/80 shadow-2xl">
+                        <canvas id="entanglementCanvas" class="w-full h-full block cursor-pointer"></canvas>
+                        
+                        <!-- Floating Node Info Inspector Drawer -->
+                        <div id="nodeInfoDrawer" class="hidden absolute top-4 right-4 w-72 glass-panel bg-gray-950/90 rounded-2xl p-4 border border-cyan-500/40 text-xs space-y-3 shadow-2xl">
+                            <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                                <span class="font-bold text-cyan-300" id="drawerTitle">Node Selected</span>
+                                <button onclick="closeDrawer()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <div class="space-y-1.5 text-gray-300">
+                                <div><strong>유형:</strong> <span id="drawerType" class="font-mono text-gray-400">Project Engine</span></div>
+                                <div><strong>상태:</strong> <span id="drawerStatus" class="font-mono text-emerald-400">Synced ($t=0$)</span></div>
+                                <div><strong>크레딧 소모:</strong> <span id="drawerCost" class="font-mono text-amber-300">0.4 Qubit/req</span></div>
+                                <div><strong>Dify Workflow:</strong> <span id="drawerDify" class="font-mono text-indigo-300">RAG Agent v2</span></div>
+                            </div>
+                            <div class="pt-2 border-t border-gray-800">
+                                <button onclick="simulateNodeRun()" class="w-full py-1.5 rounded bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-[11px] transition">
+                                    노드 단독 테스트 실행 ⚡
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BOTTOM FLOATING BAR (SINGLE LINE IDEA INPUT TO DIFY) -->
+                    <div class="relative pt-2">
+                        <div class="glass-panel bg-gray-950/90 border border-cyan-500/30 rounded-2xl p-3 shadow-2xl flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-gray-950 font-bold shrink-0 shadow-md shadow-cyan-500/20">
+                                <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+                            </div>
+                            <input type="text" id="floatingIdeaInput" placeholder="단 한 줄의 아이디어를 입력하면 백엔드 Dify로 전달되어 연결망 노드가 자동 생성됩니다..." 
+                                   class="w-full bg-transparent text-xs text-gray-100 placeholder-gray-500 focus:outline-none">
+                            <button onclick="sendIdeaToDify()" class="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold text-xs transition flex items-center gap-1.5 shrink-0 shadow-md shadow-cyan-500/20">
+                                <span>Dify 전송</span>
+                                <i class="fa-solid fa-paper-plane text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PORTAL B: B2B PARTNER PORTAL               -->
+        <!-- ========================================== -->
+        <div id="portal-b2b-wrapper" class="hidden space-y-6">
+
+            <!-- SUB VIEW 1: API KEYS & METERED BILLING GAUGE -->
+            <div id="view-b2b-metering" class="space-y-6">
+
+                <!-- PANEL 1: API KEY MANAGEMENT PANEL -->
+                <div class="glass-panel rounded-2xl p-5 lg:p-6 border border-gray-800 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-800 pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm font-bold">
+                                <i class="fa-solid fa-key"></i>
+                            </span>
+                            <div>
+                                <h2 class="text-sm font-bold text-gray-100">API Key Management Panel</h2>
+                                <p class="text-xs text-gray-400">B2B Deal 체결 파트너 전용 보안 API Key 및 권한 범위 관리</p>
+                            </div>
+                        </div>
+                        <button onclick="createNewApiKey()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs transition flex items-center gap-1.5 shadow-md shadow-indigo-600/20">
+                            <i class="fa-solid fa-plus text-[10px]"></i>
+                            <span>신규 API Key 발급</span>
+                        </button>
+                    </div>
+
+                    <!-- API Keys Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs font-mono">
+                            <thead class="bg-gray-900/80 text-gray-400 uppercase text-[10px] border-b border-gray-800">
+                                <tr>
+                                    <th class="py-2.5 px-3">Key Name / Identifier</th>
+                                    <th class="py-2.5 px-3">Security Secret Key</th>
+                                    <th class="py-2.5 px-3">Permissions Scope</th>
+                                    <th class="py-2.5 px-3">Rate Limit</th>
+                                    <th class="py-2.5 px-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800/60 text-gray-200" id="apiKeyTableBody">
+                                <tr>
+                                    <td class="py-3 px-3 font-sans font-semibold text-gray-100">
+                                        Production Production Deal API
+                                        <div class="text-[10px] text-emerald-400 font-mono">ACTIVE</div>
+                                    </td>
+                                    <td class="py-3 px-3 text-indigo-300">
+                                        <span class="key-mask">qb_live_8f3a9201a9b40f...</span>
+                                    </td>
+                                    <td class="py-3 px-3">
+                                        <div class="flex flex-wrap gap-1">
+                                            <span class="px-1.5 py-0.5 rounded bg-gray-800 text-gray-300 text-[10px]">dify:orchestrate</span>
+                                            <span class="px-1.5 py-0.5 rounded bg-gray-800 text-gray-300 text-[10px]">billing:write</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-3 text-gray-400">10,000 req/min</td>
+                                    <td class="py-3 px-3 text-right space-x-2">
+                                        <button onclick="copyKeyText('qb_live_8f3a9201a9b40f821e')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-[10px]">복사</button>
+                                        <button onclick="revokeKey(this)" class="px-2 py-1 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded text-[10px]">폐기</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PANEL 2: REAL-TIME TRAFFIC & METERED BILLING GAUGE -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- Left: Real-time Traffic Chart (8 Cols) -->
+                    <div class="lg:col-span-7 glass-panel rounded-2xl p-5 border border-gray-800 space-y-3">
+                        <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line text-indigo-400 text-xs"></i>
+                                <h3 class="text-xs font-bold text-gray-200">Real-time Traffic & Latency Chart</h3>
+                            </div>
+                            <span class="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                Live Streaming
+                            </span>
+                        </div>
+                        
+                        <div class="w-full h-56">
+                            <canvas id="b2bTrafficChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Right: Metered Billing Gauge Widget (5 Cols) -->
+                    <div class="lg:col-span-5 glass-panel rounded-2xl p-5 border border-gray-800 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-3">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-scale-balanced text-amber-400 text-xs"></i>
+                                    <h3 class="text-xs font-bold text-gray-200">Metered Billing Gauge</h3>
+                                </div>
+                                <span class="text-[10px] font-mono text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded">Real-time Metering</span>
+                            </div>
+
+                            <div class="space-y-4">
+                                <!-- Progress Bar Gauge -->
+                                <div>
+                                    <div class="flex justify-between text-xs font-mono mb-1">
+                                        <span class="text-gray-400">이번 달 호출 수량:</span>
+                                        <span id="callGaugeText" class="text-indigo-300 font-bold">452,190 / 1,000,000 Calls</span>
+                                    </div>
+                                    <div class="w-full h-3 rounded-full bg-gray-900 border border-gray-800 overflow-hidden">
+                                        <div id="callGaugeBar" class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-amber-500 transition-all duration-500" style="width: 45.2%;"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Estimated Charge Box -->
+                                <div class="p-4 rounded-xl bg-gray-950/80 border border-gray-800 text-center space-y-1">
+                                    <span class="text-[11px] text-gray-400 uppercase font-mono">트래픽 비례 예상 과금액 (Estimated Cost)</span>
+                                    <div id="estimatedCostText" class="text-2xl font-black text-amber-400 font-mono">
+                                        $452.19 <span class="text-xs text-gray-400 font-normal">USD</span>
+                                    </div>
+                                    <p class="text-[10px] text-gray-400">* $0.001 / Call Tiered Rate + GCP Local LLM Savings Applied</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Traffic Simulator Slider -->
+                        <div class="pt-3 border-t border-gray-800 space-y-2">
+                            <label class="text-[11px] text-gray-300 font-bold flex items-center justify-between">
+                                <span>트래픽 호출 시뮬레이션 게이지 조절:</span>
+                                <span id="sliderValueText" class="text-cyan-400 font-mono">452,190 Calls</span>
+                            </label>
+                            <input type="range" id="trafficSimSlider" min="10000" max="2000000" step="10000" value="452190" 
+                                   oninput="updateBillingGauge(this.value)"
+                                   class="w-full accent-indigo-500 bg-gray-800 h-2 rounded-lg cursor-pointer">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- SUB VIEW 2: INTERACTIVE API SANDBOX (PLAYGROUND) -->
+            <div id="view-b2b-sandbox" class="hidden space-y-4">
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm font-bold text-gray-100 flex items-center gap-2">
+                            <i class="fa-solid fa-terminal text-emerald-400"></i>
+                            Interactive API Sandbox (Playground)
+                        </h2>
+                        <p class="text-xs text-gray-400">Monaco-style JSON Payload 입력 및 Dify 백엔드 동시 정산($t=0$) 실시간 시뮬레이터</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20">
+                            $t=0$ Instant Settlement Engine
+                        </span>
+                    </div>
+                </div>
+
+                <!-- DUAL PANE EDITOR GRID -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    
+                    <!-- LEFT PANE: MONACO-STYLE CODE/JSON EDITOR -->
+                    <div class="glass-panel rounded-2xl border border-gray-800 flex flex-col h-[480px]">
+                        
+                        <!-- Editor Toolbar -->
+                        <div class="bg-gray-900/90 px-4 py-2.5 border-b border-gray-800 flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-2 font-mono text-gray-300">
+                                <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px]">POST</span>
+                                <span>/v1/dify/orchestrate</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="resetPayloadJson()" class="text-gray-400 hover:text-white text-[11px]"><i class="fa-solid fa-rotate-left mr-1"></i> 초기화</button>
+                            </div>
+                        </div>
+
+                        <!-- Text Area Container -->
+                        <div class="flex-1 bg-gray-950 p-4 font-mono text-xs text-cyan-300 overflow-hidden flex flex-col">
+                            <textarea id="jsonPayloadInput" class="w-full h-full bg-transparent resize-none focus:outline-none text-emerald-400 font-mono leading-relaxed" spellcheck="false">{
+  "api_key": "qb_live_8f3a9201a9b40f821e",
+  "request_id": "req_quantum_9921",
+  "prompt": "Qwen 2.5 Coder 기반 B2B 실시간 결제 모듈 스캐폴딩",
+  "parameters": {
+    "temperature": 0.2,
+    "max_tokens": 1024,
+    "rag_enabled": true
+  }
+}</textarea>
+                        </div>
+
+                        <!-- Execution Footer -->
+                        <div class="bg-gray-900/90 px-4 py-3 border-t border-gray-800 flex items-center justify-between">
+                            <span class="text-[11px] text-gray-400 font-mono">Authorization: Bearer qb_live_...</span>
+                            <button onclick="runApiSandboxRequest()" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold text-xs transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+                                <span>API 요청 전송 [⚡ POST]</span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT PANE: DIFY BACKEND REAL-TIME OUTPUT VIEW -->
+                    <div class="glass-panel rounded-2xl border border-gray-800 flex flex-col h-[480px]">
+                        
+                        <!-- Response Toolbar -->
+                        <div class="bg-gray-900/90 px-4 py-2.5 border-b border-gray-800 flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-gray-200">Backend Output ($t=0$ Data)</span>
+                            </div>
+                            <div class="flex items-center gap-2 font-mono text-[11px]">
+                                <span id="sandboxStatusBadge" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">200 OK</span>
+                                <span id="sandboxLatency" class="text-gray-400">42ms</span>
+                            </div>
+                        </div>
+
+                        <!-- Output Viewer Area -->
+                        <div class="flex-1 bg-gray-950 p-4 font-mono text-xs overflow-y-auto">
+                            <pre id="sandboxOutputView" class="text-cyan-300 leading-relaxed"><code>// API 요청을 실행하면 백엔드 Dify 및 Firestore $t=0$ 동시 정산 데이터가 이곳에 출력됩니다.
+// 좌측의 [API 요청 전송] 버튼을 누르세요.</code></pre>
+                        </div>
+
+                        <!-- Response Metrics Pill Bar -->
+                        <div class="bg-gray-900/90 px-4 py-3 border-t border-gray-800 flex items-center justify-between text-[11px] font-mono text-gray-400">
+                            <div>Token Usage: <span id="sandboxTokenCost" class="text-amber-300">0 Tokens</span></div>
+                            <div>Credit Deduction: <span id="sandboxCreditDeduction" class="text-cyan-300">0 Qubit</span></div>
+                            <div class="text-emerald-400">Settlement: <span id="sandboxSettlementTime">Ready</span></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- PWA Install Modal Simulation -->
+    <div id="pwaModal" class="hidden fixed inset-0 z-50 bg-gray-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md rounded-2xl border border-cyan-500/30 p-6 space-y-4 text-center shadow-2xl">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 mx-auto flex items-center justify-center text-gray-950 text-2xl font-bold shadow-lg shadow-cyan-500/30">
+                <i class="fa-solid fa-atom"></i>
+            </div>
+            
+            <h3 class="text-lg font-bold text-gray-100">Qubit AI Native PWA 설치</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+                모바일 및 데스크톱 홈 화면에 개별 앱으로 설치합니다.<br/>
+                네이티브 앱과 동일한 100% SPA 속도 및 오프라인 양자 그래프 모드를 지원합니다.
+            </p>
+
+            <div class="pt-2 flex items-center justify-center gap-2">
+                <button onclick="closePwaModal()" class="px-4 py-2.5 rounded-xl bg-gray-800 text-gray-300 hover:bg-gray-700 text-xs font-semibold">
+                    취소
+                </button>
+                <button onclick="confirmPwaInstall()" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold text-xs transition shadow-md shadow-cyan-500/20">
+                    지금 설치하기 (Install)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        // Portal & Sub-View Switcher Logic
+        let currentPortal = 'user'; // 'user' or 'b2b'
+        let currentUserSubView = 'landing'; // 'landing' or 'dashboard'
+        let currentB2bSubView = 'metering'; // 'metering' or 'sandbox'
+
+        function switchPortal(portal) {
+            currentPortal = portal;
+            
+            const userWrapper = document.getElementById('portal-user-wrapper');
+            const b2bWrapper = document.getElementById('portal-b2b-wrapper');
+            const btnUser = document.getElementById('btn-portal-user');
+            const btnB2b = document.getElementById('btn-portal-b2b');
+            const subnavUser = document.getElementById('subnav-user');
+            const subnavB2b = document.getElementById('subnav-b2b');
+
+            if (portal === 'user') {
+                userWrapper.classList.remove('hidden');
+                b2bWrapper.classList.add('hidden');
+                
+                btnUser.className = "portal-tab px-3.5 py-2 rounded-lg bg-cyan-600 text-white font-semibold transition flex items-center gap-2 shadow-md shadow-cyan-600/20";
+                btnB2b.className = "portal-tab px-3.5 py-2 rounded-lg text-gray-400 hover:text-white transition flex items-center gap-2";
+                
+                subnavUser.classList.remove('hidden');
+                subnavB2b.classList.add('hidden');
+            } else {
+                userWrapper.classList.add('hidden');
+                b2bWrapper.classList.remove('hidden');
+                
+                btnUser.className = "portal-tab px-3.5 py-2 rounded-lg text-gray-400 hover:text-white transition flex items-center gap-2";
+                btnB2b.className = "portal-tab px-3.5 py-2 rounded-lg bg-indigo-600 text-white font-semibold transition flex items-center gap-2 shadow-md shadow-indigo-600/20";
+                
+                subnavUser.classList.add('hidden');
+                subnavB2b.classList.remove('hidden');
+
+                // Init chart on first view
+                initChartIfNeeded();
+            }
+        }
+
+        function switchUserSubView(sub) {
+            currentUserSubView = sub;
+            const viewLanding = document.getElementById('view-user-landing');
+            const viewDashboard = document.getElementById('view-user-dashboard');
+            const btnLanding = document.getElementById('btn-user-landing');
+            const btnDashboard = document.getElementById('btn-user-dashboard');
+
+            if (sub === 'landing') {
+                viewLanding.classList.remove('hidden');
+                viewDashboard.classList.add('hidden');
+
+                btnLanding.className = "px-3 py-1.5 rounded-lg bg-gray-800 text-cyan-300 border border-cyan-500/30 font-medium transition flex items-center gap-1.5";
+                btnDashboard.className = "px-3 py-1.5 rounded-lg text-gray-400 hover:bg-gray-800 transition flex items-center gap-1.5";
+            } else {
+                viewLanding.classList.add('hidden');
+                viewDashboard.classList.remove('hidden');
+
+                btnLanding.className = "px-3 py-1.5 rounded-lg text-gray-400 hover:bg-gray-800 transition flex items-center gap-1.5";
+                btnDashboard.className = "px-3 py-1.5 rounded-lg bg-gray-800 text-cyan-300 border border-cyan-500/30 font-medium transition flex items-center gap-1.5";
+
+                // Initialize Entanglement Canvas
+                initCanvasIfNeeded();
+            }
+        }
+
+        function switchB2bSubView(sub) {
+            currentB2bSubView = sub;
+            const viewMetering = document.getElementById('view-b2b-metering');
+            const viewSandbox = document.getElementById('view-b2b-sandbox');
+            const btnMetering = document.getElementById('btn-b2b-metering');
+            const btnSandbox = document.getElementById('btn-b2b-sandbox');
+
+            if (sub === 'metering') {
+                viewMetering.classList.remove('hidden');
+                viewSandbox.classList.add('hidden');
+
+                btnMetering.className = "px-3 py-1.5 rounded-lg bg-gray-800 text-indigo-300 border border-indigo-500/30 font-medium transition flex items-center gap-1.5";
+                btnSandbox.className = "px-3 py-1.5 rounded-lg text-gray-400 hover:bg-gray-800 transition flex items-center gap-1.5";
+            } else {
+                viewMetering.classList.add('hidden');
+                viewSandbox.classList.remove('hidden');
+
+                btnMetering.className = "px-3 py-1.5 rounded-lg text-gray-400 hover:bg-gray-800 transition flex items-center gap-1.5";
+                btnSandbox.className = "px-3 py-1.5 rounded-lg bg-gray-800 text-emerald-300 border border-emerald-500/30 font-medium transition flex items-center gap-1.5";
+            }
+        }
+
+        // ONE SPARK TEST SIMULATION
+        function runSparkTest() {
+            const val = document.getElementById('landingSparkInput').value.trim();
+            if (!val) {
+                showToast("아이디어를 입력해주세요!", "warning");
+                return;
+            }
+
+            document.getElementById('sparkResultBox').classList.remove('hidden');
+            showToast("Dify 백엔드로 원 스파크 매개변수가 전송되었습니다.", "success");
+        }
+
+        // QUBIT CREDITS & AGENT STATUS LOGIC
+        let creditBalance = 1280;
+        let isAgentActive = true;
+
+        function addQubitCredits() {
+            creditBalance += 500;
+            document.getElementById('qubitCreditBalance').innerText = creditBalance.toLocaleString();
+            showToast("500 Qubit Credit이 성공적으로 충전되었습니다!", "success");
+        }
+
+        function toggleAgentStatus() {
+            isAgentActive = !isAgentActive;
+            const pulse = document.getElementById('agentStatusPulse');
+            const text = document.getElementById('agentStatusText');
+
+            if (isAgentActive) {
+                pulse.className = "w-3 h-3 rounded-full bg-emerald-400 animate-ping";
+                text.className = "text-xs font-bold text-emerald-400 font-mono";
+                text.innerText = "ACTIVE (Green)";
+                showToast("AI 에이전트 가동 상태: ACTIVE (Green)", "info");
+            } else {
+                pulse.className = "w-3 h-3 rounded-full bg-rose-500";
+                text.className = "text-xs font-bold text-rose-500 font-mono";
+                text.innerText = "OFFLINE (Red)";
+                showToast("AI 에이전트 가동 중단: OFFLINE (Red)", "warning");
+            }
+        }
+
+        // QUANTUM ENTANGLEMENT CANVAS GRAPH SYSTEM
+        let canvas, ctx;
+        let nodes = [];
+        let canvasInitialized = false;
+
+        function initCanvasIfNeeded() {
+            if (canvasInitialized) return;
+            canvasInitialized = true;
+
+            canvas = document.getElementById('entanglementCanvas');
+            ctx = canvas.getContext('2d');
+
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Populate Default Nodes
+            nodes = [
+                { id: 1, name: "One-Spark Orchestrator", x: 0.5, y: 0.5, radius: 24, color: "#06b6d4", type: "Core Engine", cost: "0.8 Qubit", dify: "Workflow Core" },
+                { id: 2, name: "Project FinTech", x: 0.25, y: 0.3, radius: 16, color: "#a855f7", type: "RAG Bot", cost: "0.4 Qubit", dify: "FinTech Prompt" },
+                { id: 3, name: "Project Metering", x: 0.75, y: 0.35, radius: 18, color: "#10b981", type: "Billing Sync", cost: "0.2 Qubit", dify: "Billing Engine" },
+                { id: 4, name: "Qwen 2.5 Coder", x: 0.35, y: 0.75, radius: 20, color: "#f59e0b", type: "LLM Local", cost: "0.0 Qubit (Free)", dify: "Local Ollama" },
+                { id: 5, name: "Firestore Node", x: 0.7, y: 0.7, radius: 15, color: "#3b82f6", type: "NoSQL DB", cost: "0.1 Qubit", dify: "DB Sync" }
+            ];
+
+            canvas.addEventListener('click', handleCanvasClick);
+            requestAnimationFrame(renderGraph);
+        }
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+
+        function renderGraph() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Draw Connection Entanglement Lines
+            const core = nodes[0];
+            const cx = core.x * w;
+            const cy = core.y * h;
+
+            for (let i = 1; i < nodes.length; i++) {
+                const target = nodes[i];
+                const tx = target.x * w;
+                const ty = target.y * h;
+
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(tx, ty);
+                ctx.strokeStyle = "rgba(6, 182, 212, 0.25)";
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // Animated Particle on Line
+                const time = Date.now() * 0.001;
+                const progress = (time + i * 0.4) % 1;
+                const px = cx + (tx - cx) * progress;
+                const py = cy + (ty - cy) * progress;
+
+                ctx.beginPath();
+                ctx.arc(px, py, 3, 0, Math.PI * 2);
+                ctx.fillStyle = "#a855f7";
+                ctx.shadowColor = "#a855f7";
+                ctx.shadowBlur = 8;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            // Draw Nodes
+            nodes.forEach(node => {
+                const nx = node.x * w;
+                const ny = node.y * h;
+
+                // Outer Pulse
+                ctx.beginPath();
+                ctx.arc(nx, ny, node.radius + 6, 0, Math.PI * 2);
+                ctx.fillStyle = node.color + "22";
+                ctx.fill();
+
+                // Node Circle
+                ctx.beginPath();
+                ctx.arc(nx, ny, node.radius, 0, Math.PI * 2);
+                ctx.fillStyle = node.color;
+                ctx.shadowColor = node.color;
+                ctx.shadowBlur = 12;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Node Label
+                ctx.font = "11px Inter, sans-serif";
+                ctx.fillStyle = "#f3f4f6";
+                ctx.textAlign = "center";
+                ctx.fillText(node.name, nx, ny + node.radius + 16);
+            });
+
+            requestAnimationFrame(renderGraph);
+        }
+
+        let selectedNode = null;
+        function handleCanvasClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            const w = canvas.width;
+            const h = canvas.height;
+
+            selectedNode = null;
+
+            nodes.forEach(node => {
+                const nx = node.x * w;
+                const ny = node.y * h;
+                const dist = Math.hypot(clickX - nx, clickY - ny);
+
+                if (dist <= node.radius + 6) {
+                    selectedNode = node;
+                }
+            });
+
+            if (selectedNode) {
+                document.getElementById('drawerTitle').innerText = selectedNode.name;
+                document.getElementById('drawerType').innerText = selectedNode.type;
+                document.getElementById('drawerCost').innerText = selectedNode.cost;
+                document.getElementById('drawerDify').innerText = selectedNode.dify;
+                document.getElementById('nodeInfoDrawer').classList.remove('hidden');
+            }
+        }
+
+        function closeDrawer() {
+            document.getElementById('nodeInfoDrawer').classList.add('hidden');
+        }
+
+        function simulateNodeRun() {
+            if (!selectedNode) return;
+            showToast(`${selectedNode.name} 노드 테스트 실행 완료 (Latency: 18ms)`, "success");
+        }
+
+        function sendIdeaToDify() {
+            const input = document.getElementById('floatingIdeaInput');
+            const text = input.value.trim();
+            if (!text) {
+                showToast("아이디어를 입력해주세요!", "warning");
+                return;
+            }
+
+            // Create dynamic node
+            const newNode = {
+                id: nodes.length + 1,
+                name: text.length > 15 ? text.substring(0, 15) + "..." : text,
+                x: 0.2 + Math.random() * 0.6,
+                y: 0.2 + Math.random() * 0.6,
+                radius: 14,
+                color: "#10b981",
+                type: "Dify Generated Project",
+                cost: "0.5 Qubit",
+                dify: "Custom Dify Workflow"
+            };
+
+            nodes.push(newNode);
+            input.value = "";
+            showToast("Dify 백엔드로 전달되어 연결망에 새로운 노드가 생성되었습니다!", "success");
+        }
+
+        function resetGraph() {
+            initCanvasIfNeeded();
+            nodes = nodes.slice(0, 5);
+            closeDrawer();
+            showToast("연결망 그래프가 초기화되었습니다.", "info");
+        }
+
+        // B2B TRAFFIC CHART ENGINE
+        let chartInitialized = false;
+        let trafficChart = null;
+
+        function initChartIfNeeded() {
+            if (chartInitialized) return;
+            chartInitialized = true;
+
+            const ctxChart = document.getElementById('b2bTrafficChart').getContext('2d');
+            
+            trafficChart = new Chart(ctxChart, {
+                type: 'line',
+                data: {
+                    labels: ['10m 전', '8m 전', '6m 전', '4m 전', '2m 전', '현재'],
+                    datasets: [
+                        {
+                            label: 'API Calls / min',
+                            data: [1200, 1900, 3000, 5400, 7800, 9200],
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Avg Latency (ms)',
+                            data: [42, 38, 35, 40, 32, 29],
+                            borderColor: '#10b981',
+                            borderDash: [5, 5],
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#f3f4f6', font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        // BILLING GAUGE SLIDER UPDATER
+        function updateBillingGauge(val) {
+            const numeric = parseInt(val);
+            document.getElementById('sliderValueText').innerText = numeric.toLocaleString() + " Calls";
+            document.getElementById('callGaugeText').innerText = `${numeric.toLocaleString()} / 1,000,000 Calls`;
+            
+            const pct = Math.min(100, (numeric / 1000000) * 100);
+            document.getElementById('callGaugeBar').style.width = pct + "%";
+
+            // Calculate cost: $0.001 per call
+            const estCost = (numeric * 0.001).toFixed(2);
+            document.getElementById('estimatedCostText').innerHTML = `$${estCost} <span class="text-xs text-gray-400 font-normal">USD</span>`;
+        }
+
+        // API KEY TABLE ACTIONS
+        function createNewApiKey() {
+            const table = document.getElementById('apiKeyTableBody');
+            const tr = document.createElement('tr');
+            const randomSuffix = Math.random().toString(36).substring(2, 10);
+
+            tr.innerHTML = `
+                <td class="py-3 px-3 font-sans font-semibold text-gray-100">
+                    Staging Test Key
+                    <div class="text-[10px] text-cyan-400 font-mono">NEW CREATED</div>
+                </td>
+                <td class="py-3 px-3 text-indigo-300">
+                    <span class="key-mask">qb_live_${randomSuffix}...</span>
+                </td>
+                <td class="py-3 px-3">
+                    <span class="px-1.5 py-0.5 rounded bg-gray-800 text-gray-300 text-[10px]">read:all</span>
+                </td>
+                <td class="py-3 px-3 text-gray-400">1,000 req/min</td>
+                <td class="py-3 px-3 text-right space-x-2">
+                    <button onclick="copyKeyText('qb_live_${randomSuffix}')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-[10px]">복사</button>
+                    <button onclick="revokeKey(this)" class="px-2 py-1 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded text-[10px]">폐기</button>
+                </td>
+            `;
+            table.appendChild(tr);
+            showToast("신규 보안 API Key (qb_live_...) 가 정상 발급되었습니다.", "success");
+        }
+
+        function copyKeyText(text) {
+            navigator.clipboard.writeText(text);
+            showToast(`API Key가 클립보드에 복사되었습니다: ${text}`, "info");
+        }
+
+        function revokeKey(btn) {
+            const tr = btn.closest('tr');
+            tr.remove();
+            showToast("API Key가 폐기 처리되었습니다.", "warning");
+        }
+
+        // INTERACTIVE API SANDBOX RUNNER
+        function runApiSandboxRequest() {
+            const outputView = document.getElementById('sandboxOutputView');
+            outputView.innerText = "// Dify 백엔드 연산 및 $t=0$ 동시 정산 수행 중...";
+
+            setTimeout(() => {
+                const responseData = {
+                    status: 200,
+                    message: "SUCCESS_T0_SETTLED",
+                    timestamp: new Date().toISOString(),
+                    settlement: {
+                        simultaneous_settlement: true,
+                        time_delta: "$t=0$",
+                        credits_deducted: 1.2,
+                        billing_log_id: "log_b2b_88201a"
+                    },
+                    dify_result: {
+                        model: "Qwen 2.5 Coder (Local GCP)",
+                        tokens_used: 342,
+                        generated_code: "function computeQuantumSettlement() { return true; }"
+                    }
+                };
+
+                outputView.innerHTML = `<code>${JSON.stringify(responseData, null, 2)}</code>`;
+                document.getElementById('sandboxTokenCost').innerText = "342 Tokens";
+                document.getElementById('sandboxCreditDeduction').innerText = "1.2 Qubit";
+                document.getElementById('sandboxSettlementTime').innerText = "Settled ($t=0$)";
+
+                showToast("Dify 연산 및 $t=0$ 동시 정산이 성공적으로 출력되었습니다.", "success");
+            }, 300);
+        }
+
+        function resetPayloadJson() {
+            document.getElementById('jsonPayloadInput').value = `{\n  "api_key": "qb_live_8f3a9201a9b40f821e",\n  "request_id": "req_quantum_9921",\n  "prompt": "Qwen 2.5 Coder 기반 B2B 실시간 결제 모듈 스캐폴딩"\n}`;
+            showToast("JSON Payload 초기화 완료", "info");
+        }
+
+        // PWA MODAL FUNCTIONS
+        function triggerPwaInstallModal() {
+            document.getElementById('pwaModal').classList.remove('hidden');
+        }
+
+        function closePwaModal() {
+            document.getElementById('pwaModal').classList.add('hidden');
+        }
+
+        function confirmPwaInstall() {
+            closePwaModal();
+            showToast("PWA 앱이 홈 화면에 성공적으로 설치되었습니다!", "success");
+        }
+
+        // TOAST NOTIFICATION UTILITY
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            let bg = "bg-gray-900 border-gray-700 text-gray-200";
+            if (type === 'success') bg = "bg-emerald-950/90 border-emerald-500/40 text-emerald-300";
+            if (type === 'warning') bg = "bg-amber-950/90 border-amber-500/40 text-amber-300";
+            if (type === 'info') bg = "bg-cyan-950/90 border-cyan-500/40 text-cyan-300";
+
+            toast.className = `glass-panel px-4 py-2.5 rounded-xl border text-xs font-semibold shadow-2xl flex items-center gap-2 pointer-events-auto animate-fade-in ${bg}`;
+            toast.innerHTML = `
+                <i class="fa-solid fa-circle-info"></i>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
