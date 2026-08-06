@@ -3,384 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qubit AI - 3-Step Cosmic Business Pipeline</title>
+    <title>Qubit OS - Ecosystem Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0B0F19; /* Deep Space Black */
+            background-color: #050505; /* Deep Space Black */
             color: #E2E8F0;
+            overflow-x: hidden;
         }
 
+        /* Compact Matrix Styles */
         .matrix-board {
             background: radial-gradient(circle at center, #1E293B 0%, #0B0F19 100%);
             border: 1px solid #334155;
             position: relative;
         }
-
-        .axis-line-y {
-            position: absolute;
-            left: 50%;
-            top: 5%;
-            bottom: 5%;
-            width: 1px;
-            background: rgba(148, 163, 184, 0.3);
-            border-left: 1px dashed rgba(148, 163, 184, 0.5);
-        }
-
-        .axis-line-x {
-            position: absolute;
-            top: 50%;
-            left: 5%;
-            right: 5%;
-            height: 1px;
-            background: rgba(148, 163, 184, 0.3);
-            border-top: 1px dashed rgba(148, 163, 184, 0.5);
-        }
-
+        .axis-line-y { position: absolute; left: 50%; top: 5%; bottom: 5%; width: 1px; background: rgba(148, 163, 184, 0.2); border-left: 1px dashed rgba(148, 163, 184, 0.4); }
+        .axis-line-x { position: absolute; top: 50%; left: 5%; right: 5%; height: 1px; background: rgba(148, 163, 184, 0.2); border-top: 1px dashed rgba(148, 163, 184, 0.4); }
         .dot {
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 15px currentColor;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
+            position: absolute; width: 12px; height: 12px; border-radius: 50%;
+            transform: translate(-50%, -50%); box-shadow: 0 0 10px currentColor;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .dot:hover {
-            transform: translate(-50%, -50%) scale(1.5);
-        }
+        /* Progress Tracker */
+        .step-item { transition: all 0.3s ease; }
+        .step-active { color: #3B82F6; font-weight: bold; border-bottom: 2px solid #3B82F6; }
+        .step-inactive { color: #475569; }
 
-        .tab-active {
-            border-bottom: 2px solid #3B82F6;
-            color: #60A5FA;
-            font-weight: 600;
-        }
+        /* Animations */
+        .fade-in { animation: fadeIn 0.4s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .sub-tab-active {
-            background-color: #1E3A8A;
-            color: white;
-            border-color: #3B82F6;
-        }
-
-        /* Loading Spinner */
         .loader {
-            border: 3px solid #1E293B;
-            border-top: 3px solid #3B82F6;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
+            border: 2px solid #1E293B; border-top: 2px solid #3B82F6;
+            border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- Global Header -->
-    <header class="bg-gray-900 border-b border-gray-800 p-4 flex justify-between items-center z-10">
-        <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-blue-500 shadow-[0_0_15px_#3B82F6]"></div>
-            <h1 class="text-xl font-bold tracking-wider text-white">QUBIT <span class="text-blue-400">OS</span></h1>
+    <header class="bg-[#0B0F19] border-b border-gray-800 p-4 flex justify-between items-center z-20 sticky top-0">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('landing')">
+            <div class="w-6 h-6 rounded-full bg-blue-500 shadow-[0_0_10px_#3B82F6]"></div>
+            <h1 class="text-lg font-bold tracking-widest text-white">QUBIT <span class="text-blue-400">OS</span></h1>
         </div>
-        <div class="flex gap-6 items-center text-sm">
-            <div class="flex items-center gap-2">
+        <div class="flex gap-4 items-center text-sm">
+            <div class="hidden md:flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-                <span>AI Agent Active</span>
+                <span class="text-xs text-gray-400">Agent Active</span>
             </div>
-            <div class="bg-gray-800 px-4 py-1.5 rounded-full border border-gray-700">
-                Credits: <span class="text-blue-400 font-mono font-bold">12,450 qb</span>
-            </div>
+            <button onclick="switchView('b2b')" class="bg-gray-800 hover:bg-gray-700 px-4 py-1.5 rounded border border-gray-600 text-green-400 font-semibold transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                B2B Portal
+            </button>
         </div>
     </header>
 
-    <!-- Main Navigation (3 Steps) -->
-    <div class="flex justify-center border-b border-gray-800 bg-gray-900/50 pt-4">
-        <div class="flex gap-8">
-            <button onclick="setStep(1)" id="step1-btn" class="pb-3 px-2 text-gray-400 hover:text-gray-200 transition-colors">
-                Step 1. Data Factory
-            </button>
-            <button onclick="setStep(2)" id="step2-btn" class="pb-3 px-2 text-gray-400 hover:text-gray-200 transition-colors">
-                Step 2. Cosmo Seed Ideas
-            </button>
-            <button onclick="setStep(3)" id="step3-btn" class="pb-3 px-2 text-gray-400 hover:text-gray-200 transition-colors">
-                Step 3. Biz Galaxy
-            </button>
-            <button onclick="showMacroView()" class="pb-3 px-2 text-purple-400 hover:text-purple-300 font-bold transition-colors">
-                🌌 Macro View (All)
-            </button>
+    <div id="view-landing" class="flex-1 flex flex-col items-center justify-center p-8 fade-in">
+        <div class="text-center max-w-3xl mb-12">
+            <h2 class="text-4xl font-extrabold mb-4">One Spark, <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Infinite Galaxifying</span></h2>
+            <p class="text-gray-400 text-sm md:text-base">단 하나의 비즈니스 아이디어(Spark)가 중앙화된 데이터 팩토리를 거쳐,<br>무한한 크로스 프로젝트 시너지를 내는 은하계(Biz Galaxy)로 팽창합니다.</p>
         </div>
+
+        <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8 mb-16 w-full max-w-4xl">
+            <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 flex-1 w-full text-center relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
+                <div class="text-4xl font-black text-gray-800 absolute -bottom-2 -right-2 opacity-50 group-hover:opacity-100 transition-opacity">01</div>
+                <h3 class="text-lg font-bold text-red-400 mb-2">Data Factory</h3>
+                <p class="text-xs text-gray-400">비정형 데이터 수집 및 RAG DB 구축<br>(자동 스크래핑 & API 허브)</p>
+            </div>
+            <div class="text-gray-600 rotate-90 md:rotate-0">➔</div>
+            <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 flex-1 w-full text-center relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-full h-1 bg-yellow-500"></div>
+                <div class="text-4xl font-black text-gray-800 absolute -bottom-2 -right-2 opacity-50 group-hover:opacity-100 transition-opacity">02</div>
+                <h3 class="text-lg font-bold text-yellow-400 mb-2">Cosmo Seed</h3>
+                <p class="text-xs text-gray-400">Qubit 알고리즘 기반 프로젝트 생성<br>(수요 예측 및 모델 시뮬레이션)</p>
+            </div>
+            <div class="text-gray-600 rotate-90 md:rotate-0">➔</div>
+            <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 flex-1 w-full text-center relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
+                <div class="text-4xl font-black text-gray-800 absolute -bottom-2 -right-2 opacity-50 group-hover:opacity-100 transition-opacity">03</div>
+                <h3 class="text-lg font-bold text-blue-400 mb-2">Biz Galaxy</h3>
+                <p class="text-xs text-gray-400">다자간 동시 정산 및 시너지 확장<br>(무자본 터널링 & 수익 락인)</p>
+            </div>
+        </div>
+
+        <button onclick="switchView('main')" class="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold transition-all shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:scale-105">
+            시스템 구동 시작 (Start Qubit OS)
+        </button>
     </div>
 
-    <!-- Sub Navigation (Stages) -->
-    <div class="flex justify-center p-4 gap-3" id="sub-nav">
-        <!-- Rendered by JS -->
-    </div>
-
-    <!-- Main Content Area -->
-    <main class="flex-1 flex flex-col md:flex-row gap-6 p-6">
+    <div id="view-main" class="hidden flex-1 flex flex-col fade-in">
         
-        <!-- Left Panel: Interactive Visual Matrix -->
-        <div class="flex-1 flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-                <h2 id="matrix-title" class="text-lg font-bold text-gray-200">Stage Visual Matrix</h2>
-                <span id="matrix-desc" class="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded">X vs Y Analysis</span>
-            </div>
-            
-            <div id="matrix-container" class="matrix-board flex-1 rounded-xl min-h-[400px] overflow-hidden">
-                <!-- Axes -->
-                <div class="axis-line-y"></div>
-                <div class="axis-line-x"></div>
-                
-                <!-- Axis Labels -->
-                <div class="absolute top-2 left-1/2 -translate-x-1/2 text-xs text-gray-500 font-mono" id="label-y-top">High Y</div>
-                <div class="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-gray-500 font-mono" id="label-y-bottom">Low Y</div>
-                <div class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono" id="label-x-right">High X</div>
-                <div class="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono" id="label-x-left">Low X</div>
-
-                <!-- Dots rendered here -->
-                <div id="dots-container"></div>
+        <div class="bg-[#0B0F19] border-b border-gray-800 px-6 py-4 flex justify-between items-center text-sm overflow-x-auto">
+            <div class="flex gap-8 min-w-max mx-auto">
+                <div id="track-1" class="step-item step-inactive pb-1">01. Data Center (RAG)</div>
+                <div class="text-gray-700">───</div>
+                <div id="track-2" class="step-item step-inactive pb-1">02. Qubit Engine (Seed)</div>
+                <div class="text-gray-700">───</div>
+                <div id="track-3" class="step-item step-inactive pb-1">03. Biz Galaxy (Synergy)</div>
             </div>
         </div>
 
-        <!-- Right Panel: End-User & B2B Sandbox -->
-        <div class="w-full md:w-96 flex flex-col gap-6">
+        <div class="flex-1 flex flex-col md:flex-row gap-6 p-6">
             
-            <!-- End-User PWA Simulation -->
-            <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-5 shadow-lg">
-                <h3 class="text-sm font-bold text-blue-400 mb-2">End-User: One Spark AI</h3>
-                <p class="text-xs text-gray-400 mb-4">Enter a business idea to simulate quantum analysis.</p>
-                <textarea id="idea-input" rows="3" class="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors" placeholder="e.g., AI personalized healthcare app..."></textarea>
-                <button onclick="simulateIdeaAnalysis()" class="w-full mt-3 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold py-2 rounded-lg transition-colors flex justify-center items-center gap-2">
-                    <span id="analyze-text">심층 분석 실행 (Dify Backend)</span>
-                    <div id="analyze-loader" class="loader hidden"></div>
-                </button>
-                <div id="idea-result" class="mt-4 text-xs text-gray-300 hidden bg-gray-900 p-3 rounded border border-gray-700"></div>
+            <div class="w-full md:w-1/2 lg:w-1/3 flex flex-col gap-4">
+                
+                <div class="bg-gray-900 border border-gray-700 rounded-xl p-5 shadow-lg">
+                    <h2 class="text-sm font-bold text-gray-200 flex items-center gap-2 mb-3">
+                        <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
+                        현재 단계 요약 가이드
+                    </h2>
+                    <div id="instruction-content" class="text-xs text-gray-400 space-y-2 leading-relaxed">
+                        </div>
+                </div>
+
+                <div id="data-center-cats" class="bg-gray-900 border border-gray-700 rounded-xl p-5 shadow-lg hidden">
+                    <h3 class="text-xs font-bold text-red-400 mb-3">Data Center Connection</h3>
+                    <div class="grid grid-cols-2 gap-2 text-[10px]">
+                        <div class="bg-gray-800 p-2 rounded border border-gray-700 text-center text-gray-300">RAG Database<br>(Vector Store)</div>
+                        <div class="bg-gray-800 p-2 rounded border border-gray-700 text-center text-gray-300">API Gateway<br>(Data Feeding)</div>
+                        <div class="bg-gray-800 p-2 rounded border border-gray-700 text-center col-span-2 text-gray-300">Auto Scraper (Apify / Browse AI)</div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-900 border border-gray-700 rounded-xl p-4 shadow-lg flex flex-col">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-gray-300">Matrix Visualization</span>
+                        <span id="matrix-labels" class="text-[9px] text-gray-500 bg-gray-800 px-1.5 py-0.5 rounded">X vs Y</span>
+                    </div>
+                    <div id="compact-matrix" class="matrix-board w-full h-40 rounded-lg overflow-hidden relative">
+                        <div class="axis-line-y"></div>
+                        <div class="axis-line-x"></div>
+                        <div id="matrix-dots"></div>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- B2B Partner Portal Simulation -->
-            <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-5 shadow-lg flex-1">
-                <h3 class="text-sm font-bold text-green-400 mb-2">B2B Portal: API Sandbox</h3>
-                <div class="flex justify-between text-xs text-gray-400 mb-2">
-                    <span>API Key: <code class="text-green-300">qb_live_...</code></span>
-                    <span>Latency: <span class="text-white">~45ms</span></span>
+            <div class="flex-1 flex flex-col gap-4">
+                <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 shadow-lg flex-1 flex flex-col relative">
+                    <h3 class="text-lg font-bold text-white mb-2">One Spark AI Input</h3>
+                    <p class="text-xs text-gray-400 mb-6">"어떤 비즈니스를 상상하시나요?" 단 한 줄의 아이디어가 100개의 프로젝트로 파생됩니다.</p>
+                    
+                    <div class="relative">
+                        <textarea id="user-idea" rows="4" class="w-full bg-[#0B0F19] border border-gray-600 rounded-lg p-4 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors resize-none" placeholder="여기에 비즈니스 아이디어를 입력하세요 (예: 글로벌 펫푸드 구독 플랫폼)..."></textarea>
+                        <button onclick="startSimulation()" id="btn-submit" class="absolute bottom-3 right-3 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded transition-colors flex items-center gap-2">
+                            <span>실행 (Trigger)</span>
+                        </button>
+                    </div>
+
+                    <div id="console-output" class="mt-6 bg-[#050505] border border-gray-800 rounded-lg p-4 font-mono text-[11px] text-gray-400 flex-1 overflow-y-auto hidden">
+                        <div class="text-green-500 mb-2">System initialized. Waiting for Spark...</div>
+                    </div>
                 </div>
-                <div class="bg-gray-900 border border-gray-600 rounded-lg p-3 font-mono text-[10px] text-gray-300 overflow-hidden h-32 mb-3">
+            </div>
+
+        </div>
+    </div>
+
+    <div id="view-b2b" class="hidden flex-1 flex flex-col fade-in p-6">
+        <div class="max-w-6xl mx-auto w-full">
+            <h2 class="text-2xl font-bold text-green-400 mb-2">B2B Partner Portal</h2>
+            <p class="text-sm text-gray-400 mb-8">API 통합 및 3자 동시 정산(t=0 Settlement) 실시간 대시보드</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-900 border border-gray-700 rounded-xl p-6">
+                    <h3 class="text-sm font-bold text-gray-200 mb-4">API Key Management</h3>
+                    <div class="bg-[#050505] border border-gray-800 rounded p-3 text-xs font-mono text-green-300 mb-4 flex justify-between items-center">
+                        <span>qb_live_8f92jK...</span>
+                        <button class="text-gray-500 hover:text-white">Copy</button>
+                    </div>
+                    
+                    <h3 class="text-sm font-bold text-gray-200 mb-2 mt-6">Metered Traffic</h3>
+                    <div class="w-full bg-gray-800 rounded-full h-2.5 mb-1">
+                        <div class="bg-blue-500 h-2.5 rounded-full" style="width: 45%"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-gray-500">
+                        <span>4,500 Calls</span>
+                        <span>Limit: 10,000 (Blaze Plan)</span>
+                    </div>
+                </div>
+
+                <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 flex flex-col">
+                    <h3 class="text-sm font-bold text-gray-200 mb-2">Interactive API Sandbox</h3>
+                    <p class="text-[10px] text-gray-400 mb-4">페이로드 전송 시 Qubit Link를 통한 즉각 정산 시뮬레이션</p>
+                    
+                    <div class="bg-[#050505] border border-gray-800 rounded p-3 font-mono text-[10px] text-gray-300 flex-1 mb-3">
 {
   "request": "project_settlement",
-  "project_id": "px-902",
-  "timestamp": "t=0",
-  "mode": "real_time_billing"
+  "client_id": "b2b_partner_01",
+  "intent": "advance_payment",
+  "timestamp": "t=0"
 }
+                    </div>
+                    <button onclick="runB2BTest(this)" class="w-full bg-green-600 hover:bg-green-500 text-white text-xs font-bold py-2 rounded transition-colors">
+                        Execute Sandbox Test
+                    </button>
                 </div>
-                <button onclick="simulateB2BAPI()" class="w-full bg-gray-700 hover:bg-gray-600 border border-gray-500 text-white text-sm font-bold py-2 rounded-lg transition-colors">
-                    Execute API Call
-                </button>
             </div>
-            
         </div>
-    </main>
+    </div>
 
-    <!-- Scripts for Logic & State Management -->
     <script>
-        // --- 1. Data Structure (3 Steps -> 7 Stages) ---
-        const pipelineData = {
+        // Data containing Summaries & Matrix configs for the 3 steps
+        const stageData = {
             1: {
-                title: "Step 1. Data Factory",
-                stages: [
-                    { id: '1-1', title: "Data Factory (Automated Insights)", xLabel: "Data Volume", yLabel: "Insight Value", color: "#F43F5E", dots: [{x: 80, y: 70, label: "Market Scraping"}, {x: 40, y: 85, label: "Core Trends"}] }
-                ]
+                id: 1, title: "Step 1. Data Factory",
+                summary: "<strong class='text-white'>데이터 중앙화 및 자율 수집:</strong><br>고전적인 재고/자본의 한계를 뚫기 위한 첫 단계입니다. 외부 웹 스크래핑(Browse AI)과 사내 API를 통해 원시 데이터를 수집하고, 이를 RAG DB용 벡터 저장소에 적재합니다.",
+                xLabel: "Data Vol", yLabel: "Accuracy", color: "#F43F5E",
+                dots: [{x: 70, y: 80}, {x: 40, y: 60}]
             },
             2: {
-                title: "Step 2. Cosmo Seed Ideas",
-                stages: [
-                    { id: '2-1', title: "Cosmo Seed Idea (Spark)", xLabel: "Market Demand", yLabel: "Novelty", color: "#FBBF24", dots: [{x: 60, y: 80, label: "AI Healthcare"}, {x: 30, y: 90, label: "Quantum Crypto"}] },
-                    { id: '2-2', title: "Qubit Engine (Project Making)", xLabel: "Credit Efficiency", yLabel: "Compute Power", color: "#3B82F6", dots: [{x: 75, y: 65, label: "Model Training"}, {x: 85, y: 40, label: "Data Pipeline"}] },
-                    { id: '2-3', title: "Cosmo Seed Biz Models", xLabel: "Time-to-Market", yLabel: "LTV Potential", color: "#10B981", dots: [{x: 20, y: 85, label: "B2B SaaS"}, {x: 70, y: 50, label: "B2C PWA"}] }
-                ]
+                id: 2, title: "Step 2. Cosmo Seed",
+                summary: "<strong class='text-white'>양자 중첩(Superposition) 모델링:</strong><br>수집된 데이터를 바탕으로 하나의 'Spark(아이디어)'를 여러 타겟층과 시장에 맞게 복제 및 최적화합니다. Qubit 엔진이 실현 가능성을 시뮬레이션합니다.",
+                xLabel: "Demand", yLabel: "Novelty", color: "#FBBF24",
+                dots: [{x: 80, y: 85}, {x: 60, y: 70}, {x: 30, y: 50}]
             },
             3: {
-                title: "Step 3. Biz Galaxy",
-                stages: [
-                    { id: '3-1', title: "Qubit Algorithm (Project Mgmt)", xLabel: "Agent Autonomy", yLabel: "Latency Speed", color: "#A855F7", dots: [{x: 90, y: 80, label: "RAG Engine"}, {x: 60, y: 95, label: "Edge Security"}] },
-                    { id: '3-2', title: "Cross Project Mgmt & Make Money", xLabel: "Synergy Output", yLabel: "t=0 Settlement", color: "#EC4899", dots: [{x: 80, y: 80, label: "API Metering"}, {x: 50, y: 70, label: "Cross-Sell"}] },
-                    { id: '3-3', title: "Galaxifying Business (Visual Board)", xLabel: "Ecosystem Size", yLabel: "Global Impact", color: "#06B6D4", dots: [{x: 85, y: 90, label: "Galaxy Expansion"}, {x: 70, y: 80, label: "Partner Network"}] }
-                ]
+                id: 3, title: "Step 3. Biz Galaxy",
+                summary: "<strong class='text-white'>양자 얽힘(Entanglement) 정산:</strong><br>생성된 프로젝트들이 상호 연결되어 동시 다발적 수익을 냅니다. 하나의 성공이 다른 노드의 승인을 즉시 트리거하여 시차 없는 정산을 이룹니다.",
+                xLabel: "Synergy", yLabel: "t=0 Output", color: "#3B82F6",
+                dots: [{x: 90, y: 90}, {x: 75, y: 80}, {x: 50, y: 95}, {x: 85, y: 60}]
             }
         };
 
-        let currentStep = 2;
-        let currentStageId = '2-1';
+        // Navigation Switcher
+        function switchView(viewName) {
+            document.getElementById('view-landing').classList.add('hidden');
+            document.getElementById('view-main').classList.add('hidden');
+            document.getElementById('view-b2b').classList.add('hidden');
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
 
-        // --- 2. Navigation Logic ---
-        function setStep(stepNum) {
-            currentStep = stepNum;
-            // Update Main Tab Styles
-            [1, 2, 3].forEach(n => {
-                const btn = document.getElementById(`step${n}-btn`);
-                if(n === stepNum) {
-                    btn.classList.add('tab-active');
-                    btn.classList.remove('text-gray-400');
-                } else {
-                    btn.classList.remove('tab-active');
-                    btn.classList.add('text-gray-400');
-                }
-            });
-
-            // Render Sub Tabs
-            const subNav = document.getElementById('sub-nav');
-            subNav.innerHTML = '';
-            const stages = pipelineData[stepNum].stages;
-            
-            stages.forEach(stage => {
-                const btn = document.createElement('button');
-                btn.className = `px-4 py-2 rounded-full text-sm font-medium border border-gray-700 transition-colors hover:border-gray-500 text-gray-300`;
-                btn.innerText = stage.title;
-                btn.onclick = () => setStage(stage.id);
-                btn.id = `stage-btn-${stage.id}`;
-                subNav.appendChild(btn);
-            });
-
-            // Default select first stage of the step
-            if(stages.length > 0) {
-                setStage(stages[0].id);
+            if(viewName === 'main') {
+                updateUIForStep(1); // Default to step 1
             }
         }
 
-        function setStage(stageId) {
-            currentStageId = stageId;
-            const stages = pipelineData[currentStep].stages;
-            const stageData = stages.find(s => s.id === stageId);
+        // Update Main UI based on Step
+        function updateUIForStep(step) {
+            const data = stageData[step];
             
-            // Update Sub Tab Styles
-            stages.forEach(s => {
-                const btn = document.getElementById(`stage-btn-${s.id}`);
-                if(s.id === stageId) {
-                    btn.classList.add('sub-tab-active');
+            // 1. Update Tracker
+            [1, 2, 3].forEach(i => {
+                const el = document.getElementById(`track-${i}`);
+                if(i === step) {
+                    el.classList.remove('step-inactive'); el.classList.add('step-active');
                 } else {
-                    btn.classList.remove('sub-tab-active');
+                    el.classList.add('step-inactive'); el.classList.remove('step-active');
                 }
             });
 
-            renderMatrix(stageData);
-        }
+            // 2. Update Instructions
+            document.getElementById('instruction-content').innerHTML = data.summary;
 
-        // --- 3. Matrix Rendering Logic ---
-        function renderMatrix(stageData) {
-            document.getElementById('matrix-title').innerText = stageData.title;
-            document.getElementById('matrix-desc').innerText = `${stageData.yLabel} vs ${stageData.xLabel}`;
-            
-            // Update Axes Labels
-            document.getElementById('label-y-top').innerText = `High ${stageData.yLabel}`;
-            document.getElementById('label-y-bottom').innerText = `Low ${stageData.yLabel}`;
-            document.getElementById('label-x-right').innerText = `High ${stageData.xLabel}`;
-            document.getElementById('label-x-left').innerText = `Low ${stageData.xLabel}`;
+            // 3. Show/Hide Data Center Cats
+            const dcCats = document.getElementById('data-center-cats');
+            if(step === 1) dcCats.classList.remove('hidden');
+            else dcCats.classList.add('hidden');
 
-            const container = document.getElementById('dots-container');
-            container.innerHTML = '';
-
-            stageData.dots.forEach(dot => {
-                createDot(dot.x, dot.y, dot.label, stageData.color);
+            // 4. Render Compact Matrix
+            document.getElementById('matrix-labels').innerText = `${data.yLabel} v ${data.xLabel}`;
+            const dotContainer = document.getElementById('matrix-dots');
+            dotContainer.innerHTML = '';
+            data.dots.forEach(d => {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                dot.style.left = `${d.x}%`;
+                dot.style.bottom = `${d.y}%`;
+                dot.style.backgroundColor = data.color;
+                dot.style.color = data.color;
+                dotContainer.appendChild(dot);
             });
         }
 
-        function createDot(x, y, labelText, color) {
-            const container = document.getElementById('dots-container');
-            const dot = document.createElement('div');
-            dot.className = 'dot group';
-            dot.style.left = `${x}%`;
-            dot.style.bottom = `${y}%`;
-            dot.style.backgroundColor = color;
-            dot.style.color = color;
+        // Simulation Flow (End-User Input)
+        function startSimulation() {
+            const input = document.getElementById('user-idea').value;
+            if(!input) return alert('비즈니스 아이디어를 입력해주세요.');
 
-            const label = document.createElement('div');
-            label.className = 'absolute top-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs bg-gray-900 border border-gray-700 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 text-white shadow-lg pointer-events-none';
-            label.innerText = labelText;
+            const btn = document.getElementById('btn-submit');
+            const consoleBox = document.getElementById('console-output');
             
-            dot.appendChild(label);
-            container.appendChild(dot);
+            btn.innerHTML = '<div class="loader"></div> Processing...';
+            btn.disabled = true;
+            consoleBox.classList.remove('hidden');
+            consoleBox.innerHTML = `<div class="text-blue-400">> Input Received: "${input.substring(0,20)}..."</div>`;
+
+            // Step 1 Simulation
+            updateUIForStep(1);
+            setTimeout(() => {
+                consoleBox.innerHTML += `<div class="text-gray-300 mt-1">> [Data Factory] Extracting global trends...</div>`;
+                consoleBox.innerHTML += `<div class="text-gray-300">> [Data Factory] Vector RAG DB updated.</div>`;
+            }, 1000);
+
+            // Step 2 Simulation
+            setTimeout(() => {
+                updateUIForStep(2);
+                consoleBox.innerHTML += `<div class="text-yellow-400 mt-2">> [Cosmo Seed] Quantum Superposition applied.</div>`;
+                consoleBox.innerHTML += `<div class="text-gray-300">> [Cosmo Seed] Generating 3 parallel Biz Models...</div>`;
+            }, 3000);
+
+            // Step 3 Simulation
+            setTimeout(() => {
+                updateUIForStep(3);
+                consoleBox.innerHTML += `<div class="text-green-400 mt-2">> [Biz Galaxy] Synergy Link established.</div>`;
+                consoleBox.innerHTML += `<div class="text-green-400 font-bold">> [Biz Galaxy] t=0 Settlement Ready. Process Complete.</div>`;
+                btn.innerHTML = '실행 (Trigger)';
+                btn.disabled = false;
+                document.getElementById('user-idea').value = '';
+            }, 5500);
         }
 
-        // Macro View (Plot all stages briefly)
-        function showMacroView() {
-            [1, 2, 3].forEach(n => document.getElementById(`step${n}-btn`).classList.remove('tab-active'));
-            document.getElementById('sub-nav').innerHTML = '<div class="text-purple-400 font-bold text-sm">Viewing All Galaxies & Ecosystems</div>';
+        // B2B Sandbox Test
+        function runB2BTest(btn) {
+            const original = btn.innerText;
+            btn.innerText = "Authenticating...";
+            btn.classList.add('bg-blue-600'); btn.classList.remove('bg-green-600');
             
-            document.getElementById('matrix-title').innerText = "Macro Overview";
-            document.getElementById('matrix-desc').innerText = "All Datapoints Across 7 Stages";
-            const container = document.getElementById('dots-container');
-            container.innerHTML = '';
-
-            Object.values(pipelineData).forEach(step => {
-                step.stages.forEach(stage => {
-                    stage.dots.forEach(dot => {
-                        createDot(dot.x, dot.y, `${stage.title}: ${dot.label}`, stage.color);
-                    });
-                });
-            });
-        }
-
-        // --- 4. Simulation Logic (Replaces Live API to prevent CORS/Key Errors) ---
-        function simulateIdeaAnalysis() {
-            const input = document.getElementById('idea-input').value;
-            if(!input) return alert("비즈니스 아이디어를 입력해주세요.");
-
-            const btnText = document.getElementById('analyze-text');
-            const loader = document.getElementById('analyze-loader');
-            const resultBox = document.getElementById('idea-result');
-
-            btnText.innerText = "양자 얽힘 분석 중...";
-            loader.classList.remove('hidden');
-            resultBox.classList.add('hidden');
-
-            // 1.5초 딜레이로 LLM 분석 대기 효과 시뮬레이션
             setTimeout(() => {
-                // 새로운 점을 매트릭스에 시뮬레이션으로 추가 (랜덤 위치)
-                const randX = Math.floor(Math.random() * 60) + 20;
-                const randY = Math.floor(Math.random() * 60) + 20;
-                
-                // 만약 현재 2단계가 열려있다면 화면에 점 추가
-                if(currentStep === 2 && currentStageId === '2-1') {
-                    createDot(randX, randY, "New: " + input.substring(0, 10), "#10B981");
-                }
-
-                btnText.innerText = "심층 분석 실행 (Dify Backend)";
-                loader.classList.add('hidden');
-                
-                resultBox.innerHTML = `
-                    <div class="text-green-400 font-bold mb-1">[Analysis Complete]</div>
-                    <ul class="list-disc pl-4 space-y-1">
-                        <li><strong>Novelty:</strong> ${randY}% (Highly unique approach)</li>
-                        <li><strong>Market Demand:</strong> ${randX}% (Growing target audience)</li>
-                        <li><strong>Action:</strong> Qubit Engine is ready to build this project.</li>
-                    </ul>
-                `;
-                resultBox.classList.remove('hidden');
-                document.getElementById('idea-input').value = '';
-            }, 1500);
-        }
-
-        function simulateB2BAPI() {
-            const btn = event.target;
-            const originalText = btn.innerText;
-            btn.innerText = "Processing $t=0 Settlement...";
-            btn.classList.add('bg-green-600');
-            btn.classList.remove('bg-gray-700');
-
-            setTimeout(() => {
-                alert("API Call Success!\nStatus: 200 OK\nLatency: 42ms\nBilled: 0.005 qb");
-                btn.innerText = originalText;
-                btn.classList.remove('bg-green-600');
-                btn.classList.add('bg-gray-700');
+                btn.innerText = "Success: 200 OK";
+                btn.classList.add('bg-gray-600'); btn.classList.remove('bg-blue-600');
+                setTimeout(() => {
+                    btn.innerText = original;
+                    btn.classList.add('bg-green-600'); btn.classList.remove('bg-gray-600');
+                }, 1500);
             }, 800);
         }
-
-        // Initialize App
-        setStep(2);
     </script>
 </body>
 </html>
