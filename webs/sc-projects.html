@@ -89,7 +89,8 @@
         x: <path d="M18 6L6 18 M6 6l12 12" />,
         save: <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z M17 21v-8H7v8 M7 3v5h8" />,
         copy: <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2 M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z" />,
-        check: <path d="M20 6L9 17l-5-5" />
+        check: <path d="M20 6L9 17l-5-5" />,
+        arrowUp: <path d="M12 19V5 M5 12l7-7 7 7" />
       };
 
       return (
@@ -241,8 +242,24 @@
       const [isAppsScriptModalOpen, setIsAppsScriptModalOpen] = useState(false);
       const [isVersionModalOpen, setIsVersionModalOpen] = useState(false);
 
-      // PWA Prompt
-      const [deferredPrompt, setDeferredPrompt] = useState(null);
+      // Floating Scroll-to-Top Listener
+      const [showScrollTop, setShowScrollTop] = useState(false);
+
+      useEffect(() => {
+        const handleScroll = () => {
+          if (window.scrollY > 100) {
+            setShowScrollTop(true);
+          } else {
+            setShowScrollTop(false);
+          }
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+
+      const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
 
       // Load initial data
       useEffect(() => {
@@ -489,15 +506,6 @@
 
               {/* Header Action Buttons */}
               <div className="flex items-center space-x-2">
-                <button
-                  onClick={handleInstallPWA}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs transition-all shadow-md active:scale-95"
-                  title="모바일/PC 홈 화면에 앱으로 저장"
-                >
-                  <Icon name="smartphone" className="w-3.5 h-3.5" />
-                  <span>App으로 저장</span>
-                </button>
-
                 <button
                   onClick={handleOneClickSyncSheet}
                   disabled={isSyncing}
@@ -1035,6 +1043,18 @@
           {/* Version Modal */}
           {isVersionModalOpen && (
             <VersionModal onClose={() => setIsVersionModalOpen(false)} appVersion={APP_VERSION} />
+          )}
+
+          {/* Floating Scroll-to-Top Button */}
+          {showScrollTop && (
+            <button
+              onClick={scrollToTop}
+              className="fixed bottom-6 right-6 z-50 p-3.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-xl shadow-indigo-600/30 border border-indigo-400/30 transition-all transform hover:scale-110 active:scale-95 flex items-center justify-center group"
+              title="맨 위로 이동"
+              aria-label="맨 위로 이동"
+            >
+              <Icon name="arrowUp" className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
+            </button>
           )}
         </div>
       );
