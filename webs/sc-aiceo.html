@@ -1,59 +1,38 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>AI-CEO Executive Dashboard</title>
 
-  <!-- PWA & Mobile Web App Meta Tags -->
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="AI-CEO" />
-  <meta name="theme-color" content="#1c1917" />
-  <meta name="description" content="AI-CEO Classic Executive Journal & Portfolio Management System" />
-
-  <!-- Web Application Manifest (Data URI) -->
-  <link rel="manifest" href='data:application/manifest+json,{"name":"AI-CEO Executive Dashboard","short_name":"AI-CEO","start_url":"/","display":"standalone","background_color":"#1c1917","theme_color":"#1c1917","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/1087/1087815.png","sizes":"512x512","type":"image/png"}]}' />
-
-  <!-- Google Fonts: Playfair Display & Pretendard -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Pretendard Font CDN -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           colors: {
-            executive: {
-              950: '#0c0a09',
-              900: '#1c1917',
-              850: '#262626',
-              800: '#27272a',
-              700: '#3f3f46'
+            appbg: '#f8fafc',
+            cardbg: '#ffffff',
+            slate: {
+              800: '#1e293b',
+              700: '#334155',
+              600: '#475569',
+              400: '#94a3b8',
+              200: '#e2e8f0',
+              100: '#f1f5f9'
             },
-            parchment: {
-              100: '#fffbeb',
-              200: '#fef3c7',
-              300: '#fde68a',
-              400: '#fcd34d'
-            },
-            gold: {
-              400: '#fbbf24',
-              500: '#f59e0b',
-              600: '#d97706',
-              700: '#b45309',
-              800: '#92400e'
+            accent: {
+              sky: '#0ea5e9',
+              skybg: '#e0f2fe',
+              skylight: '#f0f9ff'
             }
           },
           fontFamily: {
-            sans: ['Pretendard', 'Plus Jakarta Sans', '-apple-system', 'sans-serif'],
-            serif: ['Playfair Display', 'Georgia', 'serif'],
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
           },
         },
       },
@@ -73,52 +52,30 @@
   <style>
     body {
       font-family: 'Pretendard', sans-serif;
-      background-color: #0c0a09;
-      color: #fef3c7;
+      background-color: #f8fafc;
+      color: #1e293b;
       -webkit-tap-highlight-color: transparent;
     }
-    
-    /* Classic Executive Leather Card Styling */
-    .executive-card {
-      background: linear-gradient(145deg, rgba(28, 25, 23, 0.95), rgba(20, 18, 16, 0.98));
-      border: 1px solid rgba(217, 119, 6, 0.25);
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(254, 243, 199, 0.05);
-    }
 
-    .executive-card-hover {
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .executive-card-hover:hover {
-      border-color: rgba(217, 119, 6, 0.5);
-      box-shadow: 0 14px 40px -5px rgba(217, 119, 6, 0.15);
-      transform: translateY(-2px);
-    }
-
-    .executive-nav {
-      background: rgba(12, 10, 9, 0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(217, 119, 6, 0.25);
-    }
-
-    .gold-glow {
-      box-shadow: 0 0 15px rgba(217, 119, 6, 0.25);
+    .modal-backdrop {
+      background-color: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
     }
 
     /* Custom Scrollbar */
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-track {
-      background: #0c0a09;
+      background: #f1f5f9;
     }
     ::-webkit-scrollbar-thumb {
-      background: #44403c;
-      border-radius: 9999px;
+      background: #cbd5e1;
+      border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #d97706;
+      background: #0ea5e9;
     }
 
     html {
@@ -126,1972 +83,901 @@
     }
   </style>
 </head>
-<body class="min-h-screen text-stone-200 antialiased selection:bg-amber-600 selection:text-stone-950">
+<body class="min-h-screen bg-appbg text-slate-800 antialiased">
   <div id="root"></div>
 
-  <!-- React & Firebase Single-File Script -->
   <script type="text/babel">
-    const { useState, useEffect, useMemo, useRef } = React;
+    const { useState, useEffect, useMemo } = React;
 
-    // --- Lucide Vector Icon Helper ---
-    const Icon = ({ name, className = "w-4 h-4", ...props }) => {
-      const icons = {
-        briefcase: <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16 M2 10h20 M2 18h20 M2 6h20" />,
-        sparkles: <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />,
-        plus: <path d="M5 12h14 M12 5v14" />,
-        star: <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />,
-        search: <path d="m21 21-4.35-4.35M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0z" />,
-        trash: <path d="M3 6h18 M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2 M10 11v6 M14 11v6" />,
-        edit: <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7 M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />,
-        externalLink: <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6 M15 3h6v6 M10 14L21 3" />,
-        x: <path d="M18 6L6 18 M6 6l12 12" />,
-        save: <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z M17 21v-8H7v8 M7 3v5h8" />,
-        copy: <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2 M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z" />,
-        check: <path d="M20 6L9 17l-5-5" />,
-        arrowUp: <path d="M12 19V5 M5 12l7-7 7 7" />,
-        folder: <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2z" />,
-        lightbulb: <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5 M9 18h6 M10 22h4" />,
-        bookOpen: <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />,
-        target: <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12z M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />,
-        globe: <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z M2 12h20 M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />,
-        user: <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />,
-        mail: <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6" />,
-        download: <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M7 10l5 5 5-5 M12 15V3" />,
-        building: <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18 M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2 M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2 M10 6h4 M10 10h4 M10 14h4 M10 18h4" />,
-        logOut: <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9" />,
-        logIn: <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4 M10 17l5-5-5-5 M15 12H3" />,
-        archive: <path d="M21 8v13H3V8M1 3h22v5H1z M10 12h4" />,
-        tag: <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z M7 7h.01" />,
-        sort: <path d="m3 16 4 4 4-4M7 20V4M21 8l-4-4-4 4M17 4v16" />
-      };
+    // --- Domain Link Parser ---
+    const parseDomainLinks = (urlsInput) => {
+      if (!urlsInput) return [];
+      const list = typeof urlsInput === 'string'
+        ? urlsInput.split(',').map(u => u.trim()).filter(Boolean)
+        : Array.isArray(urlsInput) ? urlsInput : [];
 
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={className}
-          {...props}
-        >
-          {icons[name] || <circle cx="12" cy="12" r="10" />}
-        </svg>
-      );
+      return list.map((url, index) => {
+        let domain = `Connect ${index + 1}`;
+        try {
+          const formattedUrl = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
+          const parsed = new URL(formattedUrl);
+          const host = parsed.hostname.replace('www.', '');
+          const parts = host.split('.');
+          if (parts.length >= 2) {
+            domain = parts[0]; // Extract domain name e.g. youtube, github
+          } else {
+            domain = host;
+          }
+        } catch (e) {
+          domain = `Connect ${index + 1}`;
+        }
+        const href = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
+        return { domain, href, original: url };
+      });
     };
 
-    // Emoji options for projects
-    const EMOJI_LIST = ['🚀', '💼', '⚡', '💎', '📈', '🤖', '🌐', '🎯', '🔮', '🏆', '💡', '🛡️'];
-
-    // Initial Defaults
-    const DEFAULT_PROJECT_CATEGORIES = [
-      'Head Quarter',
-      'Intelligence Core',
-      'Qubit Algorithm',
-      'Scarlet AI',
-      'Qubit Biz',
-      'Product',
-      'Service',
-      'RnD'
-    ];
-
-    const DEFAULT_IDEA_CATEGORIES = [
-      'Core Tech',
-      'Business Model',
-      'Growth Strategy',
-      'Product Innovation',
-      'Uncategorized'
-    ];
-
+    // --- Default Initial Data ---
     const DEFAULT_PROJECTS = [
-      {
-        id: 'proj-1',
-        category: 'Scarlet AI',
-        company: 'SISTAR Group',
-        title: 'Executive Voice & Workflow Intelligence',
-        status: 'In Progress',
-        progress: 80,
-        emoji: '🚀',
-        objective: 'Automate 90% of daily leadership summary briefs via voice commands.',
-        aiPrompt: 'Role: Senior AI Strategist. Task: Summarize executive priorities and assign task vectors.',
-        urls: 'https://github.com, https://sistarcompany.com',
-        isStarred: true,
-        updatedAt: '2026-08-06'
-      },
-      {
-        id: 'proj-2',
-        category: 'Qubit Algorithm',
-        company: 'Qubit Lab',
-        title: 'Quantum Encrypted Portfolio Simulator',
-        status: 'In Progress',
-        progress: 45,
-        emoji: '⚡',
-        objective: 'Simulate multi-asset risk optimization models in sub-second latency.',
-        aiPrompt: 'Role: Quantum Physics Researcher. Task: Optimize Hamiltonian algorithms for financial matrices.',
-        urls: 'https://arxiv.org, https://notion.so',
-        isStarred: true,
-        updatedAt: '2026-08-05'
-      },
-      {
-        id: 'proj-3',
-        category: 'Head Quarter',
-        company: 'Global HQ',
-        title: 'Enterprise Capital Allocation Plan 2026',
-        status: 'Completed',
-        progress: 100,
-        emoji: '💼',
-        objective: 'Finalize global subsidiary budget allocation and growth targets.',
-        aiPrompt: 'Role: CFO Consultant. Task: Audit subsidiary cash flow and dividend yields.',
-        urls: 'https://docs.google.com',
-        isStarred: false,
-        updatedAt: '2026-08-01'
-      }
+      { id: 'p1', title: 'Executive Workflow Automation', category: 'HQ', details: 'Streamlining quarterly reporting with AI pipeline.', status: 'In Progress', progress: 75, urls: 'https://github.com, https://notion.so' },
+      { id: 'p2', title: 'Global Branch Performance Optimization', category: 'Operations', details: 'Analyzing international branch margins.', status: 'In Progress', progress: 50, urls: 'https://google.com' },
+      { id: 'p3', title: 'Q3 Capital Allocation Strategy', category: 'Finance', details: 'Budgeting next quarter expansion vectors.', status: 'Completed', progress: 100, urls: 'https://youtube.com' }
     ];
 
     const DEFAULT_IDEAS = [
-      {
-        id: 'idea-1',
-        category: 'Core Tech',
-        title: 'Offline Edge-LLM Model for Mobile Executives',
-        content: 'Zero-latency local LLM running on mobile neural chip without cloud dependency.',
-        urls: 'https://openai.com, https://github.com',
-        stars: 3,
-        isArchived: false,
-        createdAt: '2026-08-06'
-      },
-      {
-        id: 'idea-2',
-        category: 'Business Model',
-        title: 'Quantum-Compute-as-a-Service (QaaS) B2B Subscription',
-        content: 'Tiered monthly compute bandwidth allocation for biotech research institutes.',
-        urls: 'https://ibm.com/quantum',
-        stars: 2,
-        isArchived: false,
-        createdAt: '2026-08-04'
-      }
+      { id: 'i1', title: 'Offline Mobile AI Assistant', details: 'Low-latency local LLM engine for executive travel.', urls: 'https://openai.com, https://github.com' },
+      { id: 'i2', title: 'Quantum Encryption B2B SaaS', details: 'Data protection subscription for enterprise clients.', urls: 'https://ibm.com' }
     ];
 
     const DEFAULT_STUDIES = [
-      {
-        id: 'study-1',
-        title: 'Hybrid Dense Vector Indexing & RAG Optimization',
-        summary: 'Benchmarking HNSW indexing with cross-encoder re-ranking for enterprise search.',
-        urls: 'https://arxiv.org/abs/2312.00000',
-        createdAt: '2026-08-05'
-      }
+      { id: 's1', title: 'Enterprise RAG Indexing Benchmarks', details: 'Evaluation of hybrid dense retrieval models.', urls: 'https://arxiv.org' }
     ];
 
     const DEFAULT_MINDSETS = [
-      {
-        id: 'mindset-1',
-        quote: 'Executional velocity & radical focus compound into market dominance. Master the core vector.',
-        createdAt: '2026-08-01'
-      },
-      {
-        id: 'mindset-2',
-        quote: 'Simplicity is the ultimate sophistication in high-stakes executive leadership.',
-        createdAt: '2026-08-02'
-      }
+      { id: 'm1', title: 'Speed & Radical Execution', details: 'Speed overcomes friction. Maintain extreme clarity and momentum.' },
+      { id: 'm2', title: 'Simplicity is Ultimate Sophistication', details: 'Eliminate unnecessary complexity at every level.' }
     ];
 
     const DEFAULT_PLATFORMS = [
-      {
-        id: 'plat-1',
-        category: 'Product',
-        title: 'AI Studio Build Console',
-        urls: 'https://ai.studio, https://console.cloud.google.com',
-        createdAt: '2026-08-01'
-      },
-      {
-        id: 'plat-2',
-        category: 'Service',
-        title: 'GitHub Enterprise Portal',
-        urls: 'https://github.com/orgs/sistar',
-        createdAt: '2026-08-01'
-      }
+      { id: 'pl1', title: 'AI Studio Build Console', urls: 'https://ai.studio, https://console.cloud.google.com' },
+      { id: 'pl2', title: 'GitHub Enterprise Portal', urls: 'https://github.com' }
     ];
 
     const DEFAULT_PROFILE = {
       companyName: 'SISTAR Group',
-      logoUrl: '',
+      dailyFocus: 'Focus on high-velocity execution and radical operational simplicity.'
     };
 
-    // --- Inline Multi URL Renderer ---
-    const InlineUrls = ({ urls }) => {
-      if (!urls) return null;
-      const list = typeof urls === 'string' 
-        ? urls.split(',').map(u => u.trim()).filter(Boolean)
-        : Array.isArray(urls) ? urls : [];
-
-      if (list.length === 0) return null;
-
-      return (
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-amber-400 font-mono">
-          {list.map((url, idx) => {
-            let label = `Link ${idx + 1}`;
-            try {
-              const parsed = new URL(url.startsWith('http') ? url : `https://${url}`);
-              label = parsed.hostname.replace('www.', '');
-            } catch (e) {}
-
-            const href = url.startsWith('http') ? url : `https://${url}`;
-
-            return (
-              <span key={idx} className="inline-flex items-center space-x-1">
-                <span className="text-stone-500 font-sans text-[11px]">▫️</span>
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:underline hover:text-amber-300 font-medium inline-flex items-center space-x-1"
-                >
-                  <span>{label}</span>
-                  <Icon name="externalLink" className="w-2.5 h-2.5 opacity-70" />
-                </a>
-                {idx < list.length - 1 && <span className="text-stone-600">,</span>}
-              </span>
-            );
-          })}
-        </div>
-      );
-    };
-
-    // --- MAIN REACT APP ---
     function App() {
-      // Firebase State
+      // Firebase User State
       const [user, setUser] = useState(null);
-      const [authLoading, setAuthLoading] = useState(true);
-      const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-      const [authEmail, setAuthEmail] = useState('');
-      const [authPass, setAuthPass] = useState('');
-      const [isSignUp, setIsSignUp] = useState(false);
+      const [firebaseConfig, setFirebaseConfig] = useState(() => {
+        const saved = localStorage.getItem('aiceo_fb_config');
+        return saved ? JSON.parse(saved) : null;
+      });
 
       // App Data States
-      const [companyProfile, setCompanyProfile] = useState(DEFAULT_PROFILE);
-      const [projectCategories, setProjectCategories] = useState(DEFAULT_PROJECT_CATEGORIES);
-      const [ideaCategories, setIdeaCategories] = useState(DEFAULT_IDEA_CATEGORIES);
-      const [projects, setProjects] = useState(DEFAULT_PROJECTS);
-      const [ideas, setIdeas] = useState(DEFAULT_IDEAS);
-      const [studies, setStudies] = useState(DEFAULT_STUDIES);
-      const [mindsets, setMindsets] = useState(DEFAULT_MINDSETS);
-      const [platforms, setPlatforms] = useState(DEFAULT_PLATFORMS);
+      const [projects, setProjects] = useState(() => {
+        const saved = localStorage.getItem('aiceo_projects');
+        return saved ? JSON.parse(saved) : DEFAULT_PROJECTS;
+      });
+      const [ideas, setIdeas] = useState(() => {
+        const saved = localStorage.getItem('aiceo_ideas');
+        return saved ? JSON.parse(saved) : DEFAULT_IDEAS;
+      });
+      const [studies, setStudies] = useState(() => {
+        const saved = localStorage.getItem('aiceo_studies');
+        return saved ? JSON.parse(saved) : DEFAULT_STUDIES;
+      });
+      const [mindsets, setMindsets] = useState(() => {
+        const saved = localStorage.getItem('aiceo_mindsets');
+        return saved ? JSON.parse(saved) : DEFAULT_MINDSETS;
+      });
+      const [platforms, setPlatforms] = useState(() => {
+        const saved = localStorage.getItem('aiceo_platforms');
+        return saved ? JSON.parse(saved) : DEFAULT_PLATFORMS;
+      });
+      const [profile, setProfile] = useState(() => {
+        const saved = localStorage.getItem('aiceo_profile');
+        return saved ? JSON.parse(saved) : DEFAULT_PROFILE;
+      });
 
-      // Multi Selection State for Emailing
-      const [selectedItemIds, setSelectedItemIds] = useState(new Set());
+      // Pagination States (10 items max per page)
+      const [pageProjects, setPageProjects] = useState(0);
+      const [pageIdeas, setPageIdeas] = useState(0);
+      const [pageStudies, setPageStudies] = useState(0);
+      const [pageMindsets, setPageMindsets] = useState(0);
+      const [pagePlatforms, setPagePlatforms] = useState(0);
 
-      // Filter & Sorting
-      const [globalSearch, setGlobalSearch] = useState('');
-      const [searchTab, setSearchTab] = useState('All'); // 'All', 'Projects', 'Ideas', 'Study'
-      const [selectedProjectCategory, setSelectedProjectCategory] = useState('All');
-      const [selectedIdeaCategory, setSelectedIdeaCategory] = useState('All');
-      const [onlyStarredProjects, setOnlyStarredProjects] = useState(false);
-      const [sortByProgress, setSortByProgress] = useState(false); // false: default, true: progress desc
-
-      // Modals
-      const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
-      const [editingProject, setEditingProject] = useState(null);
-
-      const [isIdeaModalOpen, setIsIdeaModalOpen] = useState(false);
-      const [editingIdea, setEditingIdea] = useState(null);
-
-      const [isStudyModalOpen, setIsStudyModalOpen] = useState(false);
-      const [isMindsetModalOpen, setIsMindsetModalOpen] = useState(false);
-      const [isPlatformModalOpen, setIsPlatformModalOpen] = useState(false);
-      const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
-      const [categoryModalType, setCategoryModalType] = useState('Project'); // 'Project' or 'Idea'
+      // Modal States
+      const [activeModalItem, setActiveModalItem] = useState(null); // { type, item, isNew }
       const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+      const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+      const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
 
-      // Daily Executive Focus (randomly selected from Mindsets)
-      const dailyFocus = useMemo(() => {
-        if (mindsets.length === 0) return "Master executive velocity with radical focus.";
-        const randIndex = Math.floor(Math.abs(new Date().getDate()) % mindsets.length);
-        return mindsets[randIndex]?.quote || mindsets[0].quote;
-      }, [mindsets]);
-
-      // Load Local Storage Fallback
+      // Initialize Firebase if config exists
       useEffect(() => {
-        const lp = localStorage.getItem('ai_ceo_projects_v3');
-        if (lp) setProjects(JSON.parse(lp));
-        const li = localStorage.getItem('ai_ceo_ideas_v3');
-        if (li) setIdeas(JSON.parse(li));
-        const ls = localStorage.getItem('ai_ceo_studies_v3');
-        if (ls) setStudies(JSON.parse(ls));
-        const lm = localStorage.getItem('ai_ceo_mindsets_v3');
-        if (lm) setMindsets(JSON.parse(lm));
-        const lplat = localStorage.getItem('ai_ceo_platforms_v3');
-        if (lplat) setPlatforms(JSON.parse(lplat));
-        const lpc = localStorage.getItem('ai_ceo_proj_cat_v3');
-        if (lpc) setProjectCategories(JSON.parse(lpc));
-        const lic = localStorage.getItem('ai_ceo_idea_cat_v3');
-        if (lic) setIdeaCategories(JSON.parse(lic));
-        const lprof = localStorage.getItem('ai_ceo_profile_v3');
-        if (lprof) setCompanyProfile(JSON.parse(lprof));
-
-        // Listen to Firebase Auth if initialized
-        if (window.firebase && firebase.apps.length) {
-          const auth = firebase.auth();
-          const unsub = auth.onAuthStateChanged(u => {
-            setUser(u);
-            setAuthLoading(false);
-          });
-          return () => unsub();
-        } else {
-          setAuthLoading(false);
+        if (firebaseConfig && firebaseConfig.apiKey) {
+          try {
+            if (!firebase.apps.length) {
+              firebase.initializeApp(firebaseConfig);
+            }
+            const auth = firebase.auth();
+            const unsub = auth.onAuthStateChanged((currUser) => {
+              setUser(currUser);
+            });
+            return () => unsub();
+          } catch (e) {
+            console.error('Firebase initialization error:', e);
+          }
         }
-      }, []);
+      }, [firebaseConfig]);
 
-      // Scroll to top handler
+      // Firebase Sync when User is authenticated
+      useEffect(() => {
+        if (user && firebase.apps.length) {
+          const db = firebase.firestore();
+          const userRef = db.collection('users').doc(user.uid);
+
+          const unsubProjects = userRef.collection('projects').onSnapshot((snap) => {
+            if (!snap.empty) {
+              setProjects(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            }
+          });
+          const unsubIdeas = userRef.collection('ideas').onSnapshot((snap) => {
+            if (!snap.empty) {
+              setIdeas(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            }
+          });
+          const unsubStudies = userRef.collection('studies').onSnapshot((snap) => {
+            if (!snap.empty) {
+              setStudies(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            }
+          });
+          const unsubMindsets = userRef.collection('mindsets').onSnapshot((snap) => {
+            if (!snap.empty) {
+              setMindsets(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            }
+          });
+          const unsubPlatforms = userRef.collection('platforms').onSnapshot((snap) => {
+            if (!snap.empty) {
+              setPlatforms(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            }
+          });
+
+          return () => {
+            unsubProjects();
+            unsubIdeas();
+            unsubStudies();
+            unsubMindsets();
+            unsubPlatforms();
+          };
+        }
+      }, [user]);
+
+      // Save Data Handler (Firestore or LocalStorage)
+      const saveItem = async (type, itemData) => {
+        const id = itemData.id || `${type}_${Date.now()}`;
+        const finalItem = { ...itemData, id };
+
+        if (user && firebase.apps.length) {
+          const db = firebase.firestore();
+          await db.collection('users').doc(user.uid).collection(type).doc(id).set(finalItem, { merge: true });
+        } else {
+          // LocalStorage fallback
+          const stateUpdaters = {
+            projects: [setProjects, 'aiceo_projects'],
+            ideas: [setIdeas, 'aiceo_ideas'],
+            studies: [setStudies, 'aiceo_studies'],
+            mindsets: [setMindsets, 'aiceo_mindsets'],
+            platforms: [setPlatforms, 'aiceo_platforms'],
+          };
+
+          if (stateUpdaters[type]) {
+            const [setFn, key] = stateUpdaters[type];
+            setFn(prev => {
+              const exists = prev.some(i => i.id === id);
+              const next = exists ? prev.map(i => i.id === id ? finalItem : i) : [finalItem, ...prev];
+              localStorage.setItem(key, JSON.stringify(next));
+              return next;
+            });
+          }
+        }
+        setActiveModalItem(null);
+      };
+
+      // Delete Data Handler
+      const deleteItem = async (type, id) => {
+        if (user && firebase.apps.length) {
+          const db = firebase.firestore();
+          await db.collection('users').doc(user.uid).collection(type).doc(id).delete();
+        } else {
+          const stateUpdaters = {
+            projects: [setProjects, 'aiceo_projects'],
+            ideas: [setIdeas, 'aiceo_ideas'],
+            studies: [setStudies, 'aiceo_studies'],
+            mindsets: [setMindsets, 'aiceo_mindsets'],
+            platforms: [setPlatforms, 'aiceo_platforms'],
+          };
+
+          if (stateUpdaters[type]) {
+            const [setFn, key] = stateUpdaters[type];
+            setFn(prev => {
+              const next = prev.filter(i => i.id !== id);
+              localStorage.setItem(key, JSON.stringify(next));
+              return next;
+            });
+          }
+        }
+        setActiveModalItem(null);
+      };
+
+      // Save Profile
+      const saveProfileData = (newProfile) => {
+        setProfile(newProfile);
+        localStorage.setItem('aiceo_profile', JSON.stringify(newProfile));
+        setIsProfileModalOpen(false);
+      };
+
+      // Scroll to Top
       const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       };
 
       const scrollToSection = (id) => {
         const el = document.getElementById(id);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
       };
 
-      // Save Entity helper
-      const saveEntity = (type, item) => {
-        const today = new Date().toISOString().split('T')[0];
-        const newItem = { ...item, updatedAt: today };
-
-        if (type === 'projects') {
-          const id = newItem.id || `proj-${Date.now()}`;
-          const finalItem = { ...newItem, id };
-          setProjects(prev => {
-            const list = prev.some(p => p.id === id) ? prev.map(p => p.id === id ? finalItem : p) : [finalItem, ...prev];
-            localStorage.setItem('ai_ceo_projects_v3', JSON.stringify(list));
-            return list;
-          });
-        } else if (type === 'ideas') {
-          const id = newItem.id || `idea-${Date.now()}`;
-          const finalItem = { ...newItem, id };
-          setIdeas(prev => {
-            const list = prev.some(i => i.id === id) ? prev.map(i => i.id === id ? finalItem : i) : [finalItem, ...prev];
-            localStorage.setItem('ai_ceo_ideas_v3', JSON.stringify(list));
-            return list;
-          });
-        } else if (type === 'studies') {
-          const id = newItem.id || `study-${Date.now()}`;
-          const finalItem = { ...newItem, id };
-          setStudies(prev => {
-            const list = [finalItem, ...prev.filter(s => s.id !== id)];
-            localStorage.setItem('ai_ceo_studies_v3', JSON.stringify(list));
-            return list;
-          });
-        } else if (type === 'mindsets') {
-          const id = newItem.id || `mindset-${Date.now()}`;
-          const finalItem = { ...newItem, id };
-          setMindsets(prev => {
-            const list = [finalItem, ...prev.filter(m => m.id !== id)];
-            localStorage.setItem('ai_ceo_mindsets_v3', JSON.stringify(list));
-            return list;
-          });
-        } else if (type === 'platforms') {
-          const id = newItem.id || `plat-${Date.now()}`;
-          const finalItem = { ...newItem, id };
-          setPlatforms(prev => {
-            const list = [finalItem, ...prev.filter(p => p.id !== id)];
-            localStorage.setItem('ai_ceo_platforms_v3', JSON.stringify(list));
-            return list;
-          });
-        }
-      };
-
-      // Delete Entity
-      const deleteEntity = (type, id) => {
-        if (type === 'projects') {
-          setProjects(prev => {
-            const list = prev.filter(p => p.id !== id);
-            localStorage.setItem('ai_ceo_projects_v3', JSON.stringify(list));
-            return list;
-          });
-        } else if (type === 'ideas') {
-          setIdeas(prev => {
-            const list = prev.filter(i => i.id !== id);
-            localStorage.setItem('ai_ceo_ideas_v3', JSON.stringify(list));
-            return list;
-          });
-        } else if (type === 'studies') {
-          setStudies(prev => {
-            const list = prev.filter(s => s.id !== id);
-            localStorage.setItem('ai_ceo_studies_v3', JSON.stringify(list));
-            return list;
-          });
-        } else if (type === 'mindsets') {
-          setMindsets(prev => {
-            const list = prev.filter(m => m.id !== id);
-            localStorage.setItem('ai_ceo_mindsets_v3', JSON.stringify(list));
-            return list;
-          });
-        } else if (type === 'platforms') {
-          setPlatforms(prev => {
-            const list = prev.filter(p => p.id !== id);
-            localStorage.setItem('ai_ceo_platforms_v3', JSON.stringify(list));
-            return list;
-          });
-        }
-      };
-
-      // Selection Checkboxes
-      const toggleItemSelection = (id) => {
-        setSelectedItemIds(prev => {
-          const next = new Set(prev);
-          if (next.has(id)) next.delete(id);
-          else next.add(id);
-          return next;
-        });
-      };
-
-      // Send Selected via Email
-      const handleSendSelectedViaEmail = () => {
-        if (selectedItemIds.size === 0) return;
-
-        const allItems = [...projects, ...ideas, ...studies, ...mindsets, ...platforms];
-        const selectedList = allItems.filter(item => selectedItemIds.has(item.id));
-
-        let bodyText = `Executive Report - ${companyProfile.companyName}\nDate: ${new Date().toLocaleDateString()}\n\n`;
-        selectedList.forEach((item, index) => {
-          bodyText += `${index + 1}. ${item.title || item.quote || 'Untitled'}\n`;
-          if (item.company) bodyText += `   Company: ${item.company}\n`;
-          if (item.category) bodyText += `   Category: ${item.category}\n`;
-          if (item.status) bodyText += `   Status: ${item.status} (${item.progress}%)\n`;
-          if (item.objective) bodyText += `   Objective: ${item.objective}\n`;
-          if (item.urls) bodyText += `   URLs: ${item.urls}\n`;
-          bodyText += `\n`;
-        });
-
-        const mailtoUrl = `mailto:?subject=${encodeURIComponent(`[AI-CEO Report] ${companyProfile.companyName} Updates`)}&body=${encodeURIComponent(bodyText)}`;
-        window.location.href = mailtoUrl;
-      };
-
-      // CSV Data Export
-      const handleExportCSV = () => {
-        let csv = "Type,Title/Quote,Category,Company/Details,Status/Progress,Objective/Prompt,URLs,Date\n";
-
-        projects.forEach(p => {
-          csv += `"Project","${(p.title||'').replace(/"/g, '""')}","${p.category||''}","${p.company||''}","${p.status} (${p.progress}%)","${(p.objective||'').replace(/"/g, '""')}","${p.urls||''}","${p.updatedAt||''}"\n`;
-        });
-        ideas.forEach(i => {
-          csv += `"Idea","${(i.title||'').replace(/"/g, '""')}","${i.category||''}","${(i.content||'').replace(/"/g, '""')}","Stars: ${i.stars||0}","N/A","${i.urls||''}","${i.createdAt||''}"\n`;
-        });
-        studies.forEach(s => {
-          csv += `"Study","${(s.title||'').replace(/"/g, '""')}","RnD","${(s.summary||'').replace(/"/g, '""')}","N/A","N/A","${s.urls||''}","${s.createdAt||''}"\n`;
-        });
-        mindsets.forEach(m => {
-          csv += `"Mindset","${(m.quote||'').replace(/"/g, '""')}","Executive","N/A","N/A","N/A","N/A","${m.createdAt||''}"\n`;
-        });
-
-        const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csv);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `AI_CEO_Executive_Export_${new Date().toISOString().split('T')[0]}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      };
-
-      // Copy Markdown Context for AI
-      const handleCopyForAI = (item) => {
-        let md = '';
-        if (item) {
-          md = `### [${item.category || 'Executive'}] ${item.title}\n`;
-          if (item.company) md += `**Company**: ${item.company}\n`;
-          if (item.objective) md += `**Objective**: ${item.objective}\n`;
-          if (item.aiPrompt) md += `**AI Prompt Vector**: ${item.aiPrompt}\n`;
-          if (item.content || item.summary) md += `**Content**: ${item.content || item.summary}\n`;
-          if (item.urls) md += `**URLs**: ${item.urls}\n`;
-        } else {
-          md = `# AI-CEO Executive Memory & Context\nCompany: ${companyProfile.companyName}\n\n`;
-          md += `## Daily Mindset\n> ${dailyFocus}\n\n`;
-          md += `## Projects (${projects.length})\n`;
-          projects.forEach(p => {
-            md += `- **[${p.category}] ${p.title}** (${p.company}) | Progress: ${p.progress}%\n  Objective: ${p.objective || 'N/A'}\n  Prompt Vector: ${p.aiPrompt || 'N/A'}\n  URLs: ${p.urls || 'None'}\n`;
-          });
-        }
-
-        navigator.clipboard.writeText(md);
-        alert('Copied Markdown prompt context for AI to clipboard!');
-      };
-
-      // Filtered Projects
-      const filteredProjects = useMemo(() => {
-        let list = projects.filter(p => {
-          const matchCat = selectedProjectCategory === 'All' || p.category === selectedProjectCategory;
-          const matchStar = !onlyStarredProjects || p.isStarred;
-          const matchQuery = !globalSearch.trim() || 
-            p.title.toLowerCase().includes(globalSearch.toLowerCase()) ||
-            p.company.toLowerCase().includes(globalSearch.toLowerCase()) ||
-            (p.objective && p.objective.toLowerCase().includes(globalSearch.toLowerCase()));
-          return matchCat && matchStar && matchQuery;
-        });
-
-        if (sortByProgress) {
-          list = [...list].sort((a, b) => b.progress - a.progress);
-        }
-        return list;
-      }, [projects, selectedProjectCategory, onlyStarredProjects, globalSearch, sortByProgress]);
-
-      // Filtered Ideas
-      const filteredIdeas = useMemo(() => {
-        return ideas.filter(i => {
-          const matchCat = selectedIdeaCategory === 'All' || i.category === selectedIdeaCategory;
-          const matchQuery = !globalSearch.trim() || 
-            i.title.toLowerCase().includes(globalSearch.toLowerCase()) ||
-            i.content.toLowerCase().includes(globalSearch.toLowerCase());
-          return matchCat && matchQuery;
-        });
-      }, [ideas, selectedIdeaCategory, globalSearch]);
-
-      // Filtered Studies
-      const filteredStudies = useMemo(() => {
-        return studies.filter(s => {
-          return !globalSearch.trim() || 
-            s.title.toLowerCase().includes(globalSearch.toLowerCase()) ||
-            (s.summary && s.summary.toLowerCase().includes(globalSearch.toLowerCase()));
-        });
-      }, [studies, globalSearch]);
-
-      // Metrics
-      const totalProjects = projects.length;
-      const inProgressProjects = projects.filter(p => p.status === 'In Progress').length;
-      const starredIdeasCount = ideas.filter(i => i.stars >= 1).length;
-      const totalStudies = studies.length;
-      const activePlatforms = platforms.length;
-
-      return (
-        <div className="min-h-screen bg-stone-950 text-amber-100 flex flex-col font-sans pb-24">
-          
-          {/* 1. STICKY TOP NAVIGATION BAR */}
-          <header className="sticky top-0 z-50 executive-nav">
-            <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-              
-              {/* Left Title & Briefcase Icon (Click to Scroll to Top) */}
-              <button
-                onClick={scrollToTop}
-                className="flex items-center space-x-3 text-left group cursor-pointer focus:outline-none"
-                title="Scroll to Top"
-              >
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900 border border-amber-500/40 flex items-center justify-center text-amber-200 shadow-lg group-hover:scale-105 transition-transform">
-                  <Icon name="briefcase" className="w-5 h-5" />
-                </div>
-                <div>
-                  <h1 className="font-serif font-bold text-xl tracking-wide text-amber-200 group-hover:text-amber-100 transition-colors">
-                    AI-CEO
-                  </h1>
-                  <p className="text-[11px] text-stone-400 font-medium tracking-tight">
-                    Executive Ai Mgnt. System
-                  </p>
-                </div>
-              </button>
-
-              {/* Right Action Menu */}
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); }}
-                  className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs transition-all shadow-md flex items-center space-x-1"
-                >
-                  <Icon name="plus" className="w-3.5 h-3.5" />
-                  <span>+ Project</span>
-                </button>
-
-                <button
-                  onClick={() => { setEditingIdea(null); setIsIdeaModalOpen(true); }}
-                  className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-200 border border-amber-900/40 text-xs font-semibold transition-all hidden sm:flex items-center space-x-1"
-                >
-                  <Icon name="lightbulb" className="w-3.5 h-3.5 text-amber-400" />
-                  <span>+ Idea</span>
-                </button>
-
-                <button
-                  onClick={() => scrollToSection('study-section')}
-                  className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 text-xs font-semibold transition-all hidden md:flex items-center space-x-1"
-                >
-                  <Icon name="bookOpen" className="w-3.5 h-3.5 text-stone-400" />
-                  <span>Study</span>
-                </button>
-
-                <button
-                  onClick={() => scrollToSection('mindset-section')}
-                  className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 text-xs font-semibold transition-all hidden md:flex items-center space-x-1"
-                >
-                  <Icon name="target" className="w-3.5 h-3.5 text-amber-500" />
-                  <span>Mindset</span>
-                </button>
-
-                <button
-                  onClick={() => scrollToSection('platforms-section')}
-                  className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 text-xs font-semibold transition-all hidden lg:flex items-center space-x-1"
-                >
-                  <Icon name="globe" className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Platforms</span>
-                </button>
-
-                <button
-                  onClick={() => setIsProfileModalOpen(true)}
-                  className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 text-xs font-semibold transition-all flex items-center space-x-1"
-                  title="Profile Settings"
-                >
-                  <Icon name="user" className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="hidden sm:inline">Profile</span>
-                </button>
-
-                <button
-                  onClick={handleExportCSV}
-                  className="px-2.5 py-1.5 rounded-xl bg-amber-950/60 hover:bg-amber-900/60 text-amber-300 border border-amber-800/50 text-xs font-semibold transition-all flex items-center space-x-1"
-                  title="Export All Data as CSV"
-                >
-                  <Icon name="download" className="w-3.5 h-3.5" />
-                </button>
-
-                {user ? (
-                  <button
-                    onClick={() => firebase.auth().signOut()}
-                    className="p-1.5 rounded-xl bg-stone-800 hover:bg-red-950/50 text-stone-400 hover:text-red-400 border border-stone-700 text-xs transition-all"
-                    title="Log Out"
-                  >
-                    <Icon name="logOut" className="w-4 h-4" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setIsAuthModalOpen(true)}
-                    className="px-3 py-1.5 rounded-xl bg-amber-700 hover:bg-amber-600 text-stone-950 font-bold text-xs transition-all shadow-md"
-                  >
-                    LogIn
-                  </button>
-                )}
-              </div>
-            </div>
-          </header>
-
-          {/* 2. DAILY EXECUTIVE FOCUS BANNER */}
-          <div className="bg-gradient-to-r from-stone-900 via-amber-950/40 to-stone-900 border-b border-amber-900/30 px-4 py-3 text-center">
-            <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-3">
-              <span className="text-amber-500 font-bold text-xs uppercase tracking-widest flex items-center space-x-1 shrink-0">
-                <Icon name="sparkles" className="w-3.5 h-3.5" />
-                <span>Daily Executive Focus:</span>
-              </span>
-              <p className="font-serif italic text-amber-200 text-sm sm:text-base font-medium">
-                "{dailyFocus}"
-              </p>
-            </div>
-          </div>
-
-          {/* MAIN CONTENT AREA */}
-          <main className="max-w-7xl w-full mx-auto px-4 py-6 space-y-8">
-
-            {/* 3. RESTORED SLIM STATUS DASHBOARD METRIC BAR */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-              <button
-                onClick={() => scrollToSection('projects-section')}
-                className="executive-card executive-card-hover p-3.5 rounded-2xl text-left border border-amber-900/30 group"
-              >
-                <div className="flex items-center justify-between text-stone-400 text-xs font-semibold mb-1">
-                  <span>Total Projects</span>
-                  <Icon name="folder" className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform" />
-                </div>
-                <div className="text-2xl font-serif font-bold text-amber-100">{totalProjects}</div>
-              </button>
-
-              <button
-                onClick={() => scrollToSection('projects-section')}
-                className="executive-card executive-card-hover p-3.5 rounded-2xl text-left border border-amber-900/30 group"
-              >
-                <div className="flex items-center justify-between text-stone-400 text-xs font-semibold mb-1">
-                  <span>In Progress</span>
-                  <Icon name="sparkles" className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
-                </div>
-                <div className="text-2xl font-serif font-bold text-amber-300">{inProgressProjects}</div>
-              </button>
-
-              <button
-                onClick={() => scrollToSection('ideas-section')}
-                className="executive-card executive-card-hover p-3.5 rounded-2xl text-left border border-amber-900/30 group"
-              >
-                <div className="flex items-center justify-between text-stone-400 text-xs font-semibold mb-1">
-                  <span>Starred Ideas</span>
-                  <Icon name="star" className="w-4 h-4 text-amber-400 fill-amber-400 group-hover:scale-110 transition-transform" />
-                </div>
-                <div className="text-2xl font-serif font-bold text-amber-200">{starredIdeasCount}</div>
-              </button>
-
-              <button
-                onClick={() => scrollToSection('study-section')}
-                className="executive-card executive-card-hover p-3.5 rounded-2xl text-left border border-amber-900/30 group"
-              >
-                <div className="flex items-center justify-between text-stone-400 text-xs font-semibold mb-1">
-                  <span>Total Study</span>
-                  <Icon name="bookOpen" className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform" />
-                </div>
-                <div className="text-2xl font-serif font-bold text-amber-100">{totalStudies}</div>
-              </button>
-
-              <button
-                onClick={() => scrollToSection('platforms-section')}
-                className="executive-card executive-card-hover p-3.5 rounded-2xl text-left border border-amber-900/30 group col-span-2 sm:col-span-1"
-              >
-                <div className="flex items-center justify-between text-stone-400 text-xs font-semibold mb-1">
-                  <span>Active Platforms</span>
-                  <Icon name="globe" className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
-                </div>
-                <div className="text-2xl font-serif font-bold text-amber-200">{activePlatforms}</div>
-              </button>
-            </div>
-
-            {/* 4. UNIFIED GLOBAL SEARCH BAR */}
-            <div className="executive-card rounded-2xl p-4 space-y-3">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="relative w-full sm:flex-1">
-                  <Icon name="search" className="w-4 h-4 text-amber-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    placeholder="Search Projects, Ideas, Study topics across the entire system..."
-                    value={globalSearch}
-                    onChange={(e) => setGlobalSearch(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 rounded-xl bg-stone-950 border border-stone-800 text-sm text-stone-200 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-600/50"
-                  />
-                  {globalSearch && (
-                    <button
-                      onClick={() => setGlobalSearch('')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300"
-                    >
-                      <Icon name="x" className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-
-                <div className="flex items-center space-x-1 bg-stone-950 p-1 rounded-xl border border-stone-800 self-start sm:self-auto">
-                  {['All', 'Projects', 'Ideas', 'Study'].map(tab => (
-                    <button
-                      key={tab}
-                      onClick={() => setSearchTab(tab)}
-                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
-                        searchTab === tab
-                          ? 'bg-amber-600 text-stone-950 font-bold'
-                          : 'text-stone-400 hover:text-stone-200'
-                      }`}
-                    >
-                      {tab}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* 5. BULK SELECTION ACTION FLOATING BAR */}
-            {selectedItemIds.size > 0 && (
-              <div className="sticky top-16 z-40 executive-card rounded-2xl p-3 border border-amber-600/60 bg-amber-950/80 shadow-2xl flex items-center justify-between animate-fade-in">
-                <div className="flex items-center space-x-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
-                  <span className="text-xs font-bold text-amber-200">
-                    {selectedItemIds.size} Items Selected for Export
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setSelectedItemIds(new Set())}
-                    className="px-2.5 py-1 rounded-lg text-xs font-semibold text-stone-400 hover:text-white"
-                  >
-                    Clear
-                  </button>
-                  <button
-                    onClick={handleSendSelectedViaEmail}
-                    className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs flex items-center space-x-1.5 shadow-md transition-all"
-                  >
-                    <Icon name="mail" className="w-3.5 h-3.5" />
-                    <span>Send Selected via Email</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* 6. PROJECTS SECTION */}
-            {(searchTab === 'All' || searchTab === 'Projects') && (
-              <section id="projects-section" className="space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-800 pb-3">
-                  <div className="flex items-center space-x-2">
-                    <Icon name="folder" className="w-5 h-5 text-amber-500" />
-                    <h2 className="font-serif font-bold text-xl text-stone-100">Executive Projects</h2>
-                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800/40">
-                      {filteredProjects.length}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    {/* Category Filter */}
-                    <select
-                      value={selectedProjectCategory}
-                      onChange={(e) => setSelectedProjectCategory(e.target.value)}
-                      className="px-2.5 py-1.5 rounded-xl bg-stone-900 border border-stone-800 text-xs font-semibold text-stone-300 focus:outline-none cursor-pointer"
-                    >
-                      <option value="All">All Categories</option>
-                      {projectCategories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                      ))}
-                    </select>
-
-                    {/* Manage Project Categories */}
-                    <button
-                      onClick={() => { setCategoryModalType('Project'); setIsCategoryModalOpen(true); }}
-                      className="p-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-400 border border-stone-800 text-xs"
-                      title="Manage Project Categories"
-                    >
-                      <Icon name="tag" className="w-3.5 h-3.5 text-amber-400" />
-                    </button>
-
-                    {/* Progress Sort Button */}
-                    <button
-                      onClick={() => setSortByProgress(!sortByProgress)}
-                      className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-1 border transition-all ${
-                        sortByProgress
-                          ? 'bg-amber-600 text-stone-950 font-bold border-amber-500'
-                          : 'bg-stone-900 text-stone-300 border-stone-800 hover:bg-stone-800'
-                      }`}
-                      title="Sort by Progress %"
-                    >
-                      <Icon name="sort" className="w-3.5 h-3.5" />
-                      <span>Sort Progress</span>
-                    </button>
-
-                    {/* Star Filter Button */}
-                    <button
-                      onClick={() => setOnlyStarredProjects(!onlyStarredProjects)}
-                      className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-1 border transition-all ${
-                        onlyStarredProjects
-                          ? 'bg-amber-500 text-stone-950 font-bold border-amber-400'
-                          : 'bg-stone-900 text-stone-300 border-stone-800 hover:bg-stone-800'
-                      }`}
-                    >
-                      <Icon name="star" className={`w-3.5 h-3.5 ${onlyStarredProjects ? 'fill-stone-950' : 'text-amber-400'}`} />
-                      <span>Starred</span>
-                    </button>
-
-                    <button
-                      onClick={() => { setEditingProject(null); setIsProjectModalOpen(true); }}
-                      className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs flex items-center space-x-1 shadow-md"
-                    >
-                      <Icon name="plus" className="w-3.5 h-3.5" />
-                      <span>+ New Project</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Projects Grid */}
-                {filteredProjects.length === 0 ? (
-                  <div className="text-center py-12 executive-card rounded-2xl border border-dashed border-stone-800">
-                    <p className="text-xs text-stone-500 font-medium">No projects found in this view.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredProjects.map((project) => {
-                      const isSelected = selectedItemIds.has(project.id);
-
-                      return (
-                        <div
-                          key={project.id}
-                          className={`executive-card executive-card-hover rounded-2xl p-4 flex flex-col justify-between space-y-3 ${
-                            isSelected ? 'ring-2 ring-amber-500 bg-amber-950/20' : ''
-                          }`}
-                        >
-                          <div>
-                            {/* Card Header */}
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center space-x-2">
-                                <input
-                                  type="checkbox"
-                                  checked={isSelected}
-                                  onChange={() => toggleItemSelection(project.id)}
-                                  className="w-4 h-4 rounded bg-stone-950 border-stone-700 text-amber-600 focus:ring-amber-500 cursor-pointer"
-                                />
-                                <span className="text-lg">{project.emoji || '💼'}</span>
-                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-950/80 text-amber-300 border border-amber-800/40">
-                                  {project.category}
-                                </span>
-                              </div>
-
-                              <div className="flex items-center space-x-1">
-                                <button
-                                  onClick={() => {
-                                    saveEntity('projects', { ...project, isStarred: !project.isStarred });
-                                  }}
-                                  className="p-1 rounded hover:bg-stone-800"
-                                >
-                                  <Icon
-                                    name="star"
-                                    className={`w-4 h-4 ${project.isStarred ? 'fill-amber-400 text-amber-400' : 'text-stone-600'}`}
-                                  />
-                                </button>
-
-                                <button
-                                  onClick={() => { setEditingProject(project); setIsProjectModalOpen(true); }}
-                                  className="p-1 rounded hover:bg-stone-800 text-stone-400 hover:text-stone-200"
-                                >
-                                  <Icon name="edit" className="w-3.5 h-3.5" />
-                                </button>
-
-                                <button
-                                  onClick={() => deleteEntity('projects', project.id)}
-                                  className="p-1 rounded hover:bg-stone-800 text-stone-500 hover:text-red-400"
-                                >
-                                  <Icon name="trash" className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-                            </div>
-
-                            {/* Title & Company */}
-                            <h3 className="font-serif font-bold text-base text-amber-100 leading-snug">
-                              {project.title}
-                            </h3>
-                            {project.company && (
-                              <p className="text-xs text-stone-400 font-medium mt-0.5">
-                                Organization: <span className="text-amber-200/90">{project.company}</span>
-                              </p>
-                            )}
-
-                            {/* One-Line Objective */}
-                            {project.objective && (
-                              <div className="mt-2 text-xs bg-stone-950/70 p-2.5 rounded-xl border border-stone-800/80 text-stone-300">
-                                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block mb-0.5">One-Line Objective:</span>
-                                {project.objective}
-                              </div>
-                            )}
-
-                            {/* Inline URLs */}
-                            {project.urls && (
-                              <div className="mt-2">
-                                <InlineUrls urls={project.urls} />
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Footer Progress & Status */}
-                          <div className="pt-2 border-t border-stone-800/80 space-y-2">
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-stone-400 font-medium">{project.status}</span>
-                              <span className="font-mono font-bold text-amber-400">{project.progress}%</span>
-                            </div>
-
-                            {/* Progress Bar */}
-                            <div className="w-full bg-stone-950 rounded-full h-1.5 overflow-hidden border border-stone-800">
-                              <div
-                                className="bg-gradient-to-r from-amber-600 to-amber-400 h-1.5 rounded-full transition-all duration-300"
-                                style={{ width: `${project.progress}%` }}
-                              />
-                            </div>
-
-                            <div className="flex items-center justify-between pt-1">
-                              <span className="text-[10px] font-mono text-stone-500">Updated: {project.updatedAt}</span>
-                              <button
-                                onClick={() => handleCopyForAI(project)}
-                                className="text-[10px] font-semibold text-amber-400 hover:underline flex items-center space-x-1"
-                              >
-                                <Icon name="copy" className="w-3 h-3" />
-                                <span>Copy for AI</span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </section>
-            )}
-
-            {/* 7. IDEAS SECTION */}
-            {(searchTab === 'All' || searchTab === 'Ideas') && (
-              <section id="ideas-section" className="space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-800 pb-3">
-                  <div className="flex items-center space-x-2">
-                    <Icon name="lightbulb" className="w-5 h-5 text-amber-400" />
-                    <h2 className="font-serif font-bold text-xl text-stone-100">Executive Ideas</h2>
-                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800/40">
-                      {filteredIdeas.length}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    {/* Idea Category Filter */}
-                    <select
-                      value={selectedIdeaCategory}
-                      onChange={(e) => setSelectedIdeaCategory(e.target.value)}
-                      className="px-2.5 py-1.5 rounded-xl bg-stone-900 border border-stone-800 text-xs font-semibold text-stone-300 focus:outline-none cursor-pointer"
-                    >
-                      <option value="All">All Categories</option>
-                      {ideaCategories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                      ))}
-                    </select>
-
-                    <button
-                      onClick={() => { setCategoryModalType('Idea'); setIsCategoryModalOpen(true); }}
-                      className="p-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-400 border border-stone-800 text-xs"
-                      title="Manage Idea Categories"
-                    >
-                      <Icon name="tag" className="w-3.5 h-3.5 text-amber-400" />
-                    </button>
-
-                    <button
-                      onClick={() => { setEditingIdea(null); setIsIdeaModalOpen(true); }}
-                      className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-200 border border-amber-900/40 text-xs font-semibold flex items-center space-x-1"
-                    >
-                      <Icon name="plus" className="w-3.5 h-3.5" />
-                      <span>+ New Idea</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Ideas Grid */}
-                {filteredIdeas.length === 0 ? (
-                  <div className="text-center py-10 executive-card rounded-2xl border border-dashed border-stone-800">
-                    <p className="text-xs text-stone-500 font-medium">No executive ideas recorded yet.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {filteredIdeas.map((idea) => {
-                      const isSelected = selectedItemIds.has(idea.id);
-
-                      return (
-                        <div
-                          key={idea.id}
-                          className={`executive-card executive-card-hover rounded-2xl p-4 flex flex-col justify-between space-y-3 ${
-                            isSelected ? 'ring-2 ring-amber-500 bg-amber-950/20' : ''
-                          }`}
-                        >
-                          <div>
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center space-x-2">
-                                <input
-                                  type="checkbox"
-                                  checked={isSelected}
-                                  onChange={() => toggleItemSelection(idea.id)}
-                                  className="w-4 h-4 rounded bg-stone-950 border-stone-700 text-amber-600 focus:ring-amber-500 cursor-pointer"
-                                />
-                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-stone-800 text-amber-300 border border-stone-700">
-                                  {idea.category || 'General'}
-                                </span>
-                              </div>
-
-                              {/* Star Rating (1-3 Stars) & Actions */}
-                              <div className="flex items-center space-x-1">
-                                <div className="flex items-center space-x-0.5 bg-stone-950 px-2 py-0.5 rounded-lg border border-stone-800">
-                                  {[1, 2, 3].map(s => (
-                                    <button
-                                      key={s}
-                                      onClick={() => saveEntity('ideas', { ...idea, stars: s })}
-                                      className="focus:outline-none"
-                                    >
-                                      <Icon
-                                        name="star"
-                                        className={`w-3.5 h-3.5 ${s <= (idea.stars || 0) ? 'fill-amber-400 text-amber-400' : 'text-stone-700'}`}
-                                      />
-                                    </button>
-                                  ))}
-                                </div>
-
-                                <button
-                                  onClick={() => { setEditingIdea(idea); setIsIdeaModalOpen(true); }}
-                                  className="p-1 rounded hover:bg-stone-800 text-stone-400 hover:text-stone-200"
-                                >
-                                  <Icon name="edit" className="w-3.5 h-3.5" />
-                                </button>
-
-                                <button
-                                  onClick={() => deleteEntity('ideas', idea.id)}
-                                  className="p-1 rounded hover:bg-stone-800 text-stone-500 hover:text-red-400"
-                                >
-                                  <Icon name="trash" className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-                            </div>
-
-                            <h3 className="font-serif font-bold text-base text-amber-100">
-                              {idea.title}
-                            </h3>
-
-                            {idea.content && (
-                              <p className="text-xs text-stone-300 mt-1.5 leading-relaxed">
-                                {idea.content}
-                              </p>
-                            )}
-
-                            {idea.urls && (
-                              <div className="mt-2">
-                                <InlineUrls urls={idea.urls} />
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="pt-2 border-t border-stone-800/80 flex items-center justify-between text-[10px] text-stone-500 font-mono">
-                            <span>Created: {idea.createdAt}</span>
-                            <button
-                              onClick={() => handleCopyForAI(idea)}
-                              className="font-sans font-semibold text-amber-400 hover:underline flex items-center space-x-1"
-                            >
-                              <Icon name="copy" className="w-3 h-3" />
-                              <span>Copy for AI</span>
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </section>
-            )}
-
-            {/* 8. STUDY (RnD) SECTION */}
-            {(searchTab === 'All' || searchTab === 'Study') && (
-              <section id="study-section" className="space-y-4">
-                <div className="flex items-center justify-between border-b border-stone-800 pb-3">
-                  <div className="flex items-center space-x-2">
-                    <Icon name="bookOpen" className="w-5 h-5 text-amber-500" />
-                    <h2 className="font-serif font-bold text-xl text-stone-100">RnD & Executive Study</h2>
-                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800/40">
-                      {filteredStudies.length}
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={() => setIsStudyModalOpen(true)}
-                    className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-200 border border-amber-900/40 text-xs font-semibold flex items-center space-x-1"
-                  >
-                    <Icon name="plus" className="w-3.5 h-3.5" />
-                    <span>+ Add Study</span>
-                  </button>
-                </div>
-
-                {filteredStudies.length === 0 ? (
-                  <div className="text-center py-8 executive-card rounded-2xl border border-dashed border-stone-800">
-                    <p className="text-xs text-stone-500 font-medium">No RnD studies logged.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {filteredStudies.map((study) => (
-                      <div key={study.id} className="executive-card rounded-2xl p-4 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-serif font-bold text-sm text-amber-100">{study.title}</h3>
-                          <button
-                            onClick={() => deleteEntity('studies', study.id)}
-                            className="text-stone-500 hover:text-red-400 p-1"
-                          >
-                            <Icon name="trash" className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                        {study.summary && <p className="text-xs text-stone-300 leading-relaxed">{study.summary}</p>}
-                        {study.urls && <InlineUrls urls={study.urls} />}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-            )}
-
-            {/* 9. MINDSET SECTION */}
-            <section id="mindset-section" className="space-y-4">
-              <div className="flex items-center justify-between border-b border-stone-800 pb-3">
-                <div className="flex items-center space-x-2">
-                  <Icon name="target" className="w-5 h-5 text-amber-400" />
-                  <h2 className="font-serif font-bold text-xl text-stone-100">Executive Mindsets</h2>
-                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800/40">
-                    {mindsets.length}
-                  </span>
-                </div>
-
-                <button
-                  onClick={() => setIsMindsetModalOpen(true)}
-                  className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-200 border border-amber-900/40 text-xs font-semibold flex items-center space-x-1"
-                >
-                  <Icon name="plus" className="w-3.5 h-3.5" />
-                  <span>+ Add Mindset</span>
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {mindsets.map((m) => (
-                  <div key={m.id} className="executive-card rounded-2xl p-4 flex items-start justify-between space-x-3">
-                    <div className="space-y-1">
-                      <p className="font-serif italic text-amber-200 text-sm">"{m.quote}"</p>
-                      <span className="text-[10px] font-mono text-stone-500 block">Logged: {m.createdAt}</span>
-                    </div>
-                    <button
-                      onClick={() => deleteEntity('mindsets', m.id)}
-                      className="text-stone-500 hover:text-red-400 p-1"
-                    >
-                      <Icon name="trash" className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* 10. PLATFORMS SECTION (Up to 50 Platforms) */}
-            <section id="platforms-section" className="space-y-4">
-              <div className="flex items-center justify-between border-b border-stone-800 pb-3">
-                <div className="flex items-center space-x-2">
-                  <Icon name="globe" className="w-5 h-5 text-amber-400" />
-                  <h2 className="font-serif font-bold text-xl text-stone-100">Platforms ({platforms.length}/50)</h2>
-                </div>
-
-                <button
-                  onClick={() => setIsPlatformModalOpen(true)}
-                  className="px-3 py-1.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-200 border border-amber-900/40 text-xs font-semibold flex items-center space-x-1"
-                >
-                  <Icon name="plus" className="w-3.5 h-3.5" />
-                  <span>+ Add Platform</span>
-                </button>
-              </div>
-
-              {platforms.length === 0 ? (
-                <div className="text-center py-8 executive-card rounded-2xl border border-dashed border-stone-800">
-                  <p className="text-xs text-stone-500 font-medium">No external platforms connected.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {platforms.map(plat => (
-                    <div key={plat.id} className="executive-card rounded-2xl p-3 flex items-center justify-between space-x-2 group">
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center space-x-1.5">
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-stone-800 text-amber-300">
-                            {plat.category || 'General'}
-                          </span>
-                          <span className="font-bold text-xs text-amber-100 truncate">{plat.title}</span>
-                        </div>
-                        <div className="mt-1">
-                          <InlineUrls urls={plat.urls} />
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => deleteEntity('platforms', plat.id)}
-                        className="text-stone-500 hover:text-red-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <Icon name="trash" className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
-
-          </main>
-
-          {/* MODALS */}
-
-          {/* Project Modal */}
-          {isProjectModalOpen && (
-            <ProjectModal
-              isOpen={isProjectModalOpen}
-              onClose={() => setIsProjectModalOpen(false)}
-              onSave={(data) => {
-                saveEntity('projects', data);
-                setIsProjectModalOpen(false);
-              }}
-              initialData={editingProject}
-              categories={projectCategories}
-            />
-          )}
-
-          {/* Idea Modal */}
-          {isIdeaModalOpen && (
-            <IdeaModal
-              isOpen={isIdeaModalOpen}
-              onClose={() => setIsIdeaModalOpen(false)}
-              onSave={(data) => {
-                saveEntity('ideas', data);
-                setIsIdeaModalOpen(false);
-              }}
-              initialData={editingIdea}
-              categories={ideaCategories}
-            />
-          )}
-
-          {/* Simple Inputs Modals */}
-          {isStudyModalOpen && (
-            <SimpleInputModal
-              title="Add RnD Study Topic"
-              fields={[
-                { name: 'title', label: 'Study Title', required: true },
-                { name: 'summary', label: 'Key Summary / Findings', type: 'textarea' },
-                { name: 'urls', label: 'Multi URLs', placeholder: 'Enter multiple URLs separated by commas' }
-              ]}
-              onClose={() => setIsStudyModalOpen(false)}
-              onSave={(data) => { saveEntity('studies', data); setIsStudyModalOpen(false); }}
-            />
-          )}
-
-          {isMindsetModalOpen && (
-            <SimpleInputModal
-              title="Add Executive Mindset"
-              fields={[
-                { name: 'quote', label: 'Executive Mindset Quote', required: true, type: 'textarea' }
-              ]}
-              onClose={() => setIsMindsetModalOpen(false)}
-              onSave={(data) => { saveEntity('mindsets', data); setIsMindsetModalOpen(false); }}
-            />
-          )}
-
-          {isPlatformModalOpen && (
-            <SimpleInputModal
-              title="Add External Platform"
-              fields={[
-                { name: 'category', label: 'Platform Category' },
-                { name: 'title', label: 'Platform Title', required: true },
-                { name: 'urls', label: 'Multi URLs', placeholder: 'Enter multiple URLs separated by commas' }
-              ]}
-              onClose={() => setIsPlatformModalOpen(false)}
-              onSave={(data) => { saveEntity('platforms', data); setIsPlatformModalOpen(false); }}
-            />
-          )}
-
-          {/* Category Management Modal */}
-          {isCategoryModalOpen && (
-            <CategoryManagerModal
-              type={categoryModalType}
-              categories={categoryModalType === 'Project' ? projectCategories : ideaCategories}
-              onClose={() => setIsCategoryModalOpen(false)}
-              onUpdate={(newList) => {
-                if (categoryModalType === 'Project') {
-                  setProjectCategories(newList);
-                  localStorage.setItem('ai_ceo_proj_cat_v3', JSON.stringify(newList));
-                } else {
-                  setIdeaCategories(newList);
-                  localStorage.setItem('ai_ceo_idea_cat_v3', JSON.stringify(newList));
-                }
-              }}
-            />
-          )}
-
-          {/* Company Profile Modal */}
-          {isProfileModalOpen && (
-            <ProfileModal
-              profile={companyProfile}
-              onClose={() => setIsProfileModalOpen(false)}
-              onSave={(updated) => {
-                setCompanyProfile(updated);
-                localStorage.setItem('ai_ceo_profile_v3', JSON.stringify(updated));
-                setIsProfileModalOpen(false);
-              }}
-            />
-          )}
-
-          {/* Firebase Auth Modal */}
-          {isAuthModalOpen && (
-            <AuthModal
-              onClose={() => setIsAuthModalOpen(false)}
-              user={user}
-            />
-          )}
-
-        </div>
-      );
-    }
-
-    // --- MODAL COMPONENTS ---
-
-    // Project Modal
-    function ProjectModal({ isOpen, onClose, onSave, initialData, categories }) {
-      const [formData, setFormData] = useState({
-        id: initialData?.id || '',
-        category: initialData?.category || categories[0] || 'Head Quarter',
-        company: initialData?.company || '',
-        title: initialData?.title || '',
-        status: initialData?.status || 'In Progress',
-        progress: initialData?.progress || 50,
-        emoji: initialData?.emoji || '🚀',
-        objective: initialData?.objective || '',
-        aiPrompt: initialData?.aiPrompt || '',
-        urls: initialData?.urls || '',
-        isStarred: initialData?.isStarred || false
-      });
-
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        onSave(formData);
-      };
-
-      return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="executive-card rounded-3xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-stone-800 pb-3">
-              <h3 className="font-serif font-bold text-lg text-amber-100">
-                {initialData ? 'Edit Executive Project' : 'New Executive Project'}
-              </h3>
-              <button onClick={onClose} className="text-stone-500 hover:text-stone-200">
-                <Icon name="x" className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Emoji Selector */}
-              <div>
-                <label className="text-xs font-bold text-amber-300 block mb-1">Project Icon Emoji</label>
-                <div className="flex flex-wrap gap-2">
-                  {EMOJI_LIST.map(em => (
-                    <button
-                      key={em}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, emoji: em })}
-                      className={`text-lg p-2 rounded-xl transition-all ${
-                        formData.emoji === em ? 'bg-amber-600/40 ring-2 ring-amber-500 scale-110' : 'bg-stone-900 hover:bg-stone-800'
-                      }`}
-                    >
-                      {em}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-bold text-stone-300 block mb-1">Category *</label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                  >
-                    {categories.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-stone-300 block mb-1">Company / Sub-Brand</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. SISTAR Group"
-                    value={formData.company}
-                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-stone-300 block mb-1">Project Title *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Enter project title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-amber-300 block mb-1">One-Line Objective</label>
-                <input
-                  type="text"
-                  placeholder="State the core measurable success outcome"
-                  value={formData.objective}
-                  onChange={(e) => setFormData({ ...formData, objective: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-stone-300 block mb-1">AI Context & Prompt Vector</label>
-                <textarea
-                  rows={2}
-                  placeholder="Provide instruction context for AI assistant"
-                  value={formData.aiPrompt}
-                  onChange={(e) => setFormData({ ...formData, aiPrompt: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-bold text-stone-300 block mb-1">Status</label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                  >
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                    <option value="On Hold">On Hold</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-stone-300 block mb-1">Progress: {formData.progress}%</label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={formData.progress}
-                    onChange={(e) => setFormData({ ...formData, progress: Number(e.target.value) })}
-                    className="w-full accent-amber-600 cursor-pointer mt-2"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-stone-300 block mb-1">Multi URLs</label>
-                <input
-                  type="text"
-                  placeholder="Enter multiple URLs separated by commas"
-                  value={formData.urls}
-                  onChange={(e) => setFormData({ ...formData, urls: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600 font-mono"
-                />
-              </div>
-
-              <div className="flex justify-end space-x-2 pt-3 border-t border-stone-800">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2 rounded-xl bg-stone-900 text-stone-400 text-xs font-semibold hover:bg-stone-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs shadow-md"
-                >
-                  Save Project
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      );
-    }
-
-    // Idea Modal
-    function IdeaModal({ isOpen, onClose, onSave, initialData, categories }) {
-      const [formData, setFormData] = useState({
-        id: initialData?.id || '',
-        category: initialData?.category || categories[0] || 'Core Tech',
-        title: initialData?.title || '',
-        content: initialData?.content || '',
-        urls: initialData?.urls || '',
-        stars: initialData?.stars || 1,
-        isArchived: initialData?.isArchived || false
-      });
-
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        onSave(formData);
-      };
-
-      return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="executive-card rounded-3xl max-w-lg w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-stone-800 pb-3">
-              <h3 className="font-serif font-bold text-lg text-amber-100">
-                {initialData ? 'Edit Executive Idea' : 'New Executive Idea'}
-              </h3>
-              <button onClick={onClose} className="text-stone-500 hover:text-stone-200">
-                <Icon name="x" className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-bold text-stone-300 block mb-1">Category</label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                  >
-                    {categories.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-amber-300 block mb-1">Star Priority</label>
-                  <div className="flex items-center space-x-2 bg-stone-950 p-1.5 rounded-xl border border-stone-800">
-                    {[1, 2, 3].map(s => (
-                      <button
-                        type="button"
-                        key={s}
-                        onClick={() => setFormData({ ...formData, stars: s })}
-                        className={`px-2 py-1 rounded-lg text-xs font-bold flex items-center space-x-1 ${
-                          formData.stars === s ? 'bg-amber-600 text-stone-950' : 'text-stone-400 hover:text-white'
-                        }`}
-                      >
-                        <Icon name="star" className="w-3 h-3 fill-current" />
-                        <span>{s}★</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-stone-300 block mb-1">Idea Title *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Summarize the core innovation concept"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-stone-300 block mb-1">Description (Optional)</label>
-                <textarea
-                  rows={3}
-                  placeholder="Elaborate details or market opportunities"
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-stone-300 block mb-1">Multi URLs</label>
-                <input
-                  type="text"
-                  placeholder="Enter multiple URLs separated by commas"
-                  value={formData.urls}
-                  onChange={(e) => setFormData({ ...formData, urls: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600 font-mono"
-                />
-              </div>
-
-              <div className="flex justify-end space-x-2 pt-3 border-t border-stone-800">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2 rounded-xl bg-stone-900 text-stone-400 text-xs font-semibold hover:bg-stone-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs shadow-md"
-                >
-                  Save Idea
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      );
-    }
-
-    // Generic Simple Input Modal
-    function SimpleInputModal({ title, fields, onClose, onSave }) {
-      const [formData, setFormData] = useState({});
-
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        onSave(formData);
-      };
-
-      return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="executive-card rounded-3xl max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-stone-800 pb-3">
-              <h3 className="font-serif font-bold text-lg text-amber-100">{title}</h3>
-              <button onClick={onClose} className="text-stone-500 hover:text-stone-200">
-                <Icon name="x" className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {fields.map(field => (
-                <div key={field.name}>
-                  <label className="text-xs font-bold text-stone-300 block mb-1">{field.label}</label>
-                  {field.type === 'textarea' ? (
-                    <textarea
-                      rows={3}
-                      required={field.required}
-                      placeholder={field.placeholder || ''}
-                      value={formData[field.name] || ''}
-                      onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                    />
-                  ) : (
-                    <input
-                      type="text"
-                      required={field.required}
-                      placeholder={field.placeholder || ''}
-                      value={formData[field.name] || ''}
-                      onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                    />
-                  )}
-                </div>
-              ))}
-
-              <div className="flex justify-end space-x-2 pt-3 border-t border-stone-800">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2 rounded-xl bg-stone-900 text-stone-400 text-xs font-semibold hover:bg-stone-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs shadow-md"
-                >
-                  Save Entry
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      );
-    }
-
-    // Category Manager Modal
-    function CategoryManagerModal({ type, categories, onClose, onUpdate }) {
-      const [newCat, setNewCat] = useState('');
-
-      const handleAdd = (e) => {
-        e.preventDefault();
-        if (!newCat.trim()) return;
-        if (categories.length >= 30) {
-          alert('Maximum limit of 30 categories reached.');
-          return;
-        }
-        if (categories.includes(newCat.trim())) {
-          alert('Category already exists.');
-          return;
-        }
-        onUpdate([...categories, newCat.trim()]);
-        setNewCat('');
-      };
-
-      const handleDelete = (catName) => {
-        onUpdate(categories.filter(c => c !== catName));
-      };
-
-      return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="executive-card rounded-3xl max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-stone-800 pb-3">
-              <h3 className="font-serif font-bold text-lg text-amber-100">
-                Manage {type} Categories ({categories.length}/30)
-              </h3>
-              <button onClick={onClose} className="text-stone-500 hover:text-stone-200">
-                <Icon name="x" className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleAdd} className="flex items-center space-x-2">
-              <input
-                type="text"
-                placeholder={`+ Add ${type} Category`}
-                value={newCat}
-                onChange={(e) => setNewCat(e.target.value)}
-                className="flex-1 px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-              />
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs"
-              >
-                Add
-              </button>
-            </form>
-
-            <div className="max-h-60 overflow-y-auto space-y-1.5 pt-2">
-              {categories.map((c) => (
-                <div key={c} className="flex items-center justify-between px-3 py-2 rounded-xl bg-stone-950 border border-stone-800/80 text-xs">
-                  <span className="text-amber-200 font-medium">{c}</span>
-                  <button
-                    onClick={() => handleDelete(c)}
-                    className="text-stone-500 hover:text-red-400 p-1"
-                  >
-                    <Icon name="trash" className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Company Profile Modal
-    function ProfileModal({ profile, onClose, onSave }) {
-      const [data, setData] = useState(profile);
-
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        onSave(data);
-      };
-
-      return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="executive-card rounded-3xl max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-stone-800 pb-3">
-              <h3 className="font-serif font-bold text-lg text-amber-100">Company Profile Settings</h3>
-              <button onClick={onClose} className="text-stone-500 hover:text-stone-200">
-                <Icon name="x" className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="text-xs font-bold text-stone-300 block mb-1">Company / Group Name</label>
-                <input
-                  type="text"
-                  required
-                  value={data.companyName}
-                  onChange={(e) => setData({ ...data, companyName: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-stone-300 block mb-1">Logo Image URL</label>
-                <input
-                  type="text"
-                  placeholder="https://example.com/logo.png"
-                  value={data.logoUrl || ''}
-                  onChange={(e) => setData({ ...data, logoUrl: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                />
-              </div>
-
-              <div className="flex justify-end space-x-2 pt-3 border-t border-stone-800">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2 rounded-xl bg-stone-900 text-stone-400 text-xs font-semibold hover:bg-stone-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs shadow-md"
-                >
-                  Save Profile
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      );
-    }
-
-    // Auth Modal
-    function AuthModal({ onClose, user }) {
-      const [email, setEmail] = useState('');
-      const [password, setPassword] = useState('');
-
-      const handleGoogle = async () => {
-        if (!window.firebase || !firebase.apps.length) {
-          alert('Firebase SDK is initializing or not configured.');
+      // Auth Handlers
+      const handleGoogleLogin = async () => {
+        if (!firebase.apps.length) {
+          setIsConfigModalOpen(true);
           return;
         }
         try {
           const provider = new firebase.auth.GoogleAuthProvider();
           await firebase.auth().signInWithPopup(provider);
-          onClose();
-        } catch (err) {
-          alert(err.message);
+          setIsLoginModalOpen(false);
+        } catch (e) {
+          alert('Login Error: ' + e.message);
         }
       };
 
-      const handleEmail = async (e) => {
+      const handleEmailLogin = async (e, email, pass, isNew) => {
         e.preventDefault();
-        if (!window.firebase || !firebase.apps.length) return;
+        if (!firebase.apps.length) {
+          setIsConfigModalOpen(true);
+          return;
+        }
         try {
-          await firebase.auth().signInWithEmailAndPassword(email, password);
-          onClose();
-        } catch (err) {
-          try {
-            await firebase.auth().createUserWithEmailAndPassword(email, password);
-            onClose();
-          } catch (e2) {
-            alert(e2.message);
+          if (isNew) {
+            await firebase.auth().createUserWithEmailAndPassword(email, pass);
+          } else {
+            await firebase.auth().signInWithEmailAndPassword(email, pass);
           }
+          setIsLoginModalOpen(false);
+        } catch (e) {
+          alert('Auth Error: ' + e.message);
         }
       };
 
       return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="executive-card rounded-3xl max-w-sm w-full p-6 space-y-4 text-center">
-            <div className="flex items-center justify-between border-b border-stone-800 pb-3">
-              <h3 className="font-serif font-bold text-lg text-amber-100">Firebase Authentication</h3>
-              <button onClick={onClose} className="text-stone-500 hover:text-stone-200">
-                <Icon name="x" className="w-5 h-5" />
+        <div className="min-h-screen bg-appbg text-slate-800 flex flex-col font-sans">
+
+          {/* STICKY HEADER */}
+          <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+            <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+              {/* Title & Subtitle */}
+              <button
+                onClick={scrollToTop}
+                className="text-left focus:outline-none group cursor-pointer"
+                title="Click to Scroll to Top"
+              >
+                <div className="text-base font-bold text-slate-800 group-hover:text-accent-sky transition-colors">
+                  AI-CEO
+                </div>
+                <div className="text-[11px] text-slate-400 font-normal">
+                  Executive Ai Mgnt. System
+                </div>
               </button>
+
+              {/* Navigation Menu (Max 1-2 words per menu item) */}
+              <nav className="flex items-center space-x-3 text-xs font-medium text-slate-600">
+                <button onClick={() => scrollToSection('sec-projects')} className="hover:text-accent-sky transition-colors">Projects</button>
+                <button onClick={() => scrollToSection('sec-ideas')} className="hover:text-accent-sky transition-colors">Ideas</button>
+                <button onClick={() => scrollToSection('sec-study')} className="hover:text-accent-sky transition-colors">Study</button>
+                <button onClick={() => scrollToSection('sec-mindset')} className="hover:text-accent-sky transition-colors">Mindset</button>
+                <button onClick={() => scrollToSection('sec-platforms')} className="hover:text-accent-sky transition-colors">Platforms</button>
+                <button onClick={() => setIsProfileModalOpen(true)} className="hover:text-accent-sky transition-colors">Profile</button>
+                
+                {user ? (
+                  <button
+                    onClick={() => firebase.auth().signOut()}
+                    className="px-2.5 py-1 rounded bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setIsLoginModalOpen(true)}
+                    className="px-2.5 py-1 rounded bg-accent-sky text-white font-medium hover:bg-sky-600 transition-colors"
+                  >
+                    Login
+                  </button>
+                )}
+              </nav>
+            </div>
+          </header>
+
+          {/* MAIN CONTENT AREA */}
+          <main className="max-w-5xl w-full mx-auto px-4 py-6 space-y-8 flex-1">
+
+            {/* DAILY EXECUTIVE FOCUS BANNER */}
+            <div className="p-3.5 rounded-lg bg-accent-skylight border border-accent-skybg text-xs text-slate-700 flex items-center justify-between">
+              <div>
+                <span className="font-semibold text-accent-sky mr-2">• Focus:</span>
+                <span>{profile.dailyFocus || 'Execute with speed and extreme clarity.'}</span>
+              </div>
+              <span className="text-[11px] text-slate-400 font-normal">{profile.companyName}</span>
             </div>
 
-            {user ? (
-              <div className="space-y-3 py-4">
-                <p className="text-xs text-stone-300">Logged in as:</p>
-                <p className="font-bold text-amber-300 text-sm">{user.email}</p>
+            {/* 1. PROJECTS SECTION */}
+            <SectionContainer
+              id="sec-projects"
+              title="Projects"
+              count={projects.length}
+              page={pageProjects}
+              setPage={setPageProjects}
+              onAdd={() => setActiveModalItem({ type: 'projects', item: { title: '', category: 'HQ', details: '', status: 'In Progress', progress: 0, urls: '' }, isNew: true })}
+            >
+              {projects.slice(pageProjects * 10, (pageProjects + 1) * 10).map((proj) => (
+                <ListItemRow
+                  key={proj.id}
+                  title={proj.title}
+                  category={proj.category}
+                  badge={proj.status}
+                  urls={proj.urls}
+                  onClick={() => setActiveModalItem({ type: 'projects', item: proj, isNew: false })}
+                />
+              ))}
+            </SectionContainer>
+
+            {/* 2. IDEAS SECTION */}
+            <SectionContainer
+              id="sec-ideas"
+              title="Ideas"
+              count={ideas.length}
+              page={pageIdeas}
+              setPage={setPageIdeas}
+              onAdd={() => setActiveModalItem({ type: 'ideas', item: { title: '', details: '', urls: '' }, isNew: true })}
+            >
+              {ideas.slice(pageIdeas * 10, (pageIdeas + 1) * 10).map((idea) => (
+                <ListItemRow
+                  key={idea.id}
+                  title={idea.title}
+                  urls={idea.urls}
+                  onClick={() => setActiveModalItem({ type: 'ideas', item: idea, isNew: false })}
+                />
+              ))}
+            </SectionContainer>
+
+            {/* 3. STUDY SECTION */}
+            <SectionContainer
+              id="sec-study"
+              title="Study"
+              count={studies.length}
+              page={pageStudies}
+              setPage={setPageStudies}
+              onAdd={() => setActiveModalItem({ type: 'studies', item: { title: '', details: '', urls: '' }, isNew: true })}
+            >
+              {studies.slice(pageStudies * 10, (pageStudies + 1) * 10).map((std) => (
+                <ListItemRow
+                  key={std.id}
+                  title={std.title}
+                  urls={std.urls}
+                  onClick={() => setActiveModalItem({ type: 'studies', item: std, isNew: false })}
+                />
+              ))}
+            </SectionContainer>
+
+            {/* 4. MINDSET SECTION */}
+            <SectionContainer
+              id="sec-mindset"
+              title="Mindset"
+              count={mindsets.length}
+              page={pageMindsets}
+              setPage={setPageMindsets}
+              onAdd={() => setActiveModalItem({ type: 'mindsets', item: { title: '', details: '' }, isNew: true })}
+            >
+              {mindsets.slice(pageMindsets * 10, (pageMindsets + 1) * 10).map((mind) => (
+                <ListItemRow
+                  key={mind.id}
+                  title={mind.title}
+                  onClick={() => setActiveModalItem({ type: 'mindsets', item: mind, isNew: false })}
+                />
+              ))}
+            </SectionContainer>
+
+            {/* 5. PLATFORMS SECTION */}
+            <SectionContainer
+              id="sec-platforms"
+              title="Platforms"
+              count={platforms.length}
+              page={pagePlatforms}
+              setPage={setPagePlatforms}
+              onAdd={() => setActiveModalItem({ type: 'platforms', item: { title: '', urls: '' }, isNew: true })}
+            >
+              {platforms.slice(pagePlatforms * 10, (pagePlatforms + 1) * 10).map((plat) => (
+                <ListItemRow
+                  key={plat.id}
+                  title={plat.title}
+                  urls={plat.urls}
+                  onClick={() => setActiveModalItem({ type: 'platforms', item: plat, isNew: false })}
+                />
+              ))}
+            </SectionContainer>
+
+          </main>
+
+          {/* ITEM DETAIL & EDIT MODAL */}
+          {activeModalItem && (
+            <ItemModal
+              modalData={activeModalItem}
+              onClose={() => setActiveModalItem(null)}
+              onSave={saveItem}
+              onDelete={deleteItem}
+            />
+          )}
+
+          {/* PROFILE MODAL */}
+          {isProfileModalOpen && (
+            <ProfileModal
+              profile={profile}
+              onClose={() => setIsProfileModalOpen(false)}
+              onSave={saveProfileData}
+              user={user}
+              onOpenConfig={() => setIsConfigModalOpen(true)}
+            />
+          )}
+
+          {/* LOGIN MODAL */}
+          {isLoginModalOpen && (
+            <LoginModal
+              onClose={() => setIsLoginModalOpen(false)}
+              onGoogleLogin={handleGoogleLogin}
+              onEmailLogin={handleEmailLogin}
+              onOpenConfig={() => setIsConfigModalOpen(true)}
+            />
+          )}
+
+          {/* FIREBASE CONFIG MODAL */}
+          {isConfigModalOpen && (
+            <ConfigModal
+              currentConfig={firebaseConfig}
+              onClose={() => setIsConfigModalOpen(false)}
+              onSave={(cfg) => {
+                setFirebaseConfig(cfg);
+                localStorage.setItem('aiceo_fb_config', JSON.stringify(cfg));
+                setIsConfigModalOpen(false);
+                alert('Firebase Config saved. Reloading...');
+                window.location.reload();
+              }}
+            />
+          )}
+
+          {/* FOOTER */}
+          <footer className="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-400">
+            AI-CEO Executive Management System • Single-File Clean Architecture
+          </footer>
+        </div>
+      );
+    }
+
+    // --- REUSABLE COMPONENTS ---
+
+    // Section Container with Pagination (10 max per page)
+    function SectionContainer({ id, title, count, page, setPage, onAdd, children }) {
+      const maxPages = Math.ceil(count / 10);
+
+      return (
+        <section id={id} className="bg-cardbg rounded-xl border border-slate-200 p-4 space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <div className="flex items-center space-x-2">
+              <span className="font-semibold text-sm text-slate-800">{title}</span>
+              <span className="text-xs font-medium text-slate-400">({count})</span>
+            </div>
+
+            <button
+              onClick={onAdd}
+              className="px-2.5 py-1 text-xs font-medium rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+            >
+              + Add
+            </button>
+          </div>
+
+          <div className="divide-y divide-slate-100">
+            {count === 0 ? (
+              <div className="py-4 text-xs text-slate-400 text-center">No items recorded.</div>
+            ) : (
+              children
+            )}
+          </div>
+
+          {/* Pagination Controls */}
+          {maxPages > 1 && (
+            <div className="flex items-center justify-between pt-2 text-xs text-slate-500">
+              <span>Page {page + 1} of {maxPages}</span>
+              <div className="space-x-1">
                 <button
-                  onClick={() => { firebase.auth().signOut(); onClose(); }}
-                  className="w-full py-2 rounded-xl bg-red-900/50 hover:bg-red-800/50 text-red-300 border border-red-700 text-xs font-bold"
+                  disabled={page === 0}
+                  onClick={() => setPage(p => Math.max(0, p - 1))}
+                  className="px-2 py-0.5 rounded border border-slate-200 disabled:opacity-40 hover:bg-slate-50"
                 >
-                  Log Out
+                  [Prev 10]
+                </button>
+                <button
+                  disabled={page >= maxPages - 1}
+                  onClick={() => setPage(p => Math.min(maxPages - 1, p + 1))}
+                  className="px-2 py-0.5 rounded border border-slate-200 disabled:opacity-40 hover:bg-slate-50"
+                >
+                  [Next 10]
                 </button>
               </div>
-            ) : (
-              <div className="space-y-4 pt-2">
-                <button
-                  onClick={handleGoogle}
-                  className="w-full py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-amber-200 border border-amber-900/40 font-bold text-xs flex items-center justify-center space-x-2"
-                >
-                  <Icon name="sparkles" className="w-4 h-4 text-amber-400" />
-                  <span>Sign In with Google</span>
-                </button>
+            </div>
+          )}
+        </section>
+      );
+    }
 
-                <div className="relative my-2">
-                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-stone-800"></div></div>
-                  <div className="relative text-[10px] uppercase text-stone-500 font-bold bg-stone-900 px-2 inline-block">Or Email Login</div>
+    // Single-Line List Item Row
+    function ListItemRow({ title, category, badge, urls, onClick }) {
+      const domainLinks = parseDomainLinks(urls);
+
+      return (
+        <div
+          onClick={onClick}
+          className="py-2.5 px-2 hover:bg-accent-skylight cursor-pointer transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs"
+        >
+          <div className="flex items-center space-x-2 truncate">
+            <span className="text-slate-400 font-bold">•</span>
+            {category && (
+              <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-medium">
+                {category}
+              </span>
+            )}
+            <span className="font-medium text-slate-800 truncate">{title}</span>
+            {badge && (
+              <span className="px-1.5 py-0.5 rounded bg-accent-skybg text-accent-sky text-[10px] font-medium shrink-0">
+                {badge}
+              </span>
+            )}
+          </div>
+
+          {/* Inline Domain Links */}
+          {domainLinks.length > 0 && (
+            <div className="flex flex-wrap items-center space-x-1.5 text-[11px] text-slate-500 shrink-0" onClick={(e) => e.stopPropagation()}>
+              {domainLinks.map((link, i) => (
+                <span key={i} className="inline-flex items-center">
+                  <span className="text-slate-400 mr-0.5">▫️</span>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-accent-sky hover:underline"
+                  >
+                    {link.domain}
+                  </a>
+                  {i < domainLinks.length - 1 && <span className="text-slate-300 ml-1">,</span>}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Modal for Creating & Editing Items
+    function ItemModal({ modalData, onClose, onSave, onDelete }) {
+      const { type, item, isNew } = modalData;
+      const [formData, setFormData] = useState({ ...item });
+
+      const handleChange = (field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave(type, formData);
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-lg w-full p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span className="font-bold text-sm text-slate-800">
+                {isNew ? `New ${type.slice(0, -1)}` : `Edit ${type.slice(0, -1)}`}
+              </span>
+              <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-sm font-bold">✕</button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-600 font-medium mb-1">Title</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title || ''}
+                  onChange={(e) => handleChange('title', e.target.value)}
+                  className="w-full px-3 py-1.5 rounded border border-slate-200 focus:outline-none focus:border-accent-sky"
+                  placeholder="Enter title"
+                />
+              </div>
+
+              {type === 'projects' && (
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-slate-600 font-medium mb-1">Category</label>
+                    <input
+                      type="text"
+                      value={formData.category || ''}
+                      onChange={(e) => handleChange('category', e.target.value)}
+                      className="w-full px-3 py-1.5 rounded border border-slate-200 focus:outline-none focus:border-accent-sky"
+                      placeholder="e.g. HQ, Finance"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-600 font-medium mb-1">Status</label>
+                    <select
+                      value={formData.status || 'In Progress'}
+                      onChange={(e) => handleChange('status', e.target.value)}
+                      className="w-full px-3 py-1.5 rounded border border-slate-200 focus:outline-none focus:border-accent-sky bg-white"
+                    >
+                      <option value="In Progress">In Progress</option>
+                      <option value="Completed">Completed</option>
+                      <option value="Planning">Planning</option>
+                    </select>
+                  </div>
                 </div>
+              )}
 
-                <form onSubmit={handleEmail} className="space-y-3 text-left">
-                  <div>
-                    <label className="text-[11px] font-bold text-stone-400 block mb-1">Email Address</label>
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                    />
-                  </div>
+              <div>
+                <label className="block text-slate-600 font-medium mb-1">Details / Note</label>
+                <textarea
+                  rows="3"
+                  value={formData.details || ''}
+                  onChange={(e) => handleChange('details', e.target.value)}
+                  className="w-full px-3 py-1.5 rounded border border-slate-200 focus:outline-none focus:border-accent-sky"
+                  placeholder="Enter detailed description"
+                />
+              </div>
 
-                  <div>
-                    <label className="text-[11px] font-bold text-stone-400 block mb-1">Password</label>
-                    <input
-                      type="password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-stone-950 border border-stone-800 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600"
-                    />
-                  </div>
+              {type !== 'mindsets' && (
+                <div>
+                  <label className="block text-slate-600 font-medium mb-1">Multi URLs</label>
+                  <input
+                    type="text"
+                    value={formData.urls || ''}
+                    onChange={(e) => handleChange('urls', e.target.value)}
+                    className="w-full px-3 py-1.5 rounded border border-slate-200 focus:outline-none focus:border-accent-sky font-mono text-[11px]"
+                    placeholder="Enter multiple URLs separated by commas"
+                  />
+                  <span className="text-[10px] text-slate-400 mt-0.5 block">Separated by commas e.g. https://youtube.com, https://github.com</span>
+                </div>
+              )}
 
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                {!isNew ? (
+                  <button
+                    type="button"
+                    onClick={() => onDelete(type, formData.id)}
+                    className="px-3 py-1.5 rounded bg-red-50 text-red-600 hover:bg-red-100 font-medium transition-colors"
+                  >
+                    Delete
+                  </button>
+                ) : <div />}
+
+                <div className="space-x-2">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="px-3 py-1.5 rounded bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
                   <button
                     type="submit"
-                    className="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs shadow-md"
+                    className="px-4 py-1.5 rounded bg-accent-sky text-white font-medium hover:bg-sky-600 transition-colors"
                   >
-                    Sign In / Register
+                    Save
                   </button>
-                </form>
+                </div>
               </div>
-            )}
+            </form>
           </div>
         </div>
       );
     }
 
-    // Render React Root
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
+    // Profile Settings Modal
+    function ProfileModal({ profile, onClose, onSave, user, onOpenConfig }) {
+      const [formData, setFormData] = useState({ ...profile });
+
+      return (
+        <div className="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-md w-full p-5 space-y-4 text-xs">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span className="font-bold text-sm text-slate-800">Profile & Settings</span>
+              <button onClick={onClose} className="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-slate-600 font-medium mb-1">Company / Organization Name</label>
+                <input
+                  type="text"
+                  value={formData.companyName || ''}
+                  onChange={(e) => setFormData(p => ({ ...p, companyName: e.target.value }))}
+                  className="w-full px-3 py-1.5 rounded border border-slate-200 focus:outline-none focus:border-accent-sky"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-600 font-medium mb-1">Daily Executive Focus</label>
+                <input
+                  type="text"
+                  value={formData.dailyFocus || ''}
+                  onChange={(e) => setFormData(p => ({ ...p, dailyFocus: e.target.value }))}
+                  className="w-full px-3 py-1.5 rounded border border-slate-200 focus:outline-none focus:border-accent-sky"
+                />
+              </div>
+
+              <div className="p-3 bg-slate-50 rounded border border-slate-200 space-y-1">
+                <div className="font-medium text-slate-700">Account Status</div>
+                <div className="text-slate-500">
+                  {user ? `Logged in as: ${user.email}` : 'Not logged in (Using LocalStorage)'}
+                </div>
+                <button
+                  type="button"
+                  onClick={onOpenConfig}
+                  className="text-accent-sky hover:underline mt-1 block font-medium"
+                >
+                  Configure Firebase Credentials
+                </button>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-2 pt-2 border-t border-slate-100">
+              <button onClick={onClose} className="px-3 py-1.5 rounded bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium">Cancel</button>
+              <button onClick={() => onSave(formData)} className="px-4 py-1.5 rounded bg-accent-sky text-white font-medium hover:bg-sky-600">Save Profile</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Login Modal
+    function LoginModal({ onClose, onGoogleLogin, onEmailLogin, onOpenConfig }) {
+      const [email, setEmail] = useState('');
+      const [password, setPassword] = useState('');
+
+      return (
+        <div className="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-sm w-full p-5 space-y-4 text-xs">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span className="font-bold text-sm text-slate-800">Login to AI-CEO</span>
+              <button onClick={onClose} className="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+
+            <button
+              onClick={onGoogleLogin}
+              className="w-full py-2 px-3 rounded border border-slate-200 hover:bg-slate-50 font-medium text-slate-700 flex items-center justify-center space-x-2 transition-colors"
+            >
+              <span>Login with Google</span>
+            </button>
+
+            <div className="text-center text-slate-400 text-[10px] uppercase font-semibold">or email login</div>
+
+            <form onSubmit={(e) => onEmailLogin(e, email, password, false)} className="space-y-2">
+              <input
+                type="email"
+                required
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 py-1.5 rounded border border-slate-200 focus:outline-none focus:border-accent-sky"
+              />
+              <input
+                type="password"
+                required
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-1.5 rounded border border-slate-200 focus:outline-none focus:border-accent-sky"
+              />
+              <div className="flex space-x-2 pt-1">
+                <button
+                  type="submit"
+                  className="flex-1 py-1.5 rounded bg-accent-sky text-white font-medium hover:bg-sky-600 transition-colors"
+                >
+                  Sign In
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => onEmailLogin(e, email, password, true)}
+                  className="flex-1 py-1.5 rounded bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition-colors"
+                >
+                  Sign Up
+                </button>
+              </div>
+            </form>
+
+            <div className="text-center pt-2 border-t border-slate-100">
+              <button onClick={onOpenConfig} className="text-[11px] text-accent-sky hover:underline">Set Firebase Credentials</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Config Modal
+    function ConfigModal({ currentConfig, onClose, onSave }) {
+      const [apiKey, setApiKey] = useState(currentConfig?.apiKey || '');
+      const [authDomain, setAuthDomain] = useState(currentConfig?.authDomain || '');
+      const [projectId, setProjectId] = useState(currentConfig?.projectId || '');
+
+      return (
+        <div className="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-md w-full p-5 space-y-4 text-xs">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span className="font-bold text-sm text-slate-800">Firebase Config</span>
+              <button onClick={onClose} className="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+
+            <div className="space-y-2">
+              <div>
+                <label className="block text-slate-600 font-medium mb-1">API Key</label>
+                <input
+                  type="text"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  className="w-full px-3 py-1.5 rounded border border-slate-200 font-mono text-[11px]"
+                />
+              </div>
+              <div>
+                <label className="block text-slate-600 font-medium mb-1">Auth Domain</label>
+                <input
+                  type="text"
+                  value={authDomain}
+                  onChange={(e) => setAuthDomain(e.target.value)}
+                  className="w-full px-3 py-1.5 rounded border border-slate-200 font-mono text-[11px]"
+                />
+              </div>
+              <div>
+                <label className="block text-slate-600 font-medium mb-1">Project ID</label>
+                <input
+                  type="text"
+                  value={projectId}
+                  onChange={(e) => setProjectId(e.target.value)}
+                  className="w-full px-3 py-1.5 rounded border border-slate-200 font-mono text-[11px]"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-2 pt-2 border-t border-slate-100">
+              <button onClick={onClose} className="px-3 py-1.5 rounded bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium">Cancel</button>
+              <button
+                onClick={() => onSave({ apiKey, authDomain, projectId })}
+                className="px-4 py-1.5 rounded bg-accent-sky text-white font-medium hover:bg-sky-600"
+              >
+                Save Config
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
 </body>
 </html>
