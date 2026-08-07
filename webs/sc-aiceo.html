@@ -722,40 +722,40 @@
                   className="relative group flex items-center space-x-1 cursor-pointer select-none"
                   title="Click to Edit Slogan"
                 >
-                  <span className="text-[10px] sm:text-[11px] text-grayholder font-normal hover:text-darkslate transition-colors truncate max-w-[110px] sm:max-w-none">
+                  <span className="text-[10.5px] sm:text-[11.5px] text-grayholder font-normal hover:text-darkslate transition-colors truncate max-w-[110px] sm:max-w-none">
                     {branding.slogan || 'Executive Mgnt.'}
                   </span>
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] text-slate-400">
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10.5px] text-slate-400">
                     ✏️
                   </span>
                 </div>
               </div>
 
               {/* Navigation Menu */}
-              <nav className="flex items-center flex-wrap gap-x-2 sm:gap-x-4 gap-y-1 text-[9.5px] font-normal">
-                <button onClick={() => scrollToBox('box-projects')} className="font-bold text-brandsky hover:underline cursor-pointer text-[9.5px]">
+              <nav className="flex items-center flex-wrap gap-x-2 sm:gap-x-4 gap-y-1 text-[10px] font-normal">
+                <button onClick={() => scrollToBox('box-projects')} className="font-bold text-brandsky hover:underline cursor-pointer text-[10px]">
                   Projects
                 </button>
-                <button onClick={() => scrollToBox('box-ideas')} className="font-bold text-brandsky hover:underline cursor-pointer text-[9.5px]">
+                <button onClick={() => scrollToBox('box-ideas')} className="font-bold text-brandsky hover:underline cursor-pointer text-[10px]">
                   Ideas
                 </button>
-                <button onClick={() => scrollToBox('box-study')} className="font-bold text-brandsky hover:underline cursor-pointer text-[9.5px] whitespace-nowrap">
+                <button onClick={() => scrollToBox('box-study')} className="font-bold text-brandsky hover:underline cursor-pointer text-[10px] whitespace-nowrap">
                   Study / RnD
                 </button>
-                <button onClick={() => scrollToBox('box-mindset')} className="font-bold text-brandsky hover:underline cursor-pointer text-[9.5px]">
+                <button onClick={() => scrollToBox('box-mindset')} className="font-bold text-brandsky hover:underline cursor-pointer text-[10px]">
                   Mindset
                 </button>
 
-                <button onClick={handleExportCSV} className="text-slate-500 hover:text-slate-700 font-normal cursor-pointer text-[9.5px] whitespace-nowrap">
+                <button onClick={handleExportCSV} className="text-slate-500 hover:text-slate-700 font-normal cursor-pointer text-[10px] whitespace-nowrap">
                   ↓ CSV
                 </button>
 
                 {user ? (
-                  <button onClick={() => firebase.auth().signOut()} className="text-slate-500 hover:text-red-500 font-normal cursor-pointer text-[9.5px]">
+                  <button onClick={() => firebase.auth().signOut()} className="text-slate-500 hover:text-red-500 font-normal cursor-pointer text-[10px]">
                     Logout
                   </button>
                 ) : (
-                  <button onClick={() => setIsLoginModalOpen(true)} className="text-slate-500 hover:text-slate-700 font-normal cursor-pointer text-[9.5px]">
+                  <button onClick={() => setIsLoginModalOpen(true)} className="text-slate-500 hover:text-slate-700 font-normal cursor-pointer text-[10px]">
                     Login
                   </button>
                 )}
@@ -775,12 +775,12 @@
                   value={globalSearch}
                   onFocus={() => setIsSearchFocused(true)}
                   onChange={(e) => setGlobalSearch(e.target.value)}
-                  className="w-full px-2 py-0.5 bg-white border border-gray-200 rounded text-[11px] text-darkslate placeholder-grayholder focus:outline-none focus:border-brandsky shadow-none"
+                  className="w-full px-2 py-0.5 bg-white border border-gray-200 rounded text-[11.5px] text-darkslate placeholder-grayholder focus:outline-none focus:border-brandsky shadow-none"
                 />
                 {globalSearch && (
                   <button
                     onClick={() => setGlobalSearch('')}
-                    className="absolute right-1.5 top-0.5 text-grayholder hover:text-darkslate text-[11px]"
+                    className="absolute right-1.5 top-0.5 text-grayholder hover:text-darkslate text-[11.5px]"
                   >
                     ✕
                   </button>
@@ -788,8 +788,8 @@
 
                 {/* Search execution live dropdown list */}
                 {isSearchFocused && searchResults.length > 0 && (
-                  <div className="absolute left-0 top-full mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-xl max-h-64 overflow-y-auto z-50 p-1.5 space-y-1 text-[11px]">
-                    <div className="text-[9.5px] text-grayholder border-b border-gray-100 pb-1 flex justify-between">
+                  <div className="absolute left-0 top-full mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-xl max-h-64 overflow-y-auto z-50 p-1.5 space-y-1 text-[11.5px]">
+                    <div className="text-[10px] text-grayholder border-b border-gray-100 pb-1 flex justify-between">
                       <span>Matches Found ({searchResults.length})</span>
                       <button onClick={() => setIsSearchFocused(false)} className="hover:text-darkslate">Close</button>
                     </div>
@@ -804,10 +804,10 @@
                         className="p-1 hover:bg-sky-50 rounded cursor-pointer flex items-center justify-between border-b border-gray-50 last:border-none"
                       >
                         <div className="truncate pr-2">
-                          <div className="truncate text-darkslate font-normal text-[10.5px]">{item.title || item.details}</div>
-                          <div className="text-[9.5px] text-grayholder">{item.company || category}</div>
+                          <div className="truncate text-darkslate font-normal text-[11px]">{item.title || item.details}</div>
+                          <div className="text-[10px] text-grayholder">{item.company || category}</div>
                         </div>
-                        <span className="text-[9.5px] bg-sky-100 text-brandsky px-1 py-0.5 rounded shrink-0 font-medium">{boxName}</span>
+                        <span className="text-[10px] bg-sky-100 text-brandsky px-1 py-0.5 rounded shrink-0 font-medium">{boxName}</span>
                       </div>
                     ))}
                   </div>
@@ -818,11 +818,11 @@
               <div className="flex items-center space-x-2 overflow-x-auto whitespace-nowrap py-0.5 min-w-0 justify-start">
                 <div
                   onClick={() => setIsPlatformModalOpen(true)}
-                  className="relative group font-bold text-brandorange shrink-0 flex items-center space-x-1 cursor-pointer select-none text-[11px]"
+                  className="relative group font-bold text-brandorange shrink-0 flex items-center space-x-1 cursor-pointer select-none text-[11.5px]"
                   title="Click to Edit My Platforms"
                 >
-                  <span className="hover:underline text-[11px]">My Platforms</span>
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] text-slate-500">
+                  <span className="hover:underline text-[11.5px]">My Platforms</span>
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10.5px] text-slate-500">
                     ✏️
                   </span>
                   <span className="text-slate-300 font-normal ml-0.5">:</span>
@@ -831,7 +831,7 @@
                 {/* Inline Favicon Images Only */}
                 <div className="flex items-center space-x-2.5 overflow-visible">
                   {platforms.length === 0 ? (
-                    <span className="text-grayholder text-[11px] italic">No platforms. Click ✏️ to add.</span>
+                    <span className="text-grayholder text-[11.5px] italic">No platforms. Click ✏️ to add.</span>
                   ) : (
                     platforms.map((plat) => (
                       <PlatformFaviconItem key={plat.id} platform={plat} />
@@ -849,7 +849,7 @@
             style={{ top: `${headerHeight}px` }}
           >
             <div className="max-w-6xl mx-auto px-3 sm:px-4 pb-2 pt-1.5">
-              <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-5 gap-y-1 text-[10px] sm:text-[11px] font-bold text-slate-700">
+              <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-5 gap-y-1 text-[10.5px] sm:text-[11.5px] font-bold text-slate-700">
                 <button onClick={() => scrollToBox('box-projects')} className="hover:text-brandsky cursor-pointer font-bold">
                   Total Projects: <span className="text-darkslate font-bold">{projects.length}</span>
                 </button>
@@ -876,7 +876,7 @@
                 
                 {/* Step 1: Selection Status */}
                 <div className="flex items-center space-x-2 shrink-0">
-                  <span className="bg-brandsky text-white px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                  <span className="bg-brandsky text-white px-2.5 py-0.5 rounded-full text-[11.5px] font-bold">
                     {selectedIds.size} Selected
                   </span>
                 </div>
@@ -894,7 +894,7 @@
                 <div className="flex items-center space-x-2 shrink-0 justify-end">
                   <button
                     onClick={() => handleCopyForAI(null)}
-                    className="px-2 py-0.5 rounded bg-slate-700 hover:bg-slate-600 text-brandsky text-[9.5px] font-normal transition-colors cursor-pointer"
+                    className="px-2 py-0.5 rounded bg-slate-700 hover:bg-slate-600 text-brandsky text-[10px] font-normal transition-colors cursor-pointer"
                   >
                     Copy for AI Actions
                   </button>
@@ -1281,7 +1281,7 @@
           {/* Box Header */}
           <div className="flex items-center justify-between border-b border-gray-100 pb-2">
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-[12.5px] text-brandsky">{title}</span>
+              <span className="font-bold text-[13px] text-brandsky">{title}</span>
               <button
                 onClick={onAdd}
                 className="px-1.5 py-0.5 rounded bg-sky-50 text-brandsky hover:bg-sky-100 text-xs font-bold transition-colors cursor-pointer"
@@ -1289,7 +1289,7 @@
               >
                 +
               </button>
-              <span className="text-[10px] text-grayholder">({count})</span>
+              <span className="text-[10.5px] text-grayholder">({count})</span>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -1347,7 +1347,7 @@
           className="py-1.5 px-1 cursor-pointer hover:bg-slate-50 transition-colors border-b border-gray-50 last:border-none text-slate-600"
         >
           {/* Desktop Single-Line View (hidden on mobile) */}
-          <div className="hidden sm:flex items-center justify-between gap-1 text-[11px] truncate">
+          <div className="hidden sm:flex items-center justify-between gap-1 text-[11.5px] truncate">
             <div className="flex items-center space-x-1.5 truncate min-w-0 flex-1">
               <input
                 type="checkbox"
@@ -1356,17 +1356,17 @@
                 onClick={(e) => e.stopPropagation()}
                 className="transform scale-75 rounded border-gray-300 text-brandsky focus:ring-brandsky cursor-pointer shrink-0"
               />
-              <span className="text-darkslate font-bold text-[11.5px] truncate">{title}</span>
-              {company && <span className="text-grayholder text-[10px] shrink-0">| {company}</span>}
-              {category && <span className="text-grayholder text-[10px] shrink-0">| {category}</span>}
+              <span className="text-darkslate font-bold text-[12px] truncate">{title}</span>
+              {company && <span className="text-grayholder text-[10.5px] shrink-0">| {company}</span>}
+              {category && <span className="text-grayholder text-[10.5px] shrink-0">| {category}</span>}
               {progress !== undefined && (
-                <span className="text-brandsky text-[10px] font-medium shrink-0">
+                <span className="text-brandsky text-[10.5px] font-medium shrink-0">
                   | {progress}%
                 </span>
               )}
             </div>
             {stars !== undefined && (
-              <span className="text-amber-400 shrink-0 text-[10px] pl-1 font-normal tracking-tighter">
+              <span className="text-amber-400 shrink-0 text-[10.5px] pl-1 font-normal tracking-tighter">
                 {stars === 3 ? '★★★' : stars === 2 ? '★★☆' : stars === 1 ? '★☆☆' : '☆☆☆'}
               </span>
             )}
@@ -1383,14 +1383,14 @@
                 onClick={(e) => e.stopPropagation()}
                 className="transform scale-90 rounded border-gray-300 text-brandsky focus:ring-brandsky cursor-pointer shrink-0 mt-0.5"
               />
-              <span className="text-darkslate font-bold text-[12px] leading-snug flex-1 break-words">
+              <span className="text-darkslate font-bold text-[12.5px] leading-snug flex-1 break-words">
                 {title}
               </span>
             </div>
 
             {/* Line 2: Secondary indexes underneath */}
             {hasSecondary && (
-              <div className="pl-6 flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-grayholder">
+              <div className="pl-6 flex items-center flex-wrap gap-x-2 gap-y-0.5 text-[10.5px] text-grayholder">
                 {company && <span>{company}</span>}
                 {company && category && <span>•</span>}
                 {category && <span>{category}</span>}
@@ -1448,7 +1448,7 @@
                 <button
                   type="button"
                   onClick={() => onCopyForAI(form)}
-                  className="px-1.5 py-0.5 rounded bg-sky-50 text-brandsky hover:bg-sky-100 text-[9.5px] font-normal transition-colors cursor-pointer"
+                  className="px-1.5 py-0.5 rounded bg-sky-50 text-brandsky hover:bg-sky-100 text-[10px] font-normal transition-colors cursor-pointer"
                 >
                   Copy for AI Actions
                 </button>
@@ -1459,18 +1459,18 @@
             </div>
 
             {/* Modal Form Body */}
-            <form onSubmit={(e) => { e.preventDefault(); onSave(type, form); }} className="space-y-2 text-[11px]">
+            <form onSubmit={(e) => { e.preventDefault(); onSave(type, form); }} className="space-y-2 text-[11.5px]">
               
               {/* Title Field */}
               <div>
-                <label className="block font-bold text-gray-800 text-[11px] mb-0.5">Title</label>
+                <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Title</label>
                 <input
                   type="text"
                   required
                   value={form.title || ''}
                   onChange={(e) => handleChange('title', e.target.value)}
                   placeholder="Enter title..."
-                  className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11px] text-darkslate focus:outline-none focus:border-brandsky"
+                  className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none focus:border-brandsky"
                 />
               </div>
 
@@ -1478,23 +1478,23 @@
               {type === 'projects' && (
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block font-bold text-gray-800 text-[11px] mb-0.5">Category</label>
+                    <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Category</label>
                     <select
                       value={form.category || projectCategories[0]}
                       onChange={(e) => handleChange('category', e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-200 rounded text-[11px] text-darkslate focus:outline-none"
+                      className="w-full px-2 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none"
                     >
                       {projectCategories.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block font-bold text-gray-800 text-[11px] mb-0.5">Company</label>
+                    <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Company</label>
                     <input
                       type="text"
                       value={form.company || ''}
                       onChange={(e) => handleChange('company', e.target.value)}
                       placeholder="Company name..."
-                      className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11px] text-darkslate focus:outline-none"
+                      className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none"
                     />
                   </div>
                 </div>
@@ -1503,11 +1503,11 @@
               {/* Ideas Category */}
               {type === 'ideas' && (
                 <div>
-                  <label className="block font-bold text-gray-800 text-[11px] mb-0.5">Category</label>
+                  <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Category</label>
                   <select
                     value={form.category || ideaCategories[0]}
                     onChange={(e) => handleChange('category', e.target.value)}
-                    className="w-full px-2 py-1 border border-gray-200 rounded text-[11px] text-darkslate focus:outline-none"
+                    className="w-full px-2 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none"
                   >
                     {ideaCategories.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
@@ -1534,7 +1534,7 @@
               {/* Progress Slider (Projects Only) */}
               {type === 'projects' && (
                 <div>
-                  <div className="flex justify-between font-bold text-gray-800 text-[11px] mb-0.5">
+                  <div className="flex justify-between font-bold text-gray-800 text-[11.5px] mb-0.5">
                     <span>Progress (%)</span>
                     <span className="text-brandsky font-medium">{form.progress || 0}%</span>
                   </div>
@@ -1552,13 +1552,13 @@
               {/* Targets (formerly Objectives, written input text color is gray) */}
               {type === 'projects' && (
                 <div>
-                  <label className="block font-bold text-gray-800 text-[11px] mb-0.5">Targets</label>
+                  <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Targets</label>
                   <textarea
                     rows={4}
                     value={form.objective || ''}
                     onChange={(e) => handleChange('objective', e.target.value)}
                     placeholder={OBJECTIVES_TEMPLATE}
-                    className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11px] text-gray-500 font-sans focus:outline-none focus:border-brandsky leading-relaxed"
+                    className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11.5px] text-gray-500 font-sans focus:outline-none focus:border-brandsky leading-relaxed"
                   />
                 </div>
               )}
@@ -1566,13 +1566,13 @@
               {/* AI Prompts for Actions */}
               {type === 'projects' && (
                 <div>
-                  <label className="block font-bold text-gray-800 text-[11px] mb-0.5">AI Prompts for Actions</label>
+                  <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">AI Prompts for Actions</label>
                   <textarea
                     rows={4}
                     value={form.aiPrompt || ''}
                     onChange={(e) => handleChange('aiPrompt', e.target.value)}
                     placeholder={AI_PROMPT_TEMPLATE}
-                    className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11px] text-gray-500 font-sans focus:outline-none focus:border-brandsky leading-relaxed"
+                    className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11.5px] text-gray-500 font-sans focus:outline-none focus:border-brandsky leading-relaxed"
                   />
                 </div>
               )}
@@ -1580,31 +1580,31 @@
               {/* Details Field for Ideas, Study, Mindset */}
               {type !== 'projects' && (
                 <div>
-                  <label className="block font-bold text-gray-800 text-[11px] mb-0.5">Details</label>
+                  <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Details</label>
                   <textarea
                     rows={4}
                     value={form.details || ''}
                     onChange={(e) => handleChange('details', e.target.value)}
                     placeholder="Enter details..."
-                    className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11px] text-darkslate focus:outline-none focus:border-brandsky"
+                    className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none focus:border-brandsky"
                   />
                 </div>
               )}
 
               {/* Links ( , for multi URLs) */}
               <div>
-                <label className="block font-bold text-gray-800 text-[11px] mb-0.5">Links ( , for multi URLs)</label>
+                <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Links ( , for multi URLs)</label>
                 <input
                   type="text"
                   value={form.urls || ''}
                   onChange={(e) => handleChange('urls', e.target.value)}
                   placeholder="Enter multiple URLs separated by commas"
-                  className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11px] text-slate-600 placeholder-gray-400 focus:outline-none"
+                  className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11.5px] text-slate-600 placeholder-gray-400 focus:outline-none"
                 />
                 
                 {/* Multi-URL Favicon Preview */}
                 {form.urls && (
-                  <div className="mt-1.5 flex flex-wrap gap-1.5 text-[10px] bg-slate-50 p-1.5 rounded border border-gray-100">
+                  <div className="mt-1.5 flex flex-wrap gap-1.5 text-[10.5px] bg-slate-50 p-1.5 rounded border border-gray-100">
                     {parseDomainLinks(form.urls).map((link, i) => (
                       <a
                         key={i}
