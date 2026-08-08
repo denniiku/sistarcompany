@@ -3,7 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>AI-CEO Executive Dashboard v7.0</title>
+  <title>CEO ActionNote | Intelligence Workspace</title>
+  <meta name="application-name" content="CEO ActionNote | Intelligence Workspace" />
+  <meta name="apple-mobile-web-app-title" content="CEO ActionNote | Intelligence Workspace" />
+  <meta name="theme-color" content="#f8fafc" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23f97316'/><text x='50%' y='55%' font-family='sans-serif' font-weight='bold' font-size='38' fill='white' text-anchor='middle' dominant-baseline='middle'>*SC</text></svg>" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23f97316'/><text x='50%' y='55%' font-family='sans-serif' font-weight='bold' font-size='38' fill='white' text-anchor='middle' dominant-baseline='middle'>*SC</text></svg>" />
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22CEO%20ActionNote%20%7C%20Intelligence%20Workspace%22%2C%22short_name%22%3A%22CEO%20ActionNote%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8fafc%22%2C%22theme_color%22%3A%22%23f8fafc%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ccircle%20cx%3D%2750%27%20cy%3D%2750%27%20r%3D%2750%27%20fill%3D%27%2523f97316%27%2F%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2755%25%27%20font-family%3D%27sans-serif%27%20font-weight%3D%27bold%27%20font-size%3D%2738%27%20fill%3D%27white%27%20text-anchor%3D%27middle%27%20dominant-baseline%3D%27middle%27%3E*SC%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D" />
 
   <!-- Pretendard Font CDN -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -22,6 +31,7 @@
             brandsky: '#0ea5e9',
             brandskybg: '#f0f9ff',
             brandorange: '#f97316',
+            brandorangelight: '#fb923c',
             brandorangebg: '#fff7ed',
           },
           fontFamily: {
@@ -190,6 +200,7 @@
         objective: '• Deploy executive neural prompt routing\n• Automate 90% of daily leadership briefings\n• Standardize AI context across subsidiaries\n• Align Q3 OKR deliverables\n• Optimize board report generation',
         aiPrompt: '• Role: Chief AI Architect\n• Tasks:\n  • Summarize executive priority metrics\n  • Generate action vectors for board review\n  • Monitor cloud execution costs\n  • Evaluate model accuracy\n  • Enforce enterprise security\n• ...',
         urls: 'https://github.com, https://sistarcompany.com',
+        startDate: '2026-08-06',
         updatedAt: '2026-08-06'
       },
       {
@@ -203,6 +214,7 @@
         objective: '• Sub-second risk optimization modeling\n• Multi-asset liquidity stress test\n• Portfolio volatility benchmarking\n• Automated rebalancing signals\n• Monte Carlo variance analysis',
         aiPrompt: '• Role: Quantum Computation Physicist\n• Tasks:\n  • Optimize Hamiltonian simulation algorithms\n  • Measure qubit fidelity rates\n  • Calibrate noise suppression protocols\n  • Streamline HPC cluster pipeline\n  • Write research summary paper\n• ...',
         urls: 'https://arxiv.org, https://notion.so',
+        startDate: '2026-08-15',
         updatedAt: '2026-08-05'
       },
       {
@@ -216,6 +228,7 @@
         objective: '• Finalize global subsidiary budget allocation\n• Establish growth targets for Q3/Q4\n• Restructure debt portfolio\n• Review strategic M&A targets\n• Conduct shareholder briefing',
         aiPrompt: '• Role: CFO Strategic Advisor\n• Tasks:\n  • Audit subsidiary cash flow statements\n  • Model inflation risk scenarios\n  • Prepare quarterly dividend forecast\n  • Review tax optimization strategies\n  • Synthesize investor Q&A\n• ...',
         urls: 'https://docs.google.com',
+        startDate: '2026-08-01',
         updatedAt: '2026-08-01'
       }
     ];
@@ -292,10 +305,27 @@
       }
     ];
 
+    const DEFAULT_BIZ_COMMUNITIES = [
+      {
+        id: 'bizc-1',
+        category: 'Community',
+        title: '*SC CEO Club Portal',
+        urls: 'https://sc-sistarcompany.web.app',
+        createdAt: '2026-08-01'
+      },
+      {
+        id: 'bizc-2',
+        category: 'Intelligence',
+        title: 'Qubit Intelligence Network',
+        urls: 'https://sc-sistarcompany.web.app/qubit',
+        createdAt: '2026-08-01'
+      }
+    ];
+
     const DEFAULT_BRANDING = {
-      title: 'AI-CEO',
+      title: 'CEO ActionNote',
       logoUrl: '',
-      slogan: 'Executive Mgnt.'
+      slogan: 'Intelligence Workspace'
     };
 
     const DEFAULT_CEO_ACTIONS = [
@@ -397,6 +427,10 @@
         const saved = localStorage.getItem('aiceo_v7_platforms');
         return saved ? JSON.parse(saved) : DEFAULT_PLATFORMS;
       });
+      const [bizCommunities, setBizCommunities] = useState(() => {
+        const saved = localStorage.getItem('aiceo_v7_biz_communities');
+        return saved ? JSON.parse(saved) : DEFAULT_BIZ_COMMUNITIES;
+      });
 
       // Selection State for Bulk Multi-Action Bar
       const [selectedIds, setSelectedIds] = useState(new Set());
@@ -409,7 +443,7 @@
       const [selectedIdeaCat, setSelectedIdeaCat] = useState('All');
 
       // Sorting States per Quadrant Box
-      const [sortProjectBy, setSortProjectBy] = useState('Date'); // Title, Date, Progress %, Company
+      const [sortProjectBy, setSortProjectBy] = useState('Date'); // Title, Date, Start Date, Progress %, Company
       const [sortIdeaBy, setSortIdeaBy] = useState('Date'); // Title, Date, Stars
       const [sortStudyBy, setSortStudyBy] = useState('Date'); // Title, Date
       const [sortMindsetBy, setSortMindsetBy] = useState('Date'); // Title, Date
@@ -426,6 +460,9 @@
       const [isCatModalOpen, setIsCatModalOpen] = useState(false);
       const [catModalType, setCatModalType] = useState('Project');
       const [isPlatformModalOpen, setIsPlatformModalOpen] = useState(false);
+      const [isBizCommunityModalOpen, setIsBizCommunityModalOpen] = useState(false);
+      const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
+      const [highlightedProjectId, setHighlightedProjectId] = useState(null);
       const [isBrandingModalOpen, setIsBrandingModalOpen] = useState(false);
       const [isSloganModalOpen, setIsSloganModalOpen] = useState(false);
       const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -435,6 +472,11 @@
       const [aiModalData, setAiModalData] = useState({ isOpen: false, loading: false, title: '', prompt: '', result: '' });
       const [markdownExportData, setMarkdownExportData] = useState({ isOpen: false, content: '' });
       const [isBulkStatusModalOpen, setIsBulkStatusModalOpen] = useState(false);
+      const [toastMessage, setToastMessage] = useState('');
+      const showToast = (msg) => {
+        setToastMessage(msg);
+        setTimeout(() => setToastMessage(''), 2500);
+      };
 
       // CEO Action Manager States
       const [ceoActions, setCeoActions] = useState(() => {
@@ -480,12 +522,15 @@
           const unsubPlatforms = userRef.collection('platforms').onSnapshot((snap) => {
             if (!snap.empty) setPlatforms(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
           });
+          const unsubBizCommunities = userRef.collection('biz_communities').onSnapshot((snap) => {
+            if (!snap.empty) setBizCommunities(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+          });
           const unsubActions = userRef.collection('settings').doc('ceo_actions').onSnapshot((doc) => {
             if (doc.exists && doc.data().actions) setCeoActions(doc.data().actions);
           });
 
           return () => {
-            unsubProjects(); unsubIdeas(); unsubStudies(); unsubMindsets(); unsubPlatforms(); unsubActions();
+            unsubProjects(); unsubIdeas(); unsubStudies(); unsubMindsets(); unsubPlatforms(); unsubBizCommunities(); unsubActions();
           };
         }
       }, [user]);
@@ -577,6 +622,25 @@
           await batch.commit();
         }
         setIsPlatformModalOpen(false);
+      };
+
+      // Save Biz Communities Bulk List
+      const handleSaveBizCommunities = async (newList) => {
+        setBizCommunities(newList);
+        localStorage.setItem('aiceo_v7_biz_communities', JSON.stringify(newList));
+
+        if (user && firebase.apps.length) {
+          const db = firebase.firestore();
+          const batch = db.batch();
+          const userRef = db.collection('users').doc(user.uid);
+          
+          newList.forEach(c => {
+            const docRef = userRef.collection('biz_communities').doc(c.id || `bizc_${Date.now()}`);
+            batch.set(docRef, c, { merge: true });
+          });
+          await batch.commit();
+        }
+        setIsBizCommunityModalOpen(false);
       };
 
       // Category Updates
@@ -882,6 +946,9 @@
           if (sortKey === 'Stars') {
             return (b.stars || 0) - (a.stars || 0);
           }
+          if (sortKey === 'Start Date') {
+            return new Date(b.startDate || '1970-01-01') - new Date(a.startDate || '1970-01-01');
+          }
           // Default Date Sort
           return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
         });
@@ -988,12 +1055,12 @@
 
           {/* 1. FIXED/PINNED MAIN NAVIGATION BAR HEADER (Sticky top-0) */}
           <div ref={headerRef} className="sticky top-0 z-50 bg-appbg/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
-            <header className="max-w-6xl mx-auto px-3 sm:px-4 py-1 sm:py-1.5 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 relative">
+            <header className="max-w-6xl w-full mx-auto px-3 sm:px-4 py-1 sm:py-1.5 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 relative">
               
               {/* Logo / Branding Area */}
-              <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+              <div className="flex items-center shrink-0">
                 {branding.logoUrl && (
-                  <img src={branding.logoUrl} alt="Logo" className="w-4 h-4 sm:w-5 sm:h-5 object-contain rounded shrink-0" />
+                  <img src={branding.logoUrl} alt="Logo" className="w-4 h-4 sm:w-5 sm:h-5 object-contain rounded shrink-0 mr-1.5 sm:mr-2" />
                 )}
 
                 {/* Main Title + Hover Edit ✏️ */}
@@ -1003,23 +1070,21 @@
                   title="Click to Edit Title & Logo"
                 >
                   <span className="font-bold text-sm sm:text-base text-darkslate hover:text-brandsky transition-colors">
-                    {branding.title || 'AI-CEO'}
+                    {branding.title || 'CEO ActionNote'}
                   </span>
                   <span className="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-slate-400">
                     ✏️
                   </span>
                 </div>
 
-                <span className="text-slate-300">|</span>
-
-                {/* Slogan + Hover Edit ✏️ */}
+                {/* Slogan + Hover Edit ✏️ (exactly 3 characters space away, formatted as "| Slogan") */}
                 <div
                   onClick={() => setIsSloganModalOpen(true)}
-                  className="relative group flex items-center space-x-1 cursor-pointer select-none"
+                  className="relative group flex items-center space-x-0.5 cursor-pointer select-none ml-[3ch]"
                   title="Click to Edit Slogan"
                 >
                   <span className="text-[10.5px] sm:text-[11.5px] text-grayholder font-normal hover:text-darkslate transition-colors whitespace-nowrap">
-                    {branding.slogan || 'Executive Mgnt.'}
+                    | {branding.slogan || 'Intelligence Workspace'}
                   </span>
                   <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10.5px] text-slate-400">
                     ✏️
@@ -1027,21 +1092,216 @@
                 </div>
               </div>
 
-              {/* SEARCH BAR (Squarely centered in the header on desktop) */}
-              <div className="relative w-44 sm:w-60 shrink-0 mx-auto sm:mx-0 sm:absolute sm:left-1/2 sm:-translate-x-1/2 z-10">
+              {/* Navigation Menu */}
+              <nav className="flex items-center flex-wrap gap-x-2 sm:gap-x-3 gap-y-1 text-[10px] font-normal ml-auto">
+                <button onClick={() => setActiveSectionModal('projects')} className="font-bold text-brandsky hover:underline cursor-pointer text-[10px]">
+                  Projects
+                </button>
+                <button onClick={() => setActiveSectionModal('ideas')} className="font-bold text-brandsky hover:underline cursor-pointer text-[10px]">
+                  Idea/ Insight
+                </button>
+                <button onClick={() => setActiveSectionModal('studies')} className="font-bold text-brandsky hover:underline cursor-pointer text-[10px] whitespace-nowrap">
+                  Study/ RnD
+                </button>
+                <button onClick={() => setActiveSectionModal('mindsets')} className="font-bold text-brandsky hover:underline cursor-pointer text-[10px]">
+                  Mindfulness
+                </button>
+
+                {/* Qubit Dropdown (Lighter Orange Text) */}
+                <div className="relative group inline-block">
+                  <button
+                    title="Qubit Engine for CEO Actions Ai"
+                    className="font-bold text-brandorangelight hover:underline cursor-pointer text-[10px] flex items-center gap-0.5"
+                  >
+                    Qubit <span className="text-[8px]">▾</span>
+                  </button>
+                  <div className="absolute left-0 top-full pt-1 hidden group-hover:block z-[100] w-48">
+                    <div className="bg-white border border-gray-200 rounded-lg shadow-xl py-1 text-[10.5px]">
+                      <a
+                        href="https://sc-sistarcompany.web.app"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="More for Qubit Algorithe"
+                        className="block px-3 py-1.5 hover:bg-orange-50 text-darkslate hover:text-brandorangelight font-normal"
+                      >
+                        Qubit
+                      </a>
+                      <a
+                        href="https://sc-sistarcompany.web.app"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Biz models, powered by Qubit Algorithm"
+                        className="block px-3 py-1.5 hover:bg-orange-50 text-slate-700 hover:text-brandorangelight font-normal"
+                      >
+                        COSMO Seed Biz Models
+                      </a>
+                      <a
+                        href="https://sc-sistarcompany.web.app"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Biz Platforms- Spell, to magic your wishes"
+                        className="block px-3 py-1.5 hover:bg-orange-50 text-slate-700 hover:text-brandorangelight font-normal"
+                      >
+                        Scarlet Ai
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CEO Club Dropdown (Lighter Orange Text) */}
+                <div className="relative group inline-block">
+                  <button
+                    title="CEO Club"
+                    className="font-bold text-brandorangelight hover:underline cursor-pointer text-[10px] flex items-center gap-0.5"
+                  >
+                    CEO Club <span className="text-[8px]">▾</span>
+                  </button>
+                  <div className="absolute left-0 top-full pt-1 hidden group-hover:block z-[100] w-48">
+                    <div className="bg-white border border-gray-200 rounded-lg shadow-xl py-1 text-[10.5px]">
+                      <a
+                        href="https://sc-sistarcompany.web.app"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="CEO Club Membership"
+                        className="block px-3 py-1.5 hover:bg-orange-50 text-darkslate hover:text-brandorangelight font-normal"
+                      >
+                        CEO Club
+                      </a>
+                      <a
+                        href="https://sc-sistarcompany.web.app"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="*SC Qubit Knowledge Network"
+                        className="block px-3 py-1.5 hover:bg-orange-50 text-slate-700 hover:text-brandorangelight font-normal"
+                      >
+                        Qubit Synaps
+                      </a>
+                      <a
+                        href="https://sc-sistarcompany.web.app"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="*SC- SISTAR Company Biz Intelligence Core"
+                        className="block px-3 py-1.5 hover:bg-orange-50 text-slate-700 hover:text-brandorangelight font-normal"
+                      >
+                        *SC Intelligence
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Letter Icon for News Letter Service */}
+                <button
+                  type="button"
+                  onClick={() => window.location.href = 'news_letter.html'}
+                  title="*SC News Letter Service"
+                  className="text-slate-500 hover:text-brandsky text-sm cursor-pointer px-1 leading-none transition-colors"
+                >
+                  ✉
+                </button>
+
+                <button onClick={handleExportCSV} className="text-slate-500 hover:text-slate-700 font-normal cursor-pointer text-[10px] whitespace-nowrap">
+                  ↓ CSV
+                </button>
+
+                {user ? (
+                  <button onClick={() => firebase.auth().signOut()} className="text-slate-500 hover:text-red-500 font-normal cursor-pointer text-[10px]">
+                    Logout
+                  </button>
+                ) : (
+                  <button onClick={() => setIsLoginModalOpen(true)} className="text-slate-500 hover:text-slate-700 font-normal cursor-pointer text-[10px]">
+                    Login
+                  </button>
+                )}
+              </nav>
+            </header>
+          </div>
+
+          {/* 2. SUB-HEADER BAR (BIZ PLATFORM & BIZ COMMUNITY - SOFT LIGHT NAVY BACKGROUND) */}
+          <div className="bg-[#f0f4f8] border-b border-[#cbd5e1] relative z-[45] text-slate-800 shadow-sm">
+            <div className="max-w-6xl w-full mx-auto px-3 sm:px-4 py-[5.5px] flex items-center justify-end text-[10px] sm:text-[10.5px] flex-wrap gap-y-0.5 gap-x-2.5">
+              
+              {/* Favicon Group on the left */}
+              <div className="flex items-center space-x-1 flex-wrap gap-y-0.5">
+                {platforms.length === 0 ? (
+                  <span className="text-slate-400 text-[9.5px] italic">No platforms/communities. Click text to add.</span>
+                ) : (
+                  groupPlatformsByDomain(platforms).map((group) => (
+                    <DomainFaviconGroup key={group.domainHost} group={group} />
+                  ))
+                )}
+              </div>
+
+              {/* Biz Platform/ Community on the far right (Gray text, font-normal, hover-enabled) */}
+              <div
+                onClick={() => setIsPlatformModalOpen(true)}
+                className="relative group font-normal text-slate-500 hover:text-slate-700 shrink-0 flex items-center space-x-0.5 cursor-pointer select-none text-[10.5px]"
+                title="Click to Edit Biz Platform/ Community"
+              >
+                <span className="hover:underline text-[10.5px]">Biz Platform/ Community</span>
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[9.5px] text-slate-400">
+                  ✏️
+                </span>
+              </div>
+
+            </div>
+          </div>
+
+          {/* 3. FIXED/PINNED STATUS DASHBOARD METRICS BAR WITH RELOCATED SEARCH BAR */}
+          <div
+            className="sticky z-40 bg-appbg/95 backdrop-blur-md border-b border-gray-200 shadow-sm"
+            style={{ top: `${headerHeight}px` }}
+          >
+            <div className="max-w-6xl mx-auto px-3 sm:px-4 py-1.5 flex items-center justify-between gap-2 flex-wrap relative">
+              {/* Metrics Format */}
+              <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-3 gap-y-1 text-[10.5px] sm:text-[11.5px] font-normal text-slate-700">
+                <div className="flex items-center space-x-1 font-bold text-slate-800">
+                  <button onClick={() => scrollToBox('box-projects')} className="hover:text-brandsky cursor-pointer font-bold">
+                    Projects:
+                  </button>
+                </div>
+                <button onClick={() => scrollToBox('box-projects')} className="hover:text-brandsky cursor-pointer hover:underline transition-colors text-slate-600 font-normal">
+                  Total <span className="text-[#f97316] font-normal">{projects.length}</span>,
+                </button>
+                <button onClick={() => scrollToBox('box-projects')} className="hover:text-brandsky cursor-pointer hover:underline transition-colors text-slate-600 font-normal">
+                  In Process <span className="text-[#f97316] font-normal">{inProgressCount}</span>,
+                </button>
+                <button onClick={() => scrollToBox('box-projects')} className="hover:text-brandsky cursor-pointer hover:underline transition-colors text-slate-600 font-normal mr-1">
+                  x3 ⭐ <span className="text-[#f97316] font-normal">{threeStarProjectsCount}</span>
+                </button>
+                <button
+                  onClick={() => setIsCalendarModalOpen(true)}
+                  className="px-1.5 py-0.5 rounded bg-sky-100 hover:bg-sky-200 text-brandsky font-normal text-[10px] cursor-pointer transition-colors shrink-0 mr-1.5"
+                  title="Open Project Execution Calendar"
+                >
+                  Calendar
+                </button>
+                <span className="text-slate-300">|</span>
+                <button onClick={() => scrollToBox('box-ideas')} className="hover:text-brandsky cursor-pointer hover:underline transition-colors text-slate-700 font-normal">
+                  Idea/ Insight: x3 ⭐ <span className="text-[#f97316] font-normal">{threeStarIdeasCount}</span>,
+                </button>
+                <button onClick={() => scrollToBox('box-study')} className="hover:text-brandsky cursor-pointer hover:underline transition-colors text-slate-700 font-normal">
+                  Study/ RnD: <span className="text-[#f97316] font-normal">{studies.length}</span>,
+                </button>
+                <button onClick={() => scrollToBox('box-mindset')} className="hover:text-brandsky cursor-pointer hover:underline transition-colors text-slate-700 font-normal">
+                  Mindfulness: <span className="text-[#f97316] font-normal">{mindsets.length}</span>
+                </button>
+              </div>
+
+              {/* SEARCH BAR (Relocated to far right, 60% reduced width -> 20% increased from that) */}
+              <div className="relative w-28 sm:w-40 shrink-0 ml-auto mr-0 z-10 my-1 sm:my-0">
                 <input
                   type="text"
-                  placeholder="Search memory..."
+                  placeholder="Search..."
                   value={globalSearch}
                   onFocus={() => setIsSearchFocused(true)}
                   onChange={(e) => setGlobalSearch(e.target.value)}
-                  className="w-full pl-2 pr-7 py-0.5 bg-white border border-gray-200 rounded text-[11.5px] text-darkslate placeholder-grayholder focus:outline-none focus:border-brandsky shadow-none"
+                  className="w-full pl-2 pr-6 py-0.5 bg-white border border-gray-300 rounded text-[11px] text-darkslate placeholder-grayholder focus:outline-none focus:border-brandsky shadow-none"
                 />
                 {globalSearch && (
                   <button
                     type="button"
                     onClick={() => setGlobalSearch('')}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center text-grayholder hover:text-darkslate text-[11.5px] leading-none cursor-pointer p-0.5"
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center justify-center text-grayholder hover:text-darkslate text-[10px] leading-none cursor-pointer p-0.5"
                     title="Clear search"
                   >
                     ✕
@@ -1050,7 +1310,7 @@
 
                 {/* Search execution live dropdown list */}
                 {isSearchFocused && searchResults.length > 0 && (
-                  <div className="absolute left-0 top-full mt-1 w-64 sm:w-72 bg-white border border-gray-200 rounded-lg shadow-2xl max-h-64 overflow-y-auto z-[100] p-1.5 space-y-1 text-[11.5px]">
+                  <div className="absolute right-0 top-full mt-1 w-64 sm:w-72 bg-white border border-gray-200 rounded-lg shadow-2xl max-h-64 overflow-y-auto z-[100] p-1.5 space-y-1 text-[11.5px]">
                     <div className="text-[10px] text-grayholder border-b border-gray-100 pb-1 flex justify-between">
                       <span>Matches Found ({searchResults.length})</span>
                       <button onClick={() => setIsSearchFocused(false)} className="hover:text-darkslate font-bold">Close</button>
@@ -1075,122 +1335,29 @@
                   </div>
                 )}
               </div>
-
-              {/* Navigation Menu */}
-              <nav className="flex items-center flex-wrap gap-x-2 sm:gap-x-4 gap-y-1 text-[10px] font-normal ml-auto">
-                <button onClick={() => setActiveSectionModal('projects')} className="font-bold text-brandsky hover:underline cursor-pointer text-[10px]">
-                  Projects
-                </button>
-                <button onClick={() => setActiveSectionModal('ideas')} className="font-bold text-brandsky hover:underline cursor-pointer text-[10px]">
-                  Ideas
-                </button>
-                <button onClick={() => setActiveSectionModal('studies')} className="font-bold text-brandsky hover:underline cursor-pointer text-[10px] whitespace-nowrap">
-                  Study / RnD
-                </button>
-                <button onClick={() => setActiveSectionModal('mindsets')} className="font-bold text-brandsky hover:underline cursor-pointer text-[10px]">
-                  Mindset
-                </button>
-
-                <button onClick={handleExportCSV} className="text-slate-500 hover:text-slate-700 font-normal cursor-pointer text-[10px] whitespace-nowrap">
-                  ↓ CSV
-                </button>
-
-                {user ? (
-                  <button onClick={() => firebase.auth().signOut()} className="text-slate-500 hover:text-red-500 font-normal cursor-pointer text-[10px]">
-                    Logout
-                  </button>
-                ) : (
-                  <button onClick={() => setIsLoginModalOpen(true)} className="text-slate-500 hover:text-slate-700 font-normal cursor-pointer text-[10px]">
-                    Login
-                  </button>
-                )}
-              </nav>
-            </header>
-          </div>
-
-          {/* 2. SUB-HEADER BAR (MY PLATFORMS - DEDICATED FAR-LEFT ALIGNMENT & OVERFLOW VISIBLE ABOVE DASHBOARD BAR) */}
-          <div className="bg-appbg border-b border-gray-100 relative z-[45] overflow-visible">
-            <div className="max-w-6xl mx-auto px-3 sm:px-4 py-1 sm:py-1.5 flex items-center justify-start text-xs overflow-visible">
-              
-              {/* My Platforms (Far-Left Placement with generous horizontal space & no clipping) */}
-              <div className="flex items-center space-x-2.5 overflow-visible min-w-0 w-full">
-                <div
-                  onClick={() => setIsPlatformModalOpen(true)}
-                  className="relative group font-bold text-brandorange shrink-0 flex items-center space-x-1 cursor-pointer select-none text-[11.5px]"
-                  title="Click to Edit My Platforms"
-                >
-                  <span className="hover:underline text-[11.5px]">My Platforms</span>
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10.5px] text-slate-500">
-                    ✏️
-                  </span>
-                  <span className="text-slate-300 font-normal ml-0.5">:</span>
-                </div>
-
-                {/* Inline Favicon Images Only */}
-                <div className="flex items-center space-x-2 overflow-visible flex-wrap gap-y-1">
-                  {platforms.length === 0 ? (
-                    <span className="text-grayholder text-[11.5px] italic">No platforms. Click ✏️ to add.</span>
-                  ) : (
-                    groupPlatformsByDomain(platforms).map((group) => (
-                      <DomainFaviconGroup key={group.domainHost} group={group} />
-                    ))
-                  )}
-                </div>
-              </div>
-
             </div>
           </div>
 
-          {/* 3. FIXED/PINNED STATUS DASHBOARD METRICS BAR (Sticky right below Header #1) */}
-          <div
-            className="sticky z-40 bg-appbg/95 backdrop-blur-md border-b border-gray-200 shadow-sm"
-            style={{ top: `${headerHeight}px` }}
-          >
-            <div className="max-w-6xl mx-auto px-3 sm:px-4 py-1.5">
-              <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-5 gap-y-1 text-[10.5px] sm:text-[11.5px] font-bold text-slate-700">
-                <button onClick={() => scrollToBox('box-projects')} className="hover:text-brandsky cursor-pointer font-bold">
-                  Total Projects: <span className="text-darkslate font-bold">{projects.length}</span>
-                </button>
-                <button onClick={() => scrollToBox('box-projects')} className="hover:text-brandsky cursor-pointer font-bold">
-                  In Progress: <span className="text-brandsky font-bold">{inProgressCount}</span>
-                </button>
-                <button onClick={() => scrollToBox('box-projects')} className="hover:text-brandsky cursor-pointer font-bold">
-                  x3 <span className="text-amber-500 font-bold">★</span> Projects: <span className="text-amber-500 font-bold">{threeStarProjectsCount}</span>
-                </button>
-                <button onClick={() => scrollToBox('box-ideas')} className="hover:text-brandsky cursor-pointer font-bold">
-                  x3 <span className="text-amber-500 font-bold">★</span> Ideas: <span className="text-amber-500 font-bold">{threeStarIdeasCount}</span>
-                </button>
-                <button onClick={() => scrollToBox('box-study')} className="hover:text-brandsky cursor-pointer font-bold">
-                  Study / RnD: <span className="text-darkslate font-bold">{studies.length}</span>
-                </button>
-              </div>
-            </div>
-          </div>
 
-          {/* Guide Message Below Metrics Row (Non-sticky: slides under sticky metrics bar when scrolling down) */}
-          <div className="max-w-6xl mx-auto px-3 sm:px-4 pt-2 pb-0.5 relative z-10 w-full text-left">
-            <div className="text-[11px] text-slate-500 font-normal flex items-center justify-start gap-1.5 border-b border-slate-200/60 pb-1.5 w-full text-left">
-              <span className="text-brandsky font-bold text-[11px] leading-none shrink-0 inline-flex items-center">☑</span>
-              <span className="text-left leading-normal">
-                Check single or multiple items to prompt Gemini AI and execute automated CEO actions (powered by Qubit Algorithm<sup className="text-[5px] align-super font-normal text-brandsky ml-0.5">TM</sup>) with directives.
-              </span>
-            </div>
-          </div>
 
-          {/* TOP MULTI-ACTION BAR (Floating Bar, Title Header, Uniform text-[11.5px] font-normal across all elements) */}
+          {/* TOP MULTI-ACTION BAR (Floating Bar, Sticky at top, Title Header) */}
           {selectedIds.size > 0 && (
-            <div className="max-w-6xl mx-auto px-4 pt-3 w-full">
-              <div className="bg-darkslate text-white p-3.5 rounded-xl shadow-xl flex flex-col gap-2.5 text-[11.5px] font-normal border border-slate-700">
+            <div
+              className="sticky z-50 max-w-6xl mx-auto px-3 sm:px-4 pt-2 pb-1 w-full transition-all"
+              style={{ top: `${headerHeight + 26}px` }}
+            >
+              <div className="bg-slate-600/95 text-white p-2.5 sm:p-3 rounded-xl shadow-2xl flex flex-col gap-2 text-[11.5px] font-normal border border-slate-500/50 backdrop-blur-lg">
                 
-                {/* Header Title: CEO Actions, powered by Qubit Algorithm tm. */}
-                <div className="flex items-start justify-between border-b border-slate-700/80 pb-2 text-[11.5px]">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-[11.5px] font-normal text-slate-200">
-                      CEO Actions, powered by Qubit Algorithm<sup className="text-[5px] align-super font-normal text-brandsky ml-0.5">TM</sup>
+                {/* Header Title: CEO Actions Ai, powered by Qubit Algorithm tm. */}
+                <div 
+                  className="flex items-start justify-between border-b border-slate-500/50 pb-1.5 text-[11.5px]"
+                  title="With selected items: 1) Ask Gemini AI to get instant executive answers, or 2) Direct instructions with CEO Actions Ai buttons (editable via ✏️)"
+                >
+                  <div className="flex flex-col gap-0.5 cursor-help">
+                    <span className="text-[11.5px] font-bold text-slate-100 flex items-center gap-1">
+                      CEO Actions Ai, powered by Qubit Algorithm<sup className="text-brandsky ml-0.5" style={{ fontSize: '0.22em', verticalAlign: 'super' }}>TM</sup>
+                      <span className="text-[10px] text-slate-300 font-normal opacity-90">(Hover for info)</span>
                     </span>
-                    <p className="text-[10.5px] text-slate-400 font-normal leading-tight">
-                      With selected items: 1) Ask Gemini AI to get instant executive answers, or 2) Direct instructions with CEO Action buttons below (editable via ✏️).
-                    </p>
                   </div>
                   <button
                     type="button"
@@ -1218,9 +1385,12 @@
                 </div>
 
                 {/* Row 2: Dynamic CEO Action Menu Buttons (Multi-line Flex Wrap) */}
-                <div className="flex flex-wrap items-center gap-2 pt-1.5 border-t border-slate-800/80 text-[11.5px]">
-                  <span className="text-[11.5px] text-slate-400 font-normal mr-1 shrink-0 flex items-center gap-1 group">
-                    CEO Actions:
+                <div className="flex flex-wrap items-center gap-2 pt-1.5 border-t border-slate-700/60 text-[11.5px]">
+                  <span 
+                    className="text-[11.5px] text-slate-400 font-normal mr-1 shrink-0 flex items-center gap-1 group cursor-help hover:text-brandsky transition-colors"
+                    title="With selected items: 1) Ask Gemini AI to get instant executive answers, or 2) Direct instructions with CEO Actions Ai buttons (editable via ✏️)"
+                  >
+                    CEO Actions Ai:
                     <button
                       type="button"
                       onClick={() => setIsCeoActionManagerOpen(true)}
@@ -1252,8 +1422,18 @@
             </div>
           )}
 
+          {/* Guide Message Below Metrics/Actions Bar (Centered & spacing-optimized) */}
+          <div className="max-w-6xl mx-auto px-4 py-4 relative z-10 w-full text-center">
+            <div className="text-[11px] sm:text-[11.5px] text-slate-500 font-normal flex items-center justify-center gap-1.5 w-full">
+              <span className="text-brandsky font-bold text-[11px] leading-none shrink-0 inline-flex items-center">☑</span>
+              <span className="leading-normal">
+                Check single or multiple items to prompt Gemini AI and execute automated CEO actions (powered by Qubit Algorithm) with directives.
+              </span>
+            </div>
+          </div>
+
           {/* MAIN BODY 2x2 QUADRANT GRID DASHBOARD (Desktop 2 Col, Mobile 1 Col) */}
-          <main className="max-w-6xl w-full mx-auto px-4 py-4 grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+          <main className="max-w-6xl w-full mx-auto px-4 pb-0 pt-0 grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
 
             {/* QUADRANT 1: PROJECTS BOX (Top-Left) */}
             <QuadrantBox
@@ -1262,6 +1442,7 @@
               count={processedProjects.length}
               page={pageProjects}
               setPage={setPageProjects}
+              onClickBox={() => setActiveSectionModal('projects')}
               onAdd={() => setActiveModalItem({
                 type: 'projects',
                 item: { title: '', category: projectCategories[0] || 'HQ', company: '', status: 'In Progress', progress: 0, stars: 1, objective: OBJECTIVES_TEMPLATE, aiPrompt: AI_PROMPT_TEMPLATE, urls: '' },
@@ -1320,10 +1501,11 @@
             {/* QUADRANT 2: IDEAS BOX (Top-Right) */}
             <QuadrantBox
               id="box-ideas"
-              title="Ideas"
+              title="Idea/ Insight"
               count={processedIdeas.length}
               page={pageIdeas}
               setPage={setPageIdeas}
+              onClickBox={() => setActiveSectionModal('ideas')}
               onAdd={() => setActiveModalItem({
                 type: 'ideas',
                 item: { title: '', category: ideaCategories[0] || 'Core Tech', details: '', stars: 1, urls: '' },
@@ -1377,10 +1559,11 @@
             {/* QUADRANT 3: STUDY BOX (Bottom-Left - Sorting: Date, Title) */}
             <QuadrantBox
               id="box-study"
-              title="Study / RnD"
+              title="Study/ RnD"
               count={processedStudies.length}
               page={pageStudies}
               setPage={setPageStudies}
+              onClickBox={() => setActiveSectionModal('studies')}
               onAdd={() => setActiveModalItem({
                 type: 'studies',
                 item: { title: '', details: '', urls: '' },
@@ -1412,10 +1595,11 @@
             {/* QUADRANT 4: MINDSET BOX (Bottom-Right) */}
             <QuadrantBox
               id="box-mindset"
-              title="Mindset"
+              title="Mindfulness"
               count={processedMindsets.length}
               page={pageMindsets}
               setPage={setPageMindsets}
+              onClickBox={() => setActiveSectionModal('mindsets')}
               onAdd={() => setActiveModalItem({
                 type: 'mindsets',
                 item: { title: '', details: '', urls: '' },
@@ -1446,19 +1630,46 @@
 
           </main>
 
+          {/* Bottom Centered Feedback Message (Centered, Gray, Normal Font Weight) */}
+          <div className="max-w-6xl mx-auto px-4 py-3 text-center">
+            <div className="text-center font-normal text-slate-500 text-[10.5px] sm:text-[11px] max-w-lg mx-auto w-full">
+              * Feel Free to Contact us, for our Quick Upgrade for You- CEO
+            </div>
+          </div>
+
           {/* SECTION ZONE POPUP MODAL (Focus view for single zone) */}
           {activeSectionModal && (
             <div className="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
               <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-4 space-y-3 border border-gray-200 my-4 max-h-[90vh] flex flex-col">
-                <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                  <div className="flex items-center space-x-2">
-                    <span className="font-bold text-sm text-brandsky">
-                      {activeSectionModal === 'projects' && 'Projects Zone'}
-                      {activeSectionModal === 'ideas' && 'Ideas Zone'}
-                      {activeSectionModal === 'studies' && 'Study / RnD Zone'}
-                      {activeSectionModal === 'mindsets' && 'Mindset Zone'}
-                    </span>
-                    <span className="text-[10px] text-grayholder bg-sky-50 px-2 py-0.5 rounded font-normal">Focused Zone Mode</span>
+                <div className="flex items-center justify-between border-b border-gray-100 pb-2 flex-wrap gap-2">
+                  <div className="flex items-center space-x-3 flex-wrap">
+                    <span className="font-bold text-sm text-brandsky whitespace-nowrap">Focused Zone Mode</span>
+                    <div className="flex items-center gap-2 sm:gap-2.5 text-[10.5px] border-l border-slate-200 pl-3">
+                      <button
+                        onClick={() => setActiveSectionModal('projects')}
+                        className={`font-bold hover:underline cursor-pointer transition-colors ${activeSectionModal === 'projects' ? 'text-brandsky' : 'text-slate-500'}`}
+                      >
+                        Projects
+                      </button>
+                      <button
+                        onClick={() => setActiveSectionModal('ideas')}
+                        className={`font-bold hover:underline cursor-pointer transition-colors ${activeSectionModal === 'ideas' ? 'text-brandsky' : 'text-slate-500'}`}
+                      >
+                        Idea/ Insight
+                      </button>
+                      <button
+                        onClick={() => setActiveSectionModal('studies')}
+                        className={`font-bold hover:underline cursor-pointer transition-colors ${activeSectionModal === 'studies' ? 'text-brandsky' : 'text-slate-500'}`}
+                      >
+                        Study/ RnD
+                      </button>
+                      <button
+                        onClick={() => setActiveSectionModal('mindsets')}
+                        className={`font-bold hover:underline cursor-pointer transition-colors ${activeSectionModal === 'mindsets' ? 'text-brandsky' : 'text-slate-500'}`}
+                      >
+                        Mindfulness
+                      </button>
+                    </div>
                   </div>
                   <button
                     onClick={() => setActiveSectionModal(null)}
@@ -1484,6 +1695,13 @@
                       })}
                       headerControls={
                         <div className="flex items-center space-x-2 text-xs">
+                          <button
+                            onClick={() => setIsCalendarModalOpen(true)}
+                            className="px-1.5 py-0.5 rounded bg-sky-100 hover:bg-sky-200 text-brandsky font-bold text-[10px] cursor-pointer transition-colors shrink-0"
+                            title="Open Project Execution Calendar"
+                          >
+                            Calendar
+                          </button>
                           <select
                             value={selectedProjCat}
                             onChange={(e) => {
@@ -1536,7 +1754,7 @@
                   {activeSectionModal === 'ideas' && (
                     <QuadrantBox
                       id="modal-box-ideas"
-                      title="Ideas"
+                      title="Idea/ Insight"
                       count={processedIdeas.length}
                       page={pageIdeas}
                       setPage={setPageIdeas}
@@ -1594,7 +1812,7 @@
                   {activeSectionModal === 'studies' && (
                     <QuadrantBox
                       id="modal-box-study"
-                      title="Study / RnD"
+                      title="Study/ RnD"
                       count={processedStudies.length}
                       page={pageStudies}
                       setPage={setPageStudies}
@@ -1630,7 +1848,7 @@
                   {activeSectionModal === 'mindsets' && (
                     <QuadrantBox
                       id="modal-box-mindset"
-                      title="Mindset"
+                      title="Mindfulness"
                       count={processedMindsets.length}
                       page={pageMindsets}
                       setPage={setPageMindsets}
@@ -1689,12 +1907,33 @@
             />
           )}
 
+          {/* PROJECT EXECUTION CALENDAR MODAL */}
+          {isCalendarModalOpen && (
+            <CalendarModal
+              projects={projects}
+              onClose={() => setIsCalendarModalOpen(false)}
+              onSaveProject={(updatedProj) => saveItem('projects', updatedProj)}
+              onEditProject={(proj) => {
+                setActiveModalItem({ type: 'projects', item: proj, isNew: false });
+              }}
+            />
+          )}
+
           {/* MY PLATFORMS EDIT MODAL */}
           {isPlatformModalOpen && (
             <PlatformsModal
               platforms={platforms}
               onClose={() => setIsPlatformModalOpen(false)}
               onSave={handleSavePlatforms}
+            />
+          )}
+
+          {/* BIZ COMMUNITIES EDIT MODAL */}
+          {isBizCommunityModalOpen && (
+            <BizCommunitiesModal
+              bizCommunities={bizCommunities}
+              onClose={() => setIsBizCommunityModalOpen(false)}
+              onSave={handleSaveBizCommunities}
             />
           )}
 
@@ -1802,9 +2041,62 @@
           )}
 
           {/* FOOTER */}
-          <footer className="border-t border-gray-200 py-4 text-center text-xs text-grayholder">
-            AI-CEO Executive Management System v7.0 • Single-File Executive Dashboard Architecture
+          <footer className="border-t border-gray-200 py-2 px-4 sm:px-6 mt-0">
+            <div className="max-w-6xl mx-auto flex items-center justify-start gap-1 text-[10px] sm:text-[10.5px]">
+              {/* *SC SISTAR Company Link - Bright Orange */}
+              <a
+                href="https://sc-sistarcompany.web.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#f97316] hover:text-orange-400 hover:underline transition-colors font-bold flex items-center space-x-1 shrink-0"
+              >
+                <span>*SC SISTAR Company</span>
+              </a>
+
+              {/* Website Icon - Bright Orange */}
+              <a
+                href="https://sistarcompany.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1 hover:bg-slate-100 rounded transition-colors text-[#f97316] hover:text-orange-400 flex items-center justify-center text-xs cursor-pointer shrink-0"
+                title="Visit website (sistarcompany.com)"
+              >
+                🌐
+              </a>
+
+              {/* Email Icon - Bright Orange */}
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText('denniiku@sistarcompany.com');
+                  showToast('Copied: denniiku@sistarcompany.com');
+                }}
+                className="p-1 hover:bg-slate-100 rounded transition-colors text-[#f97316] hover:text-orange-400 flex items-center justify-center text-xs cursor-pointer shrink-0"
+                title="Copy Email (denniiku@sistarcompany.com)"
+              >
+                ✉️
+              </button>
+
+              {/* Phone Icon - Bright Orange */}
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText('+82(0)1028400485');
+                  showToast('Copied: +82(0)1028400485');
+                }}
+                className="p-1 hover:bg-slate-100 rounded transition-colors text-[#f97316] hover:text-orange-400 flex items-center justify-center text-xs cursor-pointer shrink-0"
+                title="Copy Phone (+82(0)1028400485)"
+              >
+                💬
+              </button>
+            </div>
           </footer>
+
+          {/* Toast Notification */}
+          {toastMessage && (
+            <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[150] bg-slate-800/95 backdrop-blur-sm text-white px-4 py-2 rounded-lg shadow-xl text-xs font-normal transition-all duration-300 transform scale-100 flex items-center space-x-1.5 border border-slate-700">
+              <span>💡</span>
+              <span>{toastMessage}</span>
+            </div>
+          )}
         </div>
       );
     }
@@ -1822,26 +2114,26 @@
         >
           {/* Favicon Icon Trigger (Hover opens dropdown automatically, no sticky click state) */}
           <div
-            className="p-1 hover:bg-slate-200/60 rounded transition-colors flex items-center space-x-0.5 cursor-pointer select-none"
+            className="p-[1.5px] hover:bg-slate-200/60 rounded transition-colors flex items-center space-x-0.5 cursor-pointer select-none"
             title={domainHost}
           >
             <img
               src={faviconUrl}
               alt={domainHost}
               className="rounded-sm object-contain"
-              style={{ width: '15.2px', height: '15.2px' }}
+              style={{ width: '12px', height: '12px' }}
               onError={(e) => {
                 e.target.onerror = null;
                 e.target.src = 'https://www.google.com/s2/favicons?domain=google.com&sz=32';
               }}
             />
-            {items.length > 1 && <span className="text-[8px] text-grayholder">▾</span>}
+            {items.length > 1 && <span className="text-[7.5px] text-grayholder">▾</span>}
           </div>
 
           {/* Hover & Auto-Dismiss Dropdown Menu */}
           {isHovered && (
             <div
-              className="absolute left-0 top-full pt-1 z-[100] min-w-[200px] max-w-xs transition-opacity duration-150"
+              className="absolute left-1/2 -translate-x-1/2 top-full pt-1 z-[100] min-w-[200px] max-w-xs transition-opacity duration-150"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
             >
@@ -1894,20 +2186,32 @@
 
     // --- REUSABLE QUADRANT BOX COMPONENT ---
     // Displays ONLY actual created data rows (no empty placeholder rows)
-    function QuadrantBox({ id, title, count, page, setPage, onAdd, headerControls, children }) {
+    function QuadrantBox({ id, title, count, page, setPage, onAdd, headerControls, onClickBox, children }) {
       const pageSize = 20;
       const maxPages = Math.ceil(count / pageSize);
       const childArray = React.Children.toArray(children);
 
+      const handleBoxClick = (e) => {
+        const isRowItem = e.target.closest('.quadrant-row-item');
+        const isInteractiveElement = e.target.closest('button, select, input, a, label');
+        if (!isRowItem && !isInteractiveElement && onClickBox) {
+          onClickBox();
+        }
+      };
+
       return (
-        <section id={id} className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm flex flex-col justify-between space-y-2 min-h-[300px]">
+        <section
+          id={id}
+          onClick={handleBoxClick}
+          className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm flex flex-col justify-between space-y-2 min-h-[300px] cursor-pointer hover:border-slate-300 hover:shadow-md transition-all"
+        >
           
           {/* Box Header */}
           <div className="flex items-center justify-between border-b border-gray-100 pb-2">
             <div className="flex items-center space-x-2">
               <span className="font-bold text-[13px] text-brandsky">{title}</span>
               <button
-                onClick={onAdd}
+                onClick={(e) => { e.stopPropagation(); onAdd(); }}
                 className="px-1.5 py-0.5 rounded bg-sky-50 text-brandsky hover:bg-sky-100 text-xs font-bold transition-colors cursor-pointer"
                 title="Add New Item"
               >
@@ -1916,7 +2220,7 @@
               <span className="text-[10.5px] text-grayholder">({count})</span>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
               {headerControls}
             </div>
           </div>
@@ -1932,7 +2236,7 @@
 
           {/* 20-Item Pagination Controls - ONLY active when count > 20 */}
           {count > 20 && (
-            <div className="flex items-center justify-between pt-2 border-t border-gray-100 text-xs text-grayholder">
+            <div className="flex items-center justify-between pt-2 border-t border-gray-100 text-xs text-grayholder" onClick={(e) => e.stopPropagation()}>
               <span>Page {page + 1} of {maxPages}</span>
               <div className="space-x-2">
                 <button
@@ -1968,14 +2272,14 @@
       return (
         <div
           onClick={onClick}
-          className="py-1.5 px-1 cursor-pointer hover:bg-slate-50 transition-colors border-b border-gray-50 last:border-none text-slate-600"
+          className="quadrant-row-item py-1.5 px-1 cursor-pointer hover:bg-slate-50 transition-colors border-b border-gray-50 last:border-none text-slate-600"
         >
           {/* Desktop Single-Line View (hidden on mobile) */}
           <div className="hidden sm:flex items-center justify-between gap-1 text-[11.5px] truncate">
             <div className="flex items-center space-x-1.5 truncate min-w-0 flex-1">
               <span
                 onClick={(e) => { e.stopPropagation(); onToggleSelect(); }}
-                className="p-1.5 -m-1.5 inline-flex items-center justify-center cursor-pointer shrink-0 select-none rounded hover:bg-sky-100/60 transition-colors"
+                className="p-3.5 -m-3.5 inline-flex items-center justify-center cursor-pointer shrink-0 select-none rounded hover:bg-sky-100/40 transition-colors"
                 title="Select item"
               >
                 <input
@@ -2008,7 +2312,7 @@
             <div className="flex items-start space-x-2">
               <span
                 onClick={(e) => { e.stopPropagation(); onToggleSelect(); }}
-                className="p-1.5 -m-1.5 inline-flex items-center justify-center cursor-pointer shrink-0 select-none rounded hover:bg-sky-100/60 transition-colors mt-0.5"
+                className="p-3.5 -m-3.5 inline-flex items-center justify-center cursor-pointer shrink-0 select-none rounded hover:bg-sky-100/40 transition-colors mt-0.5"
                 title="Select item"
               >
                 <input
@@ -2061,10 +2365,10 @@
 
       const getModalTitle = (t) => {
         const nameMap = {
-          projects: 'Project',
-          ideas: 'Idea',
-          studies: 'Study / RnD',
-          mindsets: 'Mindset'
+          projects: 'Projects',
+          ideas: 'x3별표idea/ Insight',
+          studies: 'Study/ RnD',
+          mindsets: 'Mindfulness'
         };
         const label = nameMap[t] || 'Item';
         return isNew ? `New ${label}` : label;
@@ -2076,7 +2380,7 @@
             
             {/* Modal Top Header */}
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-              <span className="font-bold text-sm text-brandsky capitalize">
+              <span className="font-bold text-sm text-brandsky">
                 {getModalTitle(type)}
               </span>
 
@@ -2132,6 +2436,33 @@
                       placeholder="Company name..."
                       className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none"
                     />
+                  </div>
+                </div>
+              )}
+
+              {/* Projects Start Date & Status */}
+              {type === 'projects' && (
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Start Date</label>
+                    <input
+                      type="date"
+                      value={form.startDate || ''}
+                      onChange={(e) => handleChange('startDate', e.target.value)}
+                      className="w-full px-2 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none font-sans"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Status</label>
+                    <select
+                      value={form.status || 'In Progress'}
+                      onChange={(e) => handleChange('status', e.target.value)}
+                      className="w-full px-2 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none"
+                    >
+                      <option value="In Progress">In Progress</option>
+                      <option value="Completed">Completed</option>
+                      <option value="On Hold">On Hold</option>
+                    </select>
                   </div>
                 </div>
               )}
@@ -2351,6 +2682,291 @@
       );
     }
 
+    // --- PROJECT EXECUTION CALENDAR MODAL COMPONENT ---
+    function CalendarModal({ projects, onClose, onSaveProject, onEditProject }) {
+      const [currentDate, setCurrentDate] = useState(new Date(2026, 7, 1)); // Default to August 2026 to match seed data
+      const [selectedProjectForClickReschedule, setSelectedProjectForClickReschedule] = useState(null);
+
+      // Helper to change month
+      const prevMonth = () => {
+        setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+      };
+      const nextMonth = () => {
+        setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+      };
+
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      // Days in month
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDayIndex = new Date(year, month, 1).getDay();
+
+      // Split projects into scheduled and unscheduled
+      const unscheduledProjects = useMemo(() => {
+        return projects.filter(p => !p.startDate);
+      }, [projects]);
+
+      const scheduledProjects = useMemo(() => {
+        return projects.filter(p => p.startDate);
+      }, [projects]);
+
+      // Group scheduled projects by date string "YYYY-MM-DD"
+      const projectsByDate = useMemo(() => {
+        const groups = {};
+        scheduledProjects.forEach(p => {
+          const dateStr = p.startDate;
+          if (!groups[dateStr]) groups[dateStr] = [];
+          groups[dateStr].push(p);
+        });
+        return groups;
+      }, [scheduledProjects]);
+
+      // Handle Drag & Drop
+      const handleDragStart = (e, projectId) => {
+        e.dataTransfer.setData('text/plain', projectId);
+      };
+
+      const handleDrop = (e, dateStr) => {
+        e.preventDefault();
+        const projectId = e.dataTransfer.getData('text/plain');
+        if (!projectId) return;
+
+        const project = projects.find(p => p.id === projectId);
+        if (project) {
+          const updated = { ...project, startDate: dateStr };
+          onSaveProject(updated);
+        }
+      };
+
+      const handleDragOver = (e) => {
+        e.preventDefault();
+      };
+
+      // Click-to-Reschedule Handler
+      const handleCellClick = (dateStr) => {
+        if (selectedProjectForClickReschedule) {
+          const updated = { ...selectedProjectForClickReschedule, startDate: dateStr };
+          onSaveProject(updated);
+          setSelectedProjectForClickReschedule(null);
+        }
+      };
+
+      // Render Calendar Cells
+      const cells = [];
+      // Empty cells for first week offset
+      for (let i = 0; i < firstDayIndex; i++) {
+        cells.push(<div key={`empty-${i}`} className="bg-slate-50 border border-gray-100 min-h-[70px] p-1"></div>);
+      }
+
+      // Active days
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayStr = day < 10 ? `0${day}` : `${day}`;
+        const monthStr = (month + 1) < 10 ? `0${month + 1}` : `${month + 1}`;
+        const dateStr = `${year}-${monthStr}-${dayStr}`;
+        const dayProjects = projectsByDate[dateStr] || [];
+
+        cells.push(
+          <div
+            key={`day-${day}`}
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, dateStr)}
+            onClick={() => handleCellClick(dateStr)}
+            className={`bg-white border border-gray-100 min-h-[75px] p-1 flex flex-col justify-between transition-all hover:bg-sky-50/20 cursor-pointer ${
+              selectedProjectForClickReschedule ? 'ring-1 ring-brandsky/40 hover:bg-sky-50' : ''
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-slate-700 text-[11px]">{day}</span>
+              {selectedProjectForClickReschedule && (
+                <span className="text-[8px] text-brandsky animate-pulse">Schedule</span>
+              )}
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-1 mt-1">
+              {dayProjects.map(proj => (
+                <div
+                  key={proj.id}
+                  draggable="true"
+                  onDragStart={(e) => handleDragStart(e, proj.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEditProject(proj);
+                  }}
+                  className={`p-1 rounded text-[9.5px] font-bold leading-tight truncate shadow-sm transition-transform cursor-grab active:cursor-grabbing hover:scale-[1.02] ${
+                    proj.status === 'Completed'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                      : proj.status === 'On Hold'
+                      ? 'bg-amber-50 text-amber-700 border border-amber-100'
+                      : 'bg-sky-50 text-brandsky border border-sky-100'
+                  }`}
+                  title={`${proj.title} (${proj.company || 'No Company'}) - Progress: ${proj.progress || 0}%`}
+                >
+                  <div className="truncate">{proj.title}</div>
+                  <div className="text-[7.5px] opacity-80 font-normal truncate">{proj.company}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      // Fill in empty cells for last week offset to make clean grid
+      const totalCells = cells.length;
+      const remainingCells = 42 - totalCells; // 6 rows standard
+      const actualRemaining = remainingCells >= 7 ? remainingCells - 7 : remainingCells;
+      for (let i = 0; i < (remainingCells > 7 ? remainingCells - 7 : remainingCells); i++) {
+        cells.push(<div key={`empty-end-${i}`} className="bg-slate-50 border border-gray-100 min-h-[70px] p-1"></div>);
+      }
+
+      const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+
+      return (
+        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-4 sm:p-6 space-y-4 border border-gray-200 my-4 max-h-[92vh] flex flex-col text-xs font-normal">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
+              <div className="flex items-center space-x-2">
+                <span className="text-xl">📅</span>
+                <div>
+                  <span className="font-bold text-sm text-darkslate block">Project Execution Calendar</span>
+                  <p className="text-[10px] text-grayholder">Drag-and-drop projects to reschedule. Click a project to edit details.</p>
+                </div>
+              </div>
+              <button onClick={onClose} className="text-slate-400 hover:text-darkslate text-sm font-bold cursor-pointer">
+                ✕
+              </button>
+            </div>
+
+            {/* Workspace Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 flex-1 overflow-hidden min-h-0">
+              
+              {/* Sidebar: Unscheduled & Actions */}
+              <div className="md:col-span-1 bg-slate-50 p-3 rounded-lg border border-slate-100 flex flex-col overflow-hidden">
+                <span className="font-bold text-slate-700 block mb-2 text-[11px] uppercase tracking-wider">Unscheduled Projects</span>
+                
+                <div className="flex-1 overflow-y-auto space-y-2 pr-1 min-h-[120px]">
+                  {unscheduledProjects.length === 0 ? (
+                    <div className="text-[10.5px] text-grayholder italic text-center py-8">
+                      All projects are scheduled. Drag calendar items to reschedule them.
+                    </div>
+                  ) : (
+                    unscheduledProjects.map(proj => (
+                      <div
+                        key={proj.id}
+                        draggable="true"
+                        onDragStart={(e) => handleDragStart(e, proj.id)}
+                        onClick={() => {
+                          if (selectedProjectForClickReschedule?.id === proj.id) {
+                            setSelectedProjectForClickReschedule(null);
+                          } else {
+                            setSelectedProjectForClickReschedule(proj);
+                          }
+                        }}
+                        className={`p-2 rounded-lg border bg-white shadow-sm transition-all cursor-grab active:cursor-grabbing hover:shadow-md ${
+                          selectedProjectForClickReschedule?.id === proj.id
+                            ? 'ring-2 ring-brandsky border-brandsky bg-sky-50/30'
+                            : 'border-gray-200'
+                        }`}
+                      >
+                        <div className="font-bold text-darkslate text-[11px] truncate">{proj.title}</div>
+                        <div className="text-[9.5px] text-grayholder truncate">{proj.company || 'No Company'}</div>
+                        <div className="flex items-center justify-between mt-1 text-[8.5px]">
+                          <span className="bg-sky-50 text-brandsky px-1 py-0.5 rounded font-bold">{proj.category}</span>
+                          <span className="text-slate-500 font-medium">{proj.progress || 0}%</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {selectedProjectForClickReschedule && (
+                  <div className="mt-3 bg-sky-50 p-2 rounded border border-sky-100 text-[10px] text-brandsky animate-pulse font-medium">
+                    👉 Click any calendar day cell to assign schedule date.
+                  </div>
+                )}
+              </div>
+
+              {/* Main Calendar View */}
+              <div className="md:col-span-3 flex flex-col overflow-hidden">
+                
+                {/* Calendar Controls */}
+                <div className="flex items-center justify-between pb-3">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={prevMonth}
+                      className="px-2.5 py-1 border border-gray-200 rounded hover:bg-slate-50 font-bold text-slate-700 cursor-pointer"
+                    >
+                      ◀ Prev
+                    </button>
+                    <span className="font-bold text-sm text-darkslate min-w-[120px] text-center">
+                      {monthNames[month]} {year}
+                    </span>
+                    <button
+                      onClick={nextMonth}
+                      className="px-2.5 py-1 border border-gray-200 rounded hover:bg-slate-50 font-bold text-slate-700 cursor-pointer"
+                    >
+                      Next ▶
+                    </button>
+                  </div>
+
+                  {/* Status Indicators */}
+                  <div className="flex items-center space-x-2 text-[9.5px]">
+                    <span className="flex items-center space-x-1">
+                      <span className="w-2 h-2 rounded-full bg-sky-500"></span>
+                      <span className="text-slate-500">In Progress</span>
+                    </span>
+                    <span className="flex items-center space-x-1">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                      <span className="text-slate-500">Completed</span>
+                    </span>
+                    <span className="flex items-center space-x-1">
+                      <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                      <span className="text-slate-500">On Hold</span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Grid Container */}
+                <div className="flex-1 flex flex-col min-h-0">
+                  
+                  {/* Day Headers */}
+                  <div className="grid grid-cols-7 gap-1 text-center font-bold text-slate-500 border-b border-gray-100 pb-1 mb-1">
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                      <div key={day} className="text-[10px] uppercase tracking-wider">{day}</div>
+                    ))}
+                  </div>
+
+                  {/* Day Cells Grid */}
+                  <div className="grid grid-cols-7 gap-1 flex-1 overflow-y-auto pr-0.5">
+                    {cells}
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* Footer actions */}
+            <div className="flex justify-end pt-2 border-t border-gray-100">
+              <button
+                onClick={onClose}
+                className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded font-medium transition-colors cursor-pointer"
+              >
+                Close Calendar
+              </button>
+            </div>
+
+          </div>
+        </div>
+      );
+    }
+
     // --- SLOGAN EDIT MODAL ---
     function SloganModal({ slogan, onClose, onSave }) {
       const [sloganText, setSloganText] = useState(slogan || 'Executive Mgnt.');
@@ -2413,7 +3029,7 @@
           <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-4 space-y-3 border border-gray-200 max-h-[85vh] flex flex-col text-xs">
             
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-              <span className="font-bold text-sm text-brandorange">Manage My Platforms</span>
+              <span className="font-bold text-sm text-brandorange">Manage Biz Platform/ Community</span>
               <button onClick={onClose} className="text-slate-400 hover:text-darkslate text-sm font-bold cursor-pointer">
                 ✕
               </button>
@@ -2474,7 +3090,109 @@
                 onClick={addPlatform}
                 className="px-2.5 py-1 bg-orange-50 text-brandorange rounded hover:bg-orange-100 text-xs font-bold cursor-pointer"
               >
-                + Add Platform
+                + Add Biz Platform/ Community
+              </button>
+              <div className="space-x-1.5">
+                <button onClick={onClose} className="px-2.5 py-1 border border-gray-200 rounded text-slate-600 cursor-pointer">
+                  Cancel
+                </button>
+                <button onClick={() => onSave(list)} className="px-3.5 py-1 rounded bg-brandorange text-white hover:bg-orange-600 font-normal cursor-pointer">
+                  Save
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      );
+    }
+
+    // --- BIZ COMMUNITY MANAGER MODAL ---
+    function BizCommunitiesModal({ bizCommunities, onClose, onSave }) {
+      const [list, setList] = useState(bizCommunities || []);
+
+      const addCommunity = () => {
+        setList(prev => [
+          ...prev,
+          { id: `bizc_${Date.now()}`, title: 'New Community', category: 'Community', urls: 'https://' }
+        ]);
+      };
+
+      const updateCommunity = (id, field, val) => {
+        setList(prev => prev.map(c => c.id === id ? { ...c, [field]: val } : c));
+      };
+
+      const deleteCommunity = (id) => {
+        setList(prev => prev.filter(c => c.id !== id));
+      };
+
+      return (
+        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-4 space-y-3 border border-gray-200 max-h-[85vh] flex flex-col text-xs">
+            
+            <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+              <span className="font-bold text-sm text-brandorange">Manage Biz Community</span>
+              <button onClick={onClose} className="text-slate-400 hover:text-darkslate text-sm font-bold cursor-pointer">
+                ✕
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1 divide-y divide-gray-100">
+              {list.map((c) => (
+                <div key={c.id} className="pt-2.5 first:pt-0 space-y-1.5">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-700 mb-0.5">Category (카테고리)</label>
+                      <input
+                        type="text"
+                        value={c.category || ''}
+                        onChange={(e) => updateCommunity(c.id, 'category', e.target.value)}
+                        placeholder="Category"
+                        className="w-full px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:border-brandorange font-bold text-gray-800"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-700 mb-0.5">Title (제목)</label>
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="text"
+                          value={c.title || ''}
+                          onChange={(e) => updateCommunity(c.id, 'title', e.target.value)}
+                          placeholder="Title"
+                          className="w-full px-2 py-1 border border-gray-200 rounded text-xs focus:outline-none focus:border-brandorange font-bold text-gray-800"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => deleteCommunity(c.id)}
+                          className="text-red-400 hover:text-red-600 px-1 text-xs font-bold cursor-pointer shrink-0"
+                          title="Remove Community"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-700 mb-0.5">Links ( , for multi URLs)</label>
+                    <input
+                      type="text"
+                      value={c.urls || ''}
+                      onChange={(e) => updateCommunity(c.id, 'urls', e.target.value)}
+                      placeholder="https://..."
+                      className="w-full px-2 py-1 border border-gray-200 rounded text-xs text-slate-600 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+              <button
+                type="button"
+                onClick={addCommunity}
+                className="px-2.5 py-1 bg-orange-50 text-brandorange rounded hover:bg-orange-100 text-xs font-bold cursor-pointer"
+              >
+                + Add Community
               </button>
               <div className="space-x-1.5">
                 <button onClick={onClose} className="px-2.5 py-1 border border-gray-200 rounded text-slate-600 cursor-pointer">
@@ -2963,7 +3681,7 @@
             <div className="bg-darkslate text-white p-3.5 px-4 flex items-center justify-between border-b border-slate-700">
               <div>
                 <h3 className="text-[11.5px] font-normal text-slate-100 flex items-center gap-1">
-                  CEO Actions, powered by Qubit Algorithm<sup className="text-[5px] align-super font-normal text-brandsky ml-0.5">TM</sup>
+                  CEO Actions, powered by Qubit Algorithm<sup className="align-super font-normal text-brandsky ml-0.5" style={{ fontSize: '2.5px' }}>TM</sup>
                 </h3>
                 <p className="text-[10.5px] text-slate-400 font-normal mt-0.5">
                   Dynamic Action Brain: Customize, add, or reorder executive actions in the floating bar
