@@ -435,6 +435,22 @@
       // Selection State for Bulk Multi-Action Bar
       const [selectedIds, setSelectedIds] = useState(new Set());
       const [instructionPrompt, setInstructionPrompt] = useState('');
+      const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
+      const [isApiMcpModalOpen, setIsApiMcpModalOpen] = useState(false);
+      const [hasCustomKey, setHasCustomKey] = useState(() => !!(localStorage.getItem('USER_GEMINI_API_KEY') || localStorage.getItem('aiceo_gemini_key')));
+      const floatingBarRef = useRef(null);
+
+      useEffect(() => {
+        function handleClickOutside(event) {
+          if (floatingBarRef.current && !floatingBarRef.current.contains(event.target)) {
+            setSelectedIds(new Set());
+          }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+          document.removeEventListener("mousedown", handleClickOutside);
+        };
+      }, [floatingBarRef]);
 
       // Search State & Filter Controls
       const [globalSearch, setGlobalSearch] = useState('');
@@ -462,6 +478,7 @@
       const [isPlatformModalOpen, setIsPlatformModalOpen] = useState(false);
       const [isBizCommunityModalOpen, setIsBizCommunityModalOpen] = useState(false);
       const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
+      const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
       const [highlightedProjectId, setHighlightedProjectId] = useState(null);
       const [isBrandingModalOpen, setIsBrandingModalOpen] = useState(false);
       const [isSloganModalOpen, setIsSloganModalOpen] = useState(false);
@@ -472,6 +489,11 @@
       const [aiModalData, setAiModalData] = useState({ isOpen: false, loading: false, title: '', prompt: '', result: '' });
       const [markdownExportData, setMarkdownExportData] = useState({ isOpen: false, content: '' });
       const [isBulkStatusModalOpen, setIsBulkStatusModalOpen] = useState(false);
+      
+      // State-driven Confirmations (Fixing iframe confirm block bug)
+      const [isBulkDeleteConfirmOpen, setIsBulkDeleteConfirmOpen] = useState(false);
+      const [isResetCeoActionsConfirmOpen, setIsResetCeoActionsConfirmOpen] = useState(false);
+
       const [toastMessage, setToastMessage] = useState('');
       const showToast = (msg) => {
         setToastMessage(msg);
@@ -508,22 +530,22 @@
           const userRef = db.collection('users').doc(user.uid);
 
           const unsubProjects = userRef.collection('projects').onSnapshot((snap) => {
-            if (!snap.empty) setProjects(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            setProjects(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
           });
           const unsubIdeas = userRef.collection('ideas').onSnapshot((snap) => {
-            if (!snap.empty) setIdeas(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            setIdeas(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
           });
           const unsubStudies = userRef.collection('studies').onSnapshot((snap) => {
-            if (!snap.empty) setStudies(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            setStudies(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
           });
           const unsubMindsets = userRef.collection('mindsets').onSnapshot((snap) => {
-            if (!snap.empty) setMindsets(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            setMindsets(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
           });
           const unsubPlatforms = userRef.collection('platforms').onSnapshot((snap) => {
-            if (!snap.empty) setPlatforms(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            setPlatforms(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
           });
           const unsubBizCommunities = userRef.collection('biz_communities').onSnapshot((snap) => {
-            if (!snap.empty) setBizCommunities(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            setBizCommunities(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
           });
           const unsubActions = userRef.collection('settings').doc('ceo_actions').onSnapshot((doc) => {
             if (doc.exists && doc.data().actions) setCeoActions(doc.data().actions);
@@ -540,26 +562,32 @@
         const id = itemData.id || `${type}_${Date.now()}`;
         const finalItem = { ...itemData, id, updatedAt: new Date().toISOString().split('T')[0] };
 
-        if (user && firebase.apps.length) {
-          const db = firebase.firestore();
-          await db.collection('users').doc(user.uid).collection(type).doc(id).set(finalItem, { merge: true });
-        } else {
-          const updaters = {
-            projects: [setProjects, 'aiceo_v7_projects'],
-            ideas: [setIdeas, 'aiceo_v7_ideas'],
-            studies: [setStudies, 'aiceo_v7_studies'],
-            mindsets: [setMindsets, 'aiceo_v7_mindsets'],
-            platforms: [setPlatforms, 'aiceo_v7_platforms'],
-          };
+        // ALWAYS update local state and localStorage first for instant UI response (optimistic UI)
+        const updaters = {
+          projects: [setProjects, 'aiceo_v7_projects'],
+          ideas: [setIdeas, 'aiceo_v7_ideas'],
+          studies: [setStudies, 'aiceo_v7_studies'],
+          mindsets: [setMindsets, 'aiceo_v7_mindsets'],
+          platforms: [setPlatforms, 'aiceo_v7_platforms'],
+        };
 
-          if (updaters[type]) {
-            const [setFn, key] = updaters[type];
-            setFn(prev => {
-              const exists = prev.some(i => i.id === id);
-              const next = exists ? prev.map(i => i.id === id ? finalItem : i) : [finalItem, ...prev];
-              localStorage.setItem(key, JSON.stringify(next));
-              return next;
-            });
+        if (updaters[type]) {
+          const [setFn, key] = updaters[type];
+          setFn(prev => {
+            const exists = prev.some(i => i.id === id);
+            const next = exists ? prev.map(i => i.id === id ? finalItem : i) : [finalItem, ...prev];
+            localStorage.setItem(key, JSON.stringify(next));
+            return next;
+          });
+        }
+
+        // If Firebase is initialized, also save to Firestore in a safe try-catch
+        if (user && firebase.apps.length) {
+          try {
+            const db = firebase.firestore();
+            await db.collection('users').doc(user.uid).collection(type).doc(id).set(finalItem, { merge: true });
+          } catch (e) {
+            console.error('Error saving to Firestore:', e);
           }
         }
         setActiveModalItem(null);
@@ -567,39 +595,59 @@
 
       // Delete Item Handler
       const deleteItem = async (type, id) => {
-        if (user && firebase.apps.length) {
-          const db = firebase.firestore();
-          await db.collection('users').doc(user.uid).collection(type).doc(id).delete();
-        } else {
-          const updaters = {
-            projects: [setProjects, 'aiceo_v7_projects'],
-            ideas: [setIdeas, 'aiceo_v7_ideas'],
-            studies: [setStudies, 'aiceo_v7_studies'],
-            mindsets: [setMindsets, 'aiceo_v7_mindsets'],
-            platforms: [setPlatforms, 'aiceo_v7_platforms'],
-          };
+        // ALWAYS update local state and localStorage first for instant UI response (optimistic UI)
+        const updaters = {
+          projects: [setProjects, 'aiceo_v7_projects'],
+          ideas: [setIdeas, 'aiceo_v7_ideas'],
+          studies: [setStudies, 'aiceo_v7_studies'],
+          mindsets: [setMindsets, 'aiceo_v7_mindsets'],
+          platforms: [setPlatforms, 'aiceo_v7_platforms'],
+        };
 
-          if (updaters[type]) {
-            const [setFn, key] = updaters[type];
-            setFn(prev => {
-              const next = prev.filter(i => i.id !== id);
-              localStorage.setItem(key, JSON.stringify(next));
-              return next;
-            });
+        if (updaters[type]) {
+          const [setFn, key] = updaters[type];
+          setFn(prev => {
+            const next = prev.filter(i => i.id !== id);
+            localStorage.setItem(key, JSON.stringify(next));
+            return next;
+          });
+        }
+
+        // If Firebase is initialized, also delete from Firestore in a safe try-catch
+        if (user && firebase.apps.length) {
+          try {
+            const db = firebase.firestore();
+            await db.collection('users').doc(user.uid).collection(type).doc(id).delete();
+          } catch (e) {
+            console.error('Error deleting from Firestore:', e);
           }
         }
         setActiveModalItem(null);
       };
 
       // Bulk Delete Selected Handler
-      const handleBulkDelete = async () => {
+      const handleBulkDelete = () => {
         if (selectedIds.size === 0) return;
-        if (!confirm(`Are you sure you want to delete ${selectedIds.size} selected item(s)?`)) return;
+        setIsBulkDeleteConfirmOpen(true);
+      };
 
-        const allTypes = ['projects', 'ideas', 'studies', 'mindsets', 'platforms'];
+      const executeBulkDelete = async () => {
         for (const id of selectedIds) {
-          for (const type of allTypes) {
-            await deleteItem(type, id);
+          let itemType = null;
+          if (projects.some(p => p.id === id)) itemType = 'projects';
+          else if (ideas.some(i => i.id === id)) itemType = 'ideas';
+          else if (studies.some(s => s.id === id)) itemType = 'studies';
+          else if (mindsets.some(m => m.id === id)) itemType = 'mindsets';
+          else if (platforms.some(p => p.id === id)) itemType = 'platforms';
+
+          if (itemType) {
+            await deleteItem(itemType, id);
+          } else {
+            // Fallback
+            const allTypes = ['projects', 'ideas', 'studies', 'mindsets', 'platforms'];
+            for (const type of allTypes) {
+              await deleteItem(type, id);
+            }
           }
         }
         setSelectedIds(new Set());
@@ -686,11 +734,13 @@
       };
 
       const handleResetCeoActions = () => {
-        if (confirm('Reset CEO actions to default buttons?')) {
-          setCeoActions(DEFAULT_CEO_ACTIONS);
-          localStorage.removeItem('aiceo_v7_ceo_actions');
-          setIsCeoActionManagerOpen(false);
-        }
+        setIsResetCeoActionsConfirmOpen(true);
+      };
+
+      const executeResetCeoActions = () => {
+        setCeoActions(DEFAULT_CEO_ACTIONS);
+        localStorage.removeItem('aiceo_v7_ceo_actions');
+        setIsCeoActionManagerOpen(false);
       };
 
       // 1. Dynamic CEO Action Execution Router (Gemini REST API & Local Actions)
@@ -739,12 +789,14 @@
           result: ''
         });
 
-        const apiKey = (typeof process !== 'undefined' && process.env && process.env.GEMINI_API_KEY) 
-          || localStorage.getItem('aiceo_gemini_key') || '';
+        const apiKeyToUse = localStorage.getItem('USER_GEMINI_API_KEY') 
+          || localStorage.getItem('aiceo_gemini_key') 
+          || (typeof process !== 'undefined' && process.env && process.env.GEMINI_API_KEY) 
+          || '';
 
-        if (apiKey) {
+        if (apiKeyToUse) {
           try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKeyToUse}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -775,7 +827,7 @@
           selectedList.forEach(item => {
             fallbackResult += `1. **${item.title || item.details}** (${item.category || 'HQ'})\n   - Progress: ${item.progress !== undefined ? item.progress + '%' : 'Active'}\n   - Alignment: Executing strategy per ${action.title} directive.\n`;
           });
-          if (!apiKey) {
+          if (!apiKeyToUse) {
             fallbackResult += `\n\n---\n*💡 Tip: Enter your Gemini API Key in the box below to activate live real-time Gemini 2.0 Flash REST API calls.*`;
           }
 
@@ -957,12 +1009,13 @@
       // Filtered & Sorted Lists
       const processedProjects = useMemo(() => {
         const filtered = projects.filter(p => {
+          const matchArchived = !p.archived;
           const matchCat = selectedProjCat === 'All' || p.category === selectedProjCat;
           const matchQuery = !globalSearch.trim() ||
             p.title.toLowerCase().includes(globalSearch.toLowerCase()) ||
             (p.company && p.company.toLowerCase().includes(globalSearch.toLowerCase())) ||
             (p.objective && p.objective.toLowerCase().includes(globalSearch.toLowerCase()));
-          return matchCat && matchQuery;
+          return matchArchived && matchCat && matchQuery;
         });
         return sortItems(filtered, sortProjectBy);
       }, [projects, selectedProjCat, globalSearch, sortProjectBy]);
@@ -1046,8 +1099,9 @@
       };
 
       // Metrics Calculations
-      const inProgressCount = projects.filter(p => p.status === 'In Progress').length;
-      const threeStarProjectsCount = projects.filter(p => p.stars === 3).length;
+      const activeProjectsCount = projects.filter(p => !p.archived).length;
+      const inProgressCount = projects.filter(p => p.status === 'In Progress' && !p.archived).length;
+      const threeStarProjectsCount = projects.filter(p => p.stars === 3 && !p.archived).length;
       const threeStarIdeasCount = ideas.filter(i => i.stars === 3).length;
 
       return (
@@ -1077,10 +1131,10 @@
                   </span>
                 </div>
 
-                {/* Slogan + Hover Edit ✏️ (exactly 3 characters space away, formatted as "| Slogan") */}
+                {/* Slogan + Hover Edit ✏️ (exactly 2 spaces away, formatted as "| Slogan") */}
                 <div
                   onClick={() => setIsSloganModalOpen(true)}
-                  className="relative group flex items-center space-x-0.5 cursor-pointer select-none ml-[3ch]"
+                  className="relative group flex items-center space-x-0.5 cursor-pointer select-none ml-2"
                   title="Click to Edit Slogan"
                 >
                   <span className="text-[10.5px] sm:text-[11.5px] text-grayholder font-normal hover:text-darkslate transition-colors whitespace-nowrap">
@@ -1194,13 +1248,24 @@
                   type="button"
                   onClick={() => window.location.href = 'news_letter.html'}
                   title="*SC News Letter Service"
-                  className="text-slate-500 hover:text-brandsky text-sm cursor-pointer px-1 leading-none transition-colors"
+                  className="text-green-500 hover:text-green-600 cursor-pointer px-1 transition-colors flex items-center justify-center shrink-0"
                 >
-                  ✉
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
                 </button>
 
                 <button onClick={handleExportCSV} className="text-slate-500 hover:text-slate-700 font-normal cursor-pointer text-[10px] whitespace-nowrap">
                   ↓ CSV
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsApiMcpModalOpen(true)}
+                  title="View API & MCP Information"
+                  className="text-slate-500 hover:text-slate-700 font-normal cursor-pointer text-[10px] whitespace-nowrap"
+                >
+                  ↑ API/ MCP
                 </button>
 
                 {user ? (
@@ -1234,13 +1299,13 @@
               {/* Biz Platform/ Community on the far right (Gray text, font-normal, hover-enabled) */}
               <div
                 onClick={() => setIsPlatformModalOpen(true)}
-                className="relative group font-normal text-slate-500 hover:text-slate-700 shrink-0 flex items-center space-x-0.5 cursor-pointer select-none text-[10.5px]"
+                className="relative group font-normal text-slate-500 hover:text-slate-700 shrink-0 flex items-center cursor-pointer select-none text-[10.5px] pr-0"
                 title="Click to Edit Biz Platform/ Community"
               >
-                <span className="hover:underline text-[10.5px]">Biz Platform/ Community</span>
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[9.5px] text-slate-400">
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[9.5px] text-slate-400 mr-1 shrink-0">
                   ✏️
                 </span>
+                <span className="hover:underline text-[10.5px]">Biz Platform/ Community</span>
               </div>
 
             </div>
@@ -1251,7 +1316,7 @@
             className="sticky z-40 bg-appbg/95 backdrop-blur-md border-b border-gray-200 shadow-sm"
             style={{ top: `${headerHeight}px` }}
           >
-            <div className="max-w-6xl mx-auto px-3 sm:px-4 py-1.5 flex items-center justify-between gap-2 flex-wrap relative">
+            <div className="max-w-6xl mx-auto px-4 py-1.5 flex items-center justify-between gap-2 flex-wrap relative">
               {/* Metrics Format */}
               <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-3 gap-y-1 text-[10.5px] sm:text-[11.5px] font-normal text-slate-700">
                 <div className="flex items-center space-x-1 font-bold text-slate-800">
@@ -1260,7 +1325,7 @@
                   </button>
                 </div>
                 <button onClick={() => scrollToBox('box-projects')} className="hover:text-brandsky cursor-pointer hover:underline transition-colors text-slate-600 font-normal">
-                  Total <span className="text-[#f97316] font-normal">{projects.length}</span>,
+                  Total <span className="text-[#f97316] font-normal">{activeProjectsCount}</span>,
                 </button>
                 <button onClick={() => scrollToBox('box-projects')} className="hover:text-brandsky cursor-pointer hover:underline transition-colors text-slate-600 font-normal">
                   In Process <span className="text-[#f97316] font-normal">{inProgressCount}</span>,
@@ -1270,10 +1335,17 @@
                 </button>
                 <button
                   onClick={() => setIsCalendarModalOpen(true)}
-                  className="px-1.5 py-0.5 rounded bg-sky-100 hover:bg-sky-200 text-brandsky font-normal text-[10px] cursor-pointer transition-colors shrink-0 mr-1.5"
+                  className="px-1.5 py-0.5 rounded bg-sky-100 hover:bg-sky-200 text-brandsky font-normal text-[10px] cursor-pointer transition-colors shrink-0 mr-1"
                   title="Open Project Execution Calendar"
                 >
                   Calendar
+                </button>
+                <button
+                  onClick={() => setIsArchiveModalOpen(true)}
+                  className="px-1.5 py-0.5 rounded bg-amber-100 hover:bg-amber-200 text-[#f97316] font-normal text-[10px] cursor-pointer transition-colors shrink-0 mr-1.5"
+                  title="Open Completed Project Archive"
+                >
+                  Archive
                 </button>
                 <span className="text-slate-300">|</span>
                 <button onClick={() => scrollToBox('box-ideas')} className="hover:text-brandsky cursor-pointer hover:underline transition-colors text-slate-700 font-normal">
@@ -1287,8 +1359,8 @@
                 </button>
               </div>
 
-              {/* SEARCH BAR (Relocated to far right, 60% reduced width -> 20% increased from that) */}
-              <div className="relative w-28 sm:w-40 shrink-0 ml-auto mr-0 z-10 my-1 sm:my-0">
+              {/* SEARCH BAR (Relocated to far right, slightly shifted left for alignment with the boxes) */}
+              <div className="relative w-28 sm:w-40 shrink-0 ml-auto mr-1 sm:mr-1.5 z-10 my-1 sm:my-0">
                 <input
                   type="text"
                   placeholder="Search..."
@@ -1343,63 +1415,63 @@
           {/* TOP MULTI-ACTION BAR (Floating Bar, Sticky at top, Title Header) */}
           {selectedIds.size > 0 && (
             <div
+              ref={floatingBarRef}
               className="sticky z-50 max-w-6xl mx-auto px-3 sm:px-4 pt-2 pb-1 w-full transition-all"
               style={{ top: `${headerHeight + 26}px` }}
             >
               <div className="bg-slate-600/95 text-white p-2.5 sm:p-3 rounded-xl shadow-2xl flex flex-col gap-2 text-[11.5px] font-normal border border-slate-500/50 backdrop-blur-lg">
                 
-                {/* Header Title: CEO Actions Ai, powered by Qubit Algorithm tm. */}
-                <div 
-                  className="flex items-start justify-between border-b border-slate-500/50 pb-1.5 text-[11.5px]"
-                  title="With selected items: 1) Ask Gemini AI to get instant executive answers, or 2) Direct instructions with CEO Actions Ai buttons (editable via ✏️)"
-                >
-                  <div className="flex flex-col gap-0.5 cursor-help">
-                    <span className="text-[11.5px] font-bold text-slate-100 flex items-center gap-1">
-                      CEO Actions Ai, powered by Qubit Algorithm<sup className="text-brandsky ml-0.5" style={{ fontSize: '0.22em', verticalAlign: 'super' }}>TM</sup>
-                      <span className="text-[10px] text-slate-300 font-normal opacity-90">(Hover for info)</span>
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedIds(new Set())}
-                    title="Deselect all items"
-                    className="text-slate-400 hover:text-white px-1.5 py-0.5 cursor-pointer text-[11.5px] font-normal leading-none"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                {/* Row 1: Selection Status & Widened Prompt Directive Input Area */}
-                <div className="flex items-center gap-2.5 w-full text-[11.5px]">
+                <div className="flex items-center gap-2.5 w-full text-[11.5px] pb-1.5 border-b border-slate-500/50">
                   <span className="bg-brandsky text-white px-2.5 py-1 rounded-full text-[11.5px] font-normal shrink-0 shadow-sm">
                     {selectedIds.size} Selected
                   </span>
 
                   <input
                     type="text"
-                    placeholder="Write prompt directive or instruction for selected items..."
+                    placeholder="Write prompt..."
                     value={instructionPrompt}
                     onChange={(e) => setInstructionPrompt(e.target.value)}
                     className="flex-1 bg-slate-800 border border-slate-600 rounded-lg px-3 py-1.5 text-white placeholder-slate-400 text-[11.5px] font-normal focus:outline-none focus:border-brandsky transition-colors"
                   />
+                  
+                  <button
+                    type="button"
+                    onClick={() => setIsApiKeyModalOpen(true)}
+                    title="Power CEO ActionNote with Your Own API Key & Custom RAG Context"
+                    className="relative px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-[11.5px] font-normal transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 border border-slate-600"
+                  >
+                    <span>🔑 If, Use my API Key</span>
+                    {hasCustomKey && (
+                      <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block" title="Custom API Key Active"></span>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedIds(new Set())}
+                    className="text-slate-400 hover:text-white text-base font-normal leading-none cursor-pointer shrink-0"
+                    title="Close"
+                  >
+                    ✕
+                  </button>
                 </div>
 
                 {/* Row 2: Dynamic CEO Action Menu Buttons (Multi-line Flex Wrap) */}
-                <div className="flex flex-wrap items-center gap-2 pt-1.5 border-t border-slate-700/60 text-[11.5px]">
-                  <span 
-                    className="text-[11.5px] text-slate-400 font-normal mr-1 shrink-0 flex items-center gap-1 group cursor-help hover:text-brandsky transition-colors"
-                    title="With selected items: 1) Ask Gemini AI to get instant executive answers, or 2) Direct instructions with CEO Actions Ai buttons (editable via ✏️)"
-                  >
-                    CEO Actions Ai:
+                <div className="flex flex-wrap items-center gap-2 pt-1.5 text-[11.5px]">
+                  <div className="flex items-center gap-2">
+                    <div className="flex flex-col text-green-400 cursor-help hover:text-brandsky transition-colors">
+                      <span className="font-bold text-[11.5px]">CEO ActionNote</span>
+                      <span className="font-normal text-[9px]">Powered by Qubit Algorithm</span>
+                    </div>
                     <button
                       type="button"
                       onClick={() => setIsCeoActionManagerOpen(true)}
-                      className="opacity-70 group-hover:opacity-100 text-slate-400 hover:text-brandsky transition-opacity cursor-pointer text-[11.5px] font-normal"
-                      title="Edit CEO Actions Manager"
+                      className="opacity-70 hover:opacity-100 text-slate-400 hover:text-brandsky transition-opacity cursor-pointer text-[11.5px] font-normal"
+                      title="Edit CEO Action Note Manager"
                     >
                       ✏️
                     </button>
-                  </span>
+                  </div>
 
                   {ceoActions.map((act) => (
                     <button
@@ -1407,10 +1479,12 @@
                       type="button"
                       onClick={() => handleExecuteAction(act)}
                       title={act.tooltip || act.title}
-                      className={`px-2.5 py-1 rounded-lg text-[11.5px] font-normal transition-colors cursor-pointer shrink-0 ${
+                      className={`px-2.5 py-1 rounded-lg text-[11.5px] font-normal transition-colors cursor-pointer shrink-0 border ${
                         act.danger
                           ? 'bg-red-900/60 hover:bg-red-800 text-red-200 border border-red-700/50'
-                          : 'bg-slate-700 hover:bg-brandsky hover:text-white text-white'
+                          : act.highlight
+                            ? 'bg-green-600 border-green-300 text-white'
+                            : 'bg-green-900/60 hover:bg-green-800 text-green-200 border border-green-500/50'
                       }`}
                     >
                       {act.title}
@@ -1475,7 +1549,7 @@
                   >
                     <option value="Date">Sort: Date</option>
                     <option value="Title">Sort: Title</option>
-                    <option value="Company">Sort: Company</option>
+                    <option value="Company">Sort: Company/ D'pt</option>
                     <option value="Progress %">Sort: Progress %</option>
                     <option value="Stars">Sort: Stars</option>
                   </select>
@@ -1639,7 +1713,10 @@
 
           {/* SECTION ZONE POPUP MODAL (Focus view for single zone) */}
           {activeSectionModal && (
-            <div className="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+            <div 
+              onClick={(e) => { if (e.target === e.currentTarget) setActiveSectionModal(null); }}
+              className="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
+            >
               <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-4 space-y-3 border border-gray-200 my-4 max-h-[90vh] flex flex-col">
                 <div className="flex items-center justify-between border-b border-gray-100 pb-2 flex-wrap gap-2">
                   <div className="flex items-center space-x-3 flex-wrap">
@@ -1701,6 +1778,13 @@
                             title="Open Project Execution Calendar"
                           >
                             Calendar
+                          </button>
+                          <button
+                            onClick={() => setIsArchiveModalOpen(true)}
+                            className="px-1.5 py-0.5 rounded bg-amber-100 hover:bg-amber-200 text-[#f97316] font-bold text-[10px] cursor-pointer transition-colors shrink-0"
+                            title="Open Completed Project Archive"
+                          >
+                            Archive
                           </button>
                           <select
                             value={selectedProjCat}
@@ -1915,6 +1999,7 @@
               onSaveProject={(updatedProj) => saveItem('projects', updatedProj)}
               onEditProject={(proj) => {
                 setActiveModalItem({ type: 'projects', item: proj, isNew: false });
+                setIsCalendarModalOpen(false);
               }}
             />
           )}
@@ -2015,6 +2100,23 @@
             />
           )}
 
+          {/* USE MY API KEY MODAL */}
+          {isApiKeyModalOpen && (
+            <UseApiKeyModal
+              isOpen={isApiKeyModalOpen}
+              onClose={() => setIsApiKeyModalOpen(false)}
+              onUpdateKey={setHasCustomKey}
+            />
+          )}
+
+          {/* API & MCP INFORMATION MODAL */}
+          {isApiMcpModalOpen && (
+            <ApiMcpModal
+              isOpen={isApiMcpModalOpen}
+              onClose={() => setIsApiMcpModalOpen(false)}
+            />
+          )}
+
           {/* AI EXECUTIVE ANALYSIS MODAL */}
           {aiModalData.isOpen && (
             <AIAnalysisModal
@@ -2031,6 +2133,20 @@
             />
           )}
 
+          {/* ARCHIVE MODAL */}
+          {isArchiveModalOpen && (
+            <ArchiveModal
+              projects={projects}
+              onClose={() => setIsArchiveModalOpen(false)}
+              onSaveProject={(updatedProj) => saveItem('projects', updatedProj)}
+              onDeleteProject={deleteItem}
+              onEditProject={(proj) => {
+                setActiveModalItem({ type: 'projects', item: proj, isNew: false });
+                setIsArchiveModalOpen(false);
+              }}
+            />
+          )}
+
           {/* BULK STATUS UPDATE MODAL */}
           {isBulkStatusModalOpen && (
             <BulkStatusModal
@@ -2040,9 +2156,33 @@
             />
           )}
 
+          {/* STATE-DRIVEN BULK DELETE CONFIRMATION MODAL */}
+          <ConfirmModal
+            isOpen={isBulkDeleteConfirmOpen}
+            title="Delete Selected Items"
+            message={`Are you sure you want to permanently delete the ${selectedIds.size} selected item(s)? This action cannot be undone.`}
+            confirmText="Yes, Delete"
+            cancelText="Cancel"
+            isDanger={true}
+            onConfirm={executeBulkDelete}
+            onClose={() => setIsBulkDeleteConfirmOpen(false)}
+          />
+
+          {/* STATE-DRIVEN RESET CEO ACTIONS CONFIRMATION MODAL */}
+          <ConfirmModal
+            isOpen={isResetCeoActionsConfirmOpen}
+            title="Reset CEO Actions"
+            message="Are you sure you want to reset all CEO Action buttons to the default preset values? Your custom action buttons will be removed."
+            confirmText="Reset Buttons"
+            cancelText="Cancel"
+            isDanger={true}
+            onConfirm={executeResetCeoActions}
+            onClose={() => setIsResetCeoActionsConfirmOpen(false)}
+          />
+
           {/* FOOTER */}
           <footer className="border-t border-gray-200 py-2 px-4 sm:px-6 mt-0">
-            <div className="max-w-6xl mx-auto flex items-center justify-start gap-1 text-[10px] sm:text-[10.5px]">
+            <div className="max-w-6xl mx-auto flex items-center justify-start gap-[3px] text-[10px] sm:text-[10.5px]">
               {/* *SC SISTAR Company Link - Bright Orange */}
               <a
                 href="https://sc-sistarcompany.web.app"
@@ -2050,43 +2190,55 @@
                 rel="noopener noreferrer"
                 className="text-[#f97316] hover:text-orange-400 hover:underline transition-colors font-bold flex items-center space-x-1 shrink-0"
               >
-                <span>*SC SISTAR Company</span>
+                <span>*SC- SISTAR Company</span>
               </a>
 
-              {/* Website Icon - Bright Orange */}
-              <a
-                href="https://sistarcompany.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-1 hover:bg-slate-100 rounded transition-colors text-[#f97316] hover:text-orange-400 flex items-center justify-center text-xs cursor-pointer shrink-0"
-                title="Visit website (sistarcompany.com)"
-              >
-                🌐
-              </a>
+              {/* Website, Email, and Message Icons Group shifted 2 spaces (ml-3) rightward in bright green */}
+              <div className="ml-3 flex items-center gap-[3px]">
+                {/* Website Icon - Bright Green */}
+                <a
+                  href="https://sistarcompany.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-0.5 hover:bg-slate-100 rounded transition-colors text-[#22c55e] hover:text-[#16a34a] flex items-center justify-center cursor-pointer shrink-0"
+                  title="Visit website (sistarcompany.com)"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-globe">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                    <path d="M2 12h20"/>
+                  </svg>
+                </a>
 
-              {/* Email Icon - Bright Orange */}
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText('denniiku@sistarcompany.com');
-                  showToast('Copied: denniiku@sistarcompany.com');
-                }}
-                className="p-1 hover:bg-slate-100 rounded transition-colors text-[#f97316] hover:text-orange-400 flex items-center justify-center text-xs cursor-pointer shrink-0"
-                title="Copy Email (denniiku@sistarcompany.com)"
-              >
-                ✉️
-              </button>
+                {/* Email Icon - Bright Green */}
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText('denniiku@sistarcompany.com');
+                    showToast('Copied: denniiku@sistarcompany.com');
+                  }}
+                  className="p-0.5 hover:bg-slate-100 rounded transition-colors text-[#22c55e] hover:text-[#16a34a] flex items-center justify-center cursor-pointer shrink-0"
+                  title="Copy Email (denniiku@sistarcompany.com)"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail">
+                    <rect width="20" height="16" x="2" y="4" rx="2"/>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                  </svg>
+                </button>
 
-              {/* Phone Icon - Bright Orange */}
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText('+82(0)1028400485');
-                  showToast('Copied: +82(0)1028400485');
-                }}
-                className="p-1 hover:bg-slate-100 rounded transition-colors text-[#f97316] hover:text-orange-400 flex items-center justify-center text-xs cursor-pointer shrink-0"
-                title="Copy Phone (+82(0)1028400485)"
-              >
-                💬
-              </button>
+                {/* Message Icon - Bright Green */}
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText('+82(0)1028400485');
+                    showToast('Copied: +82(0)1028400485');
+                  }}
+                  className="p-0.5 hover:bg-slate-100 rounded transition-colors text-[#22c55e] hover:text-[#16a34a] flex items-center justify-center cursor-pointer shrink-0"
+                  title="Copy Phone (+82(0)1028400485)"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-square">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </footer>
 
@@ -2191,6 +2343,8 @@
       const maxPages = Math.ceil(count / pageSize);
       const childArray = React.Children.toArray(children);
 
+      const isModalBox = !onClickBox || (id && id.includes('modal'));
+
       const handleBoxClick = (e) => {
         const isRowItem = e.target.closest('.quadrant-row-item');
         const isInteractiveElement = e.target.closest('button, select, input, a, label');
@@ -2203,7 +2357,11 @@
         <section
           id={id}
           onClick={handleBoxClick}
-          className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm flex flex-col justify-between space-y-2 min-h-[300px] cursor-pointer hover:border-slate-300 hover:shadow-md transition-all"
+          className={`border border-gray-200 rounded-xl p-4 bg-white shadow-sm flex flex-col justify-between space-y-2 ${
+            isModalBox
+              ? 'min-h-[300px]'
+              : 'min-h-[300px] cursor-pointer hover:border-slate-300 hover:shadow-md transition-all'
+          }`}
         >
           
           {/* Box Header */}
@@ -2226,7 +2384,13 @@
           </div>
 
           {/* Rows Container - Only actual created data, no empty dots/dashes */}
-          <div className="divide-y divide-gray-50 flex-1 min-h-[220px]">
+          <div 
+            className={`divide-y divide-gray-50 flex-1 ${
+              isModalBox 
+                ? 'min-h-[220px]' 
+                : 'min-h-[220px] max-h-[325px] overflow-y-auto pr-1'
+            }`}
+          >
             {childArray.length > 0 ? childArray : (
               <div className="py-12 text-center text-grayholder text-xs italic">
                 No items in {title}. Click + to create a new item.
@@ -2354,19 +2518,35 @@
     // --- ITEM DETAIL MODAL (Compact Popup Size & Bold Labels, No 'Edit' Word) ---
     function ItemModal({ modalData, projectCategories, ideaCategories, onClose, onSave, onDelete, onCopyForAI }) {
       const { type, item, isNew } = modalData;
+      const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
+      const [isDeleteConfirming, setIsDeleteConfirming] = useState(false);
       const [form, setForm] = useState({
         ...item,
         objective: item.objective || (type === 'projects' ? OBJECTIVES_TEMPLATE : ''),
         aiPrompt: item.aiPrompt || (type === 'projects' ? AI_PROMPT_TEMPLATE : ''),
         stars: item.stars !== undefined ? item.stars : 1
       });
+      const [pre100Progress, setPre100Progress] = useState(item.progress || 0);
 
       const handleChange = (field, val) => setForm(prev => ({ ...prev, [field]: val }));
+
+      const handleStatusChange = (newStatus) => {
+        if (newStatus === 'Completed') {
+          setShowArchiveConfirm(true);
+        } else {
+          setForm(prev => ({
+            ...prev,
+            status: newStatus,
+            progress: prev.progress === 100 ? (pre100Progress < 100 ? pre100Progress : 99) : prev.progress,
+            archived: false
+          }));
+        }
+      };
 
       const getModalTitle = (t) => {
         const nameMap = {
           projects: 'Projects',
-          ideas: 'x3별표idea/ Insight',
+          ideas: 'Idea/ Insight',
           studies: 'Study/ RnD',
           mindsets: 'Mindfulness'
         };
@@ -2375,7 +2555,10 @@
       };
 
       return (
-        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4 overflow-y-auto">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 z-[80] modal-backdrop flex items-center justify-center p-4 overflow-y-auto"
+        >
           <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-4 space-y-3 border border-gray-200 my-4">
             
             {/* Modal Top Header */}
@@ -2401,63 +2584,31 @@
             {/* Modal Form Body */}
             <form onSubmit={(e) => { e.preventDefault(); onSave(type, form); }} className="space-y-2 text-[11.5px]">
               
-              {/* Title Field */}
-              <div>
-                <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Title</label>
-                <input
-                  type="text"
-                  required
-                  value={form.title || ''}
-                  onChange={(e) => handleChange('title', e.target.value)}
-                  placeholder="Enter title..."
-                  className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none focus:border-brandsky"
-                />
-              </div>
-
-              {/* Projects Category & Company */}
-              {type === 'projects' && (
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Category</label>
-                    <select
-                      value={form.category || projectCategories[0]}
-                      onChange={(e) => handleChange('category', e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none"
-                    >
-                      {projectCategories.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Company</label>
+              {/* Row 1: Title + Status (Projects only) or normal Title block */}
+              {type === 'projects' ? (
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="col-span-2">
+                    <label className="block font-bold text-gray-800 text-[11px] mb-0.5">Title</label>
                     <input
                       type="text"
-                      value={form.company || ''}
-                      onChange={(e) => handleChange('company', e.target.value)}
-                      placeholder="Company name..."
-                      className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Projects Start Date & Status */}
-              {type === 'projects' && (
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Start Date</label>
-                    <input
-                      type="date"
-                      value={form.startDate || ''}
-                      onChange={(e) => handleChange('startDate', e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none font-sans"
+                      required
+                      value={form.title || ''}
+                      onChange={(e) => handleChange('title', e.target.value)}
+                      placeholder="Enter title..."
+                      className="w-full h-8 px-2.5 py-1 border border-gray-200 rounded text-[11px] text-darkslate focus:outline-none focus:border-brandsky"
                     />
                   </div>
                   <div>
-                    <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Status</label>
+                    <label className="block font-bold text-gray-800 text-[11px] mb-0.5">Status</label>
                     <select
+                      disabled={!form.startDate}
                       value={form.status || 'In Progress'}
-                      onChange={(e) => handleChange('status', e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none"
+                      onChange={(e) => handleStatusChange(e.target.value)}
+                      className={`w-full h-8 px-2 py-1 border rounded text-[11px] focus:outline-none ${
+                        !form.startDate
+                          ? 'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed'
+                          : 'border-gray-200 text-darkslate'
+                      }`}
                     >
                       <option value="In Progress">In Progress</option>
                       <option value="Completed">Completed</option>
@@ -2465,54 +2616,235 @@
                     </select>
                   </div>
                 </div>
-              )}
-
-              {/* Ideas Category */}
-              {type === 'ideas' && (
+              ) : (
+                /* Non-projects standard Title Row */
                 <div>
-                  <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Category</label>
-                  <select
-                    value={form.category || ideaCategories[0]}
-                    onChange={(e) => handleChange('category', e.target.value)}
-                    className="w-full px-2 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none"
-                  >
-                    {ideaCategories.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-              )}
-
-              {/* Intuitive Star Rating (3 Outline Stars ☆ ☆ ☆, No Title/Box) */}
-              {(type === 'projects' || type === 'ideas') && (
-                <div className="flex items-center space-x-1 py-0.5">
-                  {[1, 2, 3].map(num => (
-                    <button
-                      key={num}
-                      type="button"
-                      onClick={() => handleChange('stars', form.stars === num && num === 1 ? 0 : num)}
-                      className="text-base text-amber-400 hover:text-amber-500 focus:outline-none cursor-pointer px-0.5"
-                      title={`${num} Star`}
-                    >
-                      {num <= (form.stars || 0) ? '★' : '☆'}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {/* Progress Slider (Projects Only) */}
-              {type === 'projects' && (
-                <div>
-                  <div className="flex justify-between font-bold text-gray-800 text-[11.5px] mb-0.5">
-                    <span>Progress (%)</span>
-                    <span className="text-brandsky font-medium">{form.progress || 0}%</span>
-                  </div>
+                  <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Title</label>
                   <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={form.progress || 0}
-                    onChange={(e) => handleChange('progress', parseInt(e.target.value))}
-                    className="w-full cursor-pointer"
+                    type="text"
+                    required
+                    value={form.title || ''}
+                    onChange={(e) => handleChange('title', e.target.value)}
+                    placeholder="Enter title..."
+                    className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none focus:border-brandsky"
                   />
+                </div>
+              )}
+
+              {/* Projects Category & Company (Compact Row for Projects) */}
+              {type === 'projects' && (
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block font-bold text-gray-800 text-[11px] mb-0.5">Category</label>
+                    <select
+                      value={form.category || projectCategories[0]}
+                      onChange={(e) => handleChange('category', e.target.value)}
+                      className="w-full px-2 py-1 border border-gray-200 rounded text-[11px] text-darkslate focus:outline-none"
+                    >
+                      {projectCategories.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block font-bold text-gray-800 text-[11px] mb-0.5">Company/ D'pt</label>
+                    <input
+                      type="text"
+                      value={form.company || ''}
+                      onChange={(e) => handleChange('company', e.target.value)}
+                      placeholder="Company/ D'pt name..."
+                      className="w-full px-2.5 py-1 border border-gray-200 rounded text-[11px] text-darkslate focus:outline-none"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Row 2: [Start Project] Button + Start Date + Target End Date (Projects only) */}
+              {type === 'projects' && (
+                <div className="grid grid-cols-3 gap-2 items-end bg-sky-50/15 border border-sky-100 p-2 rounded-lg">
+                  <div>
+                    <label className="block font-bold text-gray-800 text-[10px] mb-0.5">Action</label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!form.startDate) {
+                          const today = new Date().toISOString().split('T')[0];
+                          setForm(prev => ({
+                            ...prev,
+                            startDate: today,
+                            status: 'In Progress',
+                            progress: prev.progress || 0,
+                            targetEndDate: prev.targetEndDate || today
+                          }));
+                        } else {
+                          setForm(prev => ({
+                            ...prev,
+                            startDate: '',
+                            targetEndDate: '',
+                            progress: 0,
+                            status: 'In Progress'
+                          }));
+                        }
+                      }}
+                      className={`w-full h-8 flex items-center justify-center rounded font-bold text-[10px] cursor-pointer transition-colors ${
+                        form.startDate
+                          ? 'bg-amber-100 hover:bg-amber-200 text-[#f97316]'
+                          : 'bg-sky-500 hover:bg-sky-600 text-white'
+                      }`}
+                    >
+                      {form.startDate ? '✕ Cancel' : '▶ Start'}
+                    </button>
+                  </div>
+                  <div>
+                    <label className="block font-bold text-gray-800 text-[10px] mb-0.5">Start Date</label>
+                    <input
+                      type="date"
+                      disabled
+                      value={form.startDate || ''}
+                      className="w-full h-8 px-1.5 py-1 border border-gray-100 bg-gray-50 rounded text-[10px] text-gray-500 font-sans focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-gray-800 text-[10px] mb-0.5">Target End Date</label>
+                    <input
+                      type="date"
+                      disabled={!form.startDate}
+                      value={form.targetEndDate || ''}
+                      onChange={(e) => handleChange('targetEndDate', e.target.value)}
+                      className={`w-full h-8 px-1.5 py-1 border rounded text-[10px] font-sans focus:outline-none ${
+                        !form.startDate
+                          ? 'border-gray-100 bg-gray-50 text-gray-400'
+                          : 'border-gray-200 text-darkslate focus:border-brandsky'
+                      }`}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Ideas Category & Star Rating */}
+              {type === 'ideas' && (
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Category</label>
+                    <select
+                      value={form.category || ideaCategories[0]}
+                      onChange={(e) => handleChange('category', e.target.value)}
+                      className="w-full px-2 py-1 border border-gray-200 rounded text-[11.5px] text-darkslate focus:outline-none"
+                    >
+                      {ideaCategories.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block font-bold text-gray-800 text-[11.5px] mb-0.5">Stars</label>
+                    <div className="flex items-center space-x-0.5 py-1">
+                      {[1, 2, 3].map(num => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => {
+                            const newStars = form.stars === num && num === 1 ? 0 : num;
+                            handleChange('stars', newStars);
+                          }}
+                          className="text-base text-amber-400 hover:text-amber-500 focus:outline-none cursor-pointer px-0.5"
+                          title={`${num} Star`}
+                        >
+                          {num <= (form.stars || 0) ? '★' : '☆'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Row 3: 별표 평가 (☆☆☆) + Progress 슬라이더 (0~100%) (Projects only) */}
+              {type === 'projects' && (
+                <div className="grid grid-cols-3 gap-2 items-center">
+                  <div>
+                    <label className="block font-bold text-gray-800 text-[10.5px] mb-0.5">Stars</label>
+                    <div className="flex items-center space-x-0.5">
+                      {[1, 2, 3].map(num => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => {
+                            const newStars = form.stars === num && num === 1 ? 0 : num;
+                            handleChange('stars', newStars);
+                          }}
+                          className="text-base text-amber-400 hover:text-amber-500 focus:outline-none cursor-pointer px-0.5"
+                          title={`${num} Star`}
+                        >
+                          {num <= (form.stars || 0) ? '★' : '☆'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="col-span-2">
+                    <div className="flex justify-between font-bold text-gray-800 text-[10.5px] mb-0.5">
+                      <span>Progress</span>
+                      <span className="text-brandsky font-medium">{form.progress || 0}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      disabled={!form.startDate}
+                      value={form.progress || 0}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value);
+                        if (val === 100) {
+                          setShowArchiveConfirm(true);
+                        } else {
+                          setForm(prev => ({
+                            ...prev,
+                            progress: val,
+                            status: val < 100 && prev.status === 'Completed' ? 'In Progress' : prev.status,
+                            archived: val < 100 ? false : prev.archived
+                          }));
+                          if (val < 100) {
+                            setPre100Progress(val);
+                          }
+                        }
+                      }}
+                      className={`w-full cursor-pointer h-5 ${!form.startDate ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Completion & Archive Confirmation Overlay */}
+              {showArchiveConfirm && (
+                <div className="fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-4 backdrop-blur-xs">
+                  <div className="bg-white rounded-xl shadow-2xl p-5 max-w-xs w-full border border-gray-100 text-center space-y-4">
+                    <div className="text-3xl">📦</div>
+                    <div className="font-bold text-darkslate text-sm">Project Completion</div>
+                    <p className="text-[11.5px] text-slate-600 leading-normal">
+                      완료된 프로젝트를 Archive 폴더로 옮기시겠습니까?
+                    </p>
+                    <div className="flex justify-center space-x-3 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = { ...form, progress: 100, status: 'Completed', archived: true };
+                          setForm(updated);
+                          setShowArchiveConfirm(false);
+                          onSave('projects', updated);
+                        }}
+                        className="px-4 py-1.5 bg-brandsky hover:bg-sky-600 text-white rounded text-xs font-bold transition-colors cursor-pointer"
+                      >
+                        YES
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const prevVal = pre100Progress < 100 ? pre100Progress : 99;
+                          const updated = { ...form, progress: prevVal, status: 'In Progress', archived: false };
+                          setForm(updated);
+                          setShowArchiveConfirm(false);
+                        }}
+                        className="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-bold transition-colors cursor-pointer"
+                      >
+                        NO
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -2591,13 +2923,34 @@
               {/* Footer Modal Actions */}
               <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                 {!isNew ? (
-                  <button
-                    type="button"
-                    onClick={() => { if (confirm('Delete this item?')) onDelete(type, form.id); }}
-                    className="text-red-500 hover:text-red-700 font-bold cursor-pointer"
-                  >
-                    Delete
-                  </button>
+                  !isDeleteConfirming ? (
+                    <button
+                      type="button"
+                      onClick={() => setIsDeleteConfirming(true)}
+                      className="text-red-500 hover:text-red-700 font-bold cursor-pointer text-[11.5px]"
+                    >
+                      Delete
+                    </button>
+                  ) : (
+                    <div className="flex items-center space-x-2 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">
+                      <span className="text-rose-700 font-bold text-[11px]">Sure?</span>
+                      <button
+                        type="button"
+                        onClick={() => onDelete(type, form.id)}
+                        className="text-red-600 hover:underline font-bold text-[11px]"
+                      >
+                        Yes
+                      </button>
+                      <span className="text-gray-300">|</span>
+                      <button
+                        type="button"
+                        onClick={() => setIsDeleteConfirming(false)}
+                        className="text-slate-500 hover:underline font-semibold text-[11px]"
+                      >
+                        No
+                      </button>
+                    </div>
+                  )
                 ) : <div />}
 
                 <div className="space-x-1.5">
@@ -2629,7 +2982,10 @@
       const [logoUrl, setLogoUrl] = useState(branding.logoUrl || '');
 
       return (
-        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-5 space-y-4 border border-gray-200 text-xs">
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
               <span className="font-bold text-sm text-darkslate">Edit Main Title & Logo</span>
@@ -2684,8 +3040,38 @@
 
     // --- PROJECT EXECUTION CALENDAR MODAL COMPONENT ---
     function CalendarModal({ projects, onClose, onSaveProject, onEditProject }) {
-      const [currentDate, setCurrentDate] = useState(new Date(2026, 7, 1)); // Default to August 2026 to match seed data
-      const [selectedProjectForClickReschedule, setSelectedProjectForClickReschedule] = useState(null);
+      const [currentDate, setCurrentDate] = useState(() => {
+        // Default to first scheduled active project date, or August 2026
+        const firstProj = projects.find(p => p.startDate && !p.archived);
+        if (firstProj) {
+          const d = new Date(firstProj.startDate);
+          return new Date(d.getFullYear(), d.getMonth(), 1);
+        }
+        return new Date(2026, 7, 1);
+      });
+      const [localProjects, setLocalProjects] = useState(projects);
+      const [resizingProject, setResizingProject] = useState(null);
+      const [selectedDateForPopup, setSelectedDateForPopup] = useState(null);
+
+      // Keep local copy in sync with parent prop
+      useEffect(() => {
+        setLocalProjects(projects);
+      }, [projects]);
+
+      // Global MouseUp to complete resizing
+      useEffect(() => {
+        const handleMouseUp = () => {
+          if (resizingProject) {
+            const updated = localProjects.find(p => p.id === resizingProject.id);
+            if (updated) {
+              onSaveProject(updated);
+            }
+            setResizingProject(null);
+          }
+        };
+        window.addEventListener('mouseup', handleMouseUp);
+        return () => window.removeEventListener('mouseup', handleMouseUp);
+      }, [resizingProject, localProjects]);
 
       // Helper to change month
       const prevMonth = () => {
@@ -2702,61 +3088,42 @@
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const firstDayIndex = new Date(year, month, 1).getDay();
 
-      // Split projects into scheduled and unscheduled
-      const unscheduledProjects = useMemo(() => {
-        return projects.filter(p => !p.startDate);
-      }, [projects]);
-
+      // Filter only "In Progress" projects that have startDate and are not archived
       const scheduledProjects = useMemo(() => {
-        return projects.filter(p => p.startDate);
-      }, [projects]);
+        return localProjects.filter(p => p.startDate && !p.archived && p.status === 'In Progress');
+      }, [localProjects]);
 
-      // Group scheduled projects by date string "YYYY-MM-DD"
-      const projectsByDate = useMemo(() => {
-        const groups = {};
-        scheduledProjects.forEach(p => {
-          const dateStr = p.startDate;
-          if (!groups[dateStr]) groups[dateStr] = [];
-          groups[dateStr].push(p);
-        });
-        return groups;
-      }, [scheduledProjects]);
-
-      // Handle Drag & Drop
-      const handleDragStart = (e, projectId) => {
-        e.dataTransfer.setData('text/plain', projectId);
+      // Color mapper for project timelines
+      const getPastelColor = (projId) => {
+        const colors = [
+          { bg: 'bg-sky-100 border-sky-200 text-sky-800 hover:bg-sky-150' },
+          { bg: 'bg-emerald-100 border-emerald-200 text-emerald-800 hover:bg-emerald-150' },
+          { bg: 'bg-amber-100 border-amber-200 text-amber-800 hover:bg-amber-150' },
+          { bg: 'bg-rose-100 border-rose-200 text-rose-800 hover:bg-rose-150' },
+          { bg: 'bg-purple-100 border-purple-200 text-purple-800 hover:bg-purple-150' },
+          { bg: 'bg-indigo-100 border-indigo-200 text-indigo-800 hover:bg-indigo-150' },
+          { bg: 'bg-orange-100 border-orange-200 text-orange-800 hover:bg-orange-150' }
+        ];
+        const idStr = String(projId || '');
+        const index = Math.abs(idStr.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % colors.length;
+        return colors[index];
       };
 
-      const handleDrop = (e, dateStr) => {
-        e.preventDefault();
-        const projectId = e.dataTransfer.getData('text/plain');
-        if (!projectId) return;
-
-        const project = projects.find(p => p.id === projectId);
-        if (project) {
-          const updated = { ...project, startDate: dateStr };
-          onSaveProject(updated);
-        }
+      const isDateInSpan = (dateStr, start, end) => {
+        if (!start) return false;
+        const endVal = end || start;
+        return dateStr >= start && dateStr <= endVal;
       };
 
-      const handleDragOver = (e) => {
-        e.preventDefault();
-      };
-
-      // Click-to-Reschedule Handler
-      const handleCellClick = (dateStr) => {
-        if (selectedProjectForClickReschedule) {
-          const updated = { ...selectedProjectForClickReschedule, startDate: dateStr };
-          onSaveProject(updated);
-          setSelectedProjectForClickReschedule(null);
-        }
-      };
+      // Get Today's Date String
+      const today = new Date();
+      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
       // Render Calendar Cells
       const cells = [];
       // Empty cells for first week offset
       for (let i = 0; i < firstDayIndex; i++) {
-        cells.push(<div key={`empty-${i}`} className="bg-slate-50 border border-gray-100 min-h-[70px] p-1"></div>);
+        cells.push(<div key={`empty-${i}`} className="bg-slate-50 border border-gray-150 h-[120px] max-h-[120px]"></div>);
       }
 
       // Active days
@@ -2764,59 +3131,96 @@
         const dayStr = day < 10 ? `0${day}` : `${day}`;
         const monthStr = (month + 1) < 10 ? `0${month + 1}` : `${month + 1}`;
         const dateStr = `${year}-${monthStr}-${dayStr}`;
-        const dayProjects = projectsByDate[dateStr] || [];
+        const isToday = dateStr === todayStr;
+
+        // Get projects covering this day
+        const dayProjects = scheduledProjects.filter(p => isDateInSpan(dateStr, p.startDate, p.targetEndDate));
 
         cells.push(
           <div
             key={`day-${day}`}
-            onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, dateStr)}
-            onClick={() => handleCellClick(dateStr)}
-            className={`bg-white border border-gray-100 min-h-[75px] p-1 flex flex-col justify-between transition-all hover:bg-sky-50/20 cursor-pointer ${
-              selectedProjectForClickReschedule ? 'ring-1 ring-brandsky/40 hover:bg-sky-50' : ''
+            onMouseEnter={() => {
+              if (resizingProject && dateStr >= resizingProject.startDate) {
+                setLocalProjects(prev =>
+                  prev.map(p =>
+                    p.id === resizingProject.id
+                      ? { ...p, targetEndDate: dateStr }
+                      : p
+                  )
+                );
+              }
+            }}
+            onClick={() => {
+              setSelectedDateForPopup({ dateStr, dayProjects });
+            }}
+            className={`border h-[120px] max-h-[120px] p-1.5 flex flex-col justify-between transition-all relative select-none cursor-pointer ${
+              isToday
+                ? 'border-brandsky bg-sky-50/15 shadow-inner ring-1 ring-brandsky/40'
+                : 'border-gray-150 bg-white hover:bg-sky-50/20'
             }`}
           >
-            <div className="flex items-center justify-between">
-              <span className="font-bold text-slate-700 text-[11px]">{day}</span>
-              {selectedProjectForClickReschedule && (
-                <span className="text-[8px] text-brandsky animate-pulse">Schedule</span>
-              )}
+            <div className="flex items-center justify-between pb-1">
+              <span className={`font-bold text-[11px] ${isToday ? 'text-brandsky bg-sky-100/80 px-1 rounded' : 'text-slate-700'}`}>
+                {day} {isToday ? '(Today)' : ''}
+              </span>
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-1 mt-1">
-              {dayProjects.map(proj => (
-                <div
-                  key={proj.id}
-                  draggable="true"
-                  onDragStart={(e) => handleDragStart(e, proj.id)}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEditProject(proj);
-                  }}
-                  className={`p-1 rounded text-[9.5px] font-bold leading-tight truncate shadow-sm transition-transform cursor-grab active:cursor-grabbing hover:scale-[1.02] ${
-                    proj.status === 'Completed'
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
-                      : proj.status === 'On Hold'
-                      ? 'bg-amber-50 text-amber-700 border border-amber-100'
-                      : 'bg-sky-50 text-brandsky border border-sky-100'
-                  }`}
-                  title={`${proj.title} (${proj.company || 'No Company'}) - Progress: ${proj.progress || 0}%`}
-                >
-                  <div className="truncate">{proj.title}</div>
-                  <div className="text-[7.5px] opacity-80 font-normal truncate">{proj.company}</div>
-                </div>
-              ))}
+            {/* Scrollable container for cell items */}
+            <div className="flex-1 overflow-y-auto max-h-[90px] space-y-1 mt-0.5 scrollbar-thin pr-0.5">
+              {dayProjects.map(proj => {
+                const isStart = dateStr === proj.startDate;
+                const isEnd = dateStr === (proj.targetEndDate || proj.startDate);
+                const colors = getPastelColor(proj.id);
+
+                return (
+                  <div
+                    key={proj.id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEditProject(proj);
+                    }}
+                    className={`relative h-6 flex items-center justify-between px-1.5 text-[9.5px] font-bold shadow-xs transition-all border-y border-slate-200/40 cursor-pointer ${colors.bg} ${
+                      isStart && isEnd
+                        ? 'rounded-md border-x'
+                        : isStart
+                        ? 'rounded-l-md border-l'
+                        : isEnd
+                        ? 'rounded-r-md border-r'
+                        : 'rounded-none'
+                    }`}
+                    title={`${proj.title} (${proj.company || 'No Company'})`}
+                  >
+                    <span className="truncate pr-2 select-none pointer-events-none">
+                      {isStart ? proj.title : ''}
+                    </span>
+
+                    {isEnd && (
+                      <div
+                        onMouseDown={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          setResizingProject(proj);
+                        }}
+                        className="absolute right-0 top-0 bottom-0 w-2 hover:bg-black/15 cursor-ew-resize flex items-center justify-center rounded-r-md z-10"
+                        title="Drag to change End Date"
+                      >
+                        <div className="w-[1.5px] h-3 bg-slate-600/60 rounded-full"></div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         );
       }
 
-      // Fill in empty cells for last week offset to make clean grid
+      // Fill remaining cells for 6-row standard clean grid
       const totalCells = cells.length;
-      const remainingCells = 42 - totalCells; // 6 rows standard
+      const remainingCells = 42 - totalCells;
       const actualRemaining = remainingCells >= 7 ? remainingCells - 7 : remainingCells;
-      for (let i = 0; i < (remainingCells > 7 ? remainingCells - 7 : remainingCells); i++) {
-        cells.push(<div key={`empty-end-${i}`} className="bg-slate-50 border border-gray-100 min-h-[70px] p-1"></div>);
+      for (let i = 0; i < actualRemaining; i++) {
+        cells.push(<div key={`empty-end-${i}`} className="bg-slate-50 border border-gray-150 h-[120px] max-h-[120px]"></div>);
       }
 
       const monthNames = [
@@ -2825,143 +3229,207 @@
       ];
 
       return (
-        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-4 sm:p-6 space-y-4 border border-gray-200 my-4 max-h-[92vh] flex flex-col text-xs font-normal">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-3 sm:p-5 overflow-y-auto"
+        >
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl h-[88vh] flex flex-col p-3 space-y-2 border border-gray-200">
             
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
+            {/* Navigation Header */}
+            <div className="flex items-center justify-between border-b border-gray-150 pb-2">
               <div className="flex items-center space-x-2">
-                <span className="text-xl">📅</span>
-                <div>
-                  <span className="font-bold text-sm text-darkslate block">Project Execution Calendar</span>
-                  <p className="text-[10px] text-grayholder">Drag-and-drop projects to reschedule. Click a project to edit details.</p>
-                </div>
-              </div>
-              <button onClick={onClose} className="text-slate-400 hover:text-darkslate text-sm font-bold cursor-pointer">
-                ✕
-              </button>
-            </div>
-
-            {/* Workspace Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 flex-1 overflow-hidden min-h-0">
-              
-              {/* Sidebar: Unscheduled & Actions */}
-              <div className="md:col-span-1 bg-slate-50 p-3 rounded-lg border border-slate-100 flex flex-col overflow-hidden">
-                <span className="font-bold text-slate-700 block mb-2 text-[11px] uppercase tracking-wider">Unscheduled Projects</span>
-                
-                <div className="flex-1 overflow-y-auto space-y-2 pr-1 min-h-[120px]">
-                  {unscheduledProjects.length === 0 ? (
-                    <div className="text-[10.5px] text-grayholder italic text-center py-8">
-                      All projects are scheduled. Drag calendar items to reschedule them.
-                    </div>
-                  ) : (
-                    unscheduledProjects.map(proj => (
-                      <div
-                        key={proj.id}
-                        draggable="true"
-                        onDragStart={(e) => handleDragStart(e, proj.id)}
-                        onClick={() => {
-                          if (selectedProjectForClickReschedule?.id === proj.id) {
-                            setSelectedProjectForClickReschedule(null);
-                          } else {
-                            setSelectedProjectForClickReschedule(proj);
-                          }
-                        }}
-                        className={`p-2 rounded-lg border bg-white shadow-sm transition-all cursor-grab active:cursor-grabbing hover:shadow-md ${
-                          selectedProjectForClickReschedule?.id === proj.id
-                            ? 'ring-2 ring-brandsky border-brandsky bg-sky-50/30'
-                            : 'border-gray-200'
-                        }`}
-                      >
-                        <div className="font-bold text-darkslate text-[11px] truncate">{proj.title}</div>
-                        <div className="text-[9.5px] text-grayholder truncate">{proj.company || 'No Company'}</div>
-                        <div className="flex items-center justify-between mt-1 text-[8.5px]">
-                          <span className="bg-sky-50 text-brandsky px-1 py-0.5 rounded font-bold">{proj.category}</span>
-                          <span className="text-slate-500 font-medium">{proj.progress || 0}%</span>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-
-                {selectedProjectForClickReschedule && (
-                  <div className="mt-3 bg-sky-50 p-2 rounded border border-sky-100 text-[10px] text-brandsky animate-pulse font-medium">
-                    👉 Click any calendar day cell to assign schedule date.
-                  </div>
-                )}
+                <button
+                  onClick={prevMonth}
+                  className="px-2 py-1 border border-gray-200 rounded bg-white hover:bg-slate-50 font-bold text-slate-700 text-[11px] cursor-pointer"
+                >
+                  ◀ Prev
+                </button>
+                <span className="font-bold text-xs text-darkslate min-w-[110px] text-center">
+                  {monthNames[month]} {year}
+                </span>
+                <button
+                  onClick={nextMonth}
+                  className="px-2 py-1 border border-gray-200 rounded bg-white hover:bg-slate-50 font-bold text-slate-700 text-[11px] cursor-pointer"
+                >
+                  Next ▶
+                </button>
               </div>
 
-              {/* Main Calendar View */}
-              <div className="md:col-span-3 flex flex-col overflow-hidden">
-                
-                {/* Calendar Controls */}
-                <div className="flex items-center justify-between pb-3">
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={prevMonth}
-                      className="px-2.5 py-1 border border-gray-200 rounded hover:bg-slate-50 font-bold text-slate-700 cursor-pointer"
-                    >
-                      ◀ Prev
-                    </button>
-                    <span className="font-bold text-sm text-darkslate min-w-[120px] text-center">
-                      {monthNames[month]} {year}
-                    </span>
-                    <button
-                      onClick={nextMonth}
-                      className="px-2.5 py-1 border border-gray-200 rounded hover:bg-slate-50 font-bold text-slate-700 cursor-pointer"
-                    >
-                      Next ▶
-                    </button>
-                  </div>
-
-                  {/* Status Indicators */}
-                  <div className="flex items-center space-x-2 text-[9.5px]">
-                    <span className="flex items-center space-x-1">
-                      <span className="w-2 h-2 rounded-full bg-sky-500"></span>
-                      <span className="text-slate-500">In Progress</span>
-                    </span>
-                    <span className="flex items-center space-x-1">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                      <span className="text-slate-500">Completed</span>
-                    </span>
-                    <span className="flex items-center space-x-1">
-                      <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                      <span className="text-slate-500">On Hold</span>
-                    </span>
-                  </div>
-                </div>
-
-                {/* Grid Container */}
-                <div className="flex-1 flex flex-col min-h-0">
-                  
-                  {/* Day Headers */}
-                  <div className="grid grid-cols-7 gap-1 text-center font-bold text-slate-500 border-b border-gray-100 pb-1 mb-1">
-                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                      <div key={day} className="text-[10px] uppercase tracking-wider">{day}</div>
-                    ))}
-                  </div>
-
-                  {/* Day Cells Grid */}
-                  <div className="grid grid-cols-7 gap-1 flex-1 overflow-y-auto pr-0.5">
-                    {cells}
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* Footer actions */}
-            <div className="flex justify-end pt-2 border-t border-gray-100">
               <button
                 onClick={onClose}
-                className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded font-medium transition-colors cursor-pointer"
+                className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded font-bold text-[11px] cursor-pointer transition-colors"
               >
-                Close Calendar
+                Close ✕
               </button>
             </div>
 
+            {/* Day Header Row */}
+            <div className="grid grid-cols-7 gap-1 text-center font-bold text-slate-500 border-b border-gray-100 py-1">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="text-[10px] uppercase tracking-wider">{day}</div>
+              ))}
+            </div>
+
+            {/* Calendar Grid Container */}
+            <div className="grid grid-cols-7 gap-1 flex-1 overflow-y-auto min-h-0 bg-slate-50 p-1 rounded-lg">
+              {cells}
+            </div>
+
+            {/* Daily Project Modal Popup */}
+            {selectedDateForPopup && (
+              <div
+                onClick={(e) => { if (e.target === e.currentTarget) setSelectedDateForPopup(null); }}
+                className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4 backdrop-blur-xs"
+              >
+                <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-4 space-y-3 border border-gray-200">
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                    <div className="text-xs font-bold text-darkslate">
+                      📅 Projects on {selectedDateForPopup.dateStr}
+                    </div>
+                    <button
+                      onClick={() => setSelectedDateForPopup(null)}
+                      className="text-slate-400 hover:text-darkslate text-sm font-bold cursor-pointer"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1 scrollbar-thin">
+                    {selectedDateForPopup.dayProjects.length === 0 ? (
+                      <p className="text-slate-400 text-[11px] italic text-center py-4">No projects scheduled for this day.</p>
+                    ) : (
+                      selectedDateForPopup.dayProjects.map(proj => {
+                        const colors = getPastelColor(proj.id);
+                        return (
+                          <div
+                            key={proj.id}
+                            onClick={() => {
+                              onEditProject(proj);
+                              setSelectedDateForPopup(null);
+                            }}
+                            className={`p-2 rounded border hover:scale-[1.02] transition-transform cursor-pointer flex flex-col space-y-0.5 ${colors.bg}`}
+                          >
+                            <span className="font-bold text-[11px] truncate">{proj.title}</span>
+                            <div className="flex justify-between items-center text-[9px] opacity-80">
+                              <span>{proj.company || 'No Company'}</span>
+                              <span>{proj.progress || 0}% Completed</span>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+      );
+    }
+
+    // --- ARCHIVE MODAL COMPONENT ---
+    function ArchiveModal({ projects, onClose, onSaveProject, onDeleteProject, onEditProject }) {
+      const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+      const archivedList = useMemo(() => {
+        return projects.filter(p => p.archived);
+      }, [projects]);
+
+      return (
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4"
+        >
+          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col border border-gray-200 text-xs">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-gray-150 p-4">
+              <div className="flex items-center space-x-2">
+                <span className="text-xl">📦</span>
+                <div>
+                  <span className="font-bold text-sm text-darkslate block">Project Archive</span>
+                  <p className="text-[10px] text-grayholder">Completed projects stored here. You can restore or permanently delete them.</p>
+                </div>
+              </div>
+              <button onClick={onClose} className="text-slate-400 hover:text-darkslate text-sm font-bold cursor-pointer">✕</button>
+            </div>
+
+            {/* List Content */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 bg-slate-50/50">
+              {archivedList.length === 0 ? (
+                <div className="text-center py-12 text-slate-400 space-y-2">
+                  <div className="text-4xl">📭</div>
+                  <p className="text-xs italic">No archived projects found.</p>
+                </div>
+              ) : (
+                archivedList.map(proj => (
+                  <div key={proj.id} className="bg-white border border-gray-150 p-3 rounded-lg shadow-xs flex items-center justify-between gap-4 hover:border-sky-300 transition-all">
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-bold text-slate-800 text-xs truncate cursor-pointer hover:text-brandsky hover:underline" onClick={() => onEditProject(proj)}>
+                          {proj.title}
+                        </span>
+                        <span className="text-[9px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-bold">Completed</span>
+                      </div>
+                      <div className="text-[10px] text-slate-500 flex flex-wrap items-center gap-x-3 gap-y-1">
+                        {proj.company && <span>🏢 {proj.company}</span>}
+                        {proj.startDate && <span>📅 {proj.startDate} ~ {proj.targetEndDate || ''}</span>}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2 shrink-0">
+                      {confirmDeleteId !== proj.id ? (
+                        <>
+                          <button
+                            onClick={() => {
+                              onSaveProject({ ...proj, archived: false });
+                            }}
+                            className="px-2.5 py-1 bg-sky-50 hover:bg-sky-100 text-brandsky rounded text-[11px] font-bold transition-colors cursor-pointer"
+                          >
+                            Restore
+                          </button>
+                          <button
+                            onClick={() => setConfirmDeleteId(proj.id)}
+                            className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded text-[11px] font-bold transition-colors cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      ) : (
+                        <div className="flex items-center space-x-1.5 bg-rose-50 px-2.5 py-1 rounded border border-rose-100 text-[11px]">
+                          <span className="text-rose-700 font-bold">Sure?</span>
+                          <button
+                            onClick={() => {
+                              onDeleteProject('projects', proj.id);
+                              setConfirmDeleteId(null);
+                            }}
+                            className="text-red-600 hover:underline font-bold"
+                          >
+                            Yes
+                          </button>
+                          <span className="text-gray-300">|</span>
+                          <button
+                            onClick={() => setConfirmDeleteId(null)}
+                            className="text-slate-500 hover:underline font-semibold"
+                          >
+                            No
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="flex justify-end p-3 border-t border-gray-150 bg-slate-50/25">
+              <button
+                onClick={onClose}
+                className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-bold transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       );
@@ -2972,7 +3440,10 @@
       const [sloganText, setSloganText] = useState(slogan || 'Executive Mgnt.');
 
       return (
-        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-5 space-y-4 border border-gray-200 text-xs">
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
               <span className="font-bold text-sm text-darkslate">Edit Executive Slogan</span>
@@ -3025,7 +3496,10 @@
       };
 
       return (
-        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-4 space-y-3 border border-gray-200 max-h-[85vh] flex flex-col text-xs">
             
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
@@ -3127,7 +3601,10 @@
       };
 
       return (
-        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-4 space-y-3 border border-gray-200 max-h-[85vh] flex flex-col text-xs">
             
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
@@ -3226,7 +3703,10 @@
       };
 
       return (
-        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-5 space-y-4 border border-gray-200">
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
               <span className="font-bold text-sm text-brandsky">+ Manage {type} Categories</span>
@@ -3275,7 +3755,10 @@
       const [isSignUp, setIsSignUp] = useState(false);
 
       return (
-        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-5 space-y-4 border border-gray-200 text-xs">
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
               <span className="font-bold text-sm text-darkslate">{isSignUp ? 'Sign Up' : 'Executive Login'}</span>
@@ -3341,7 +3824,10 @@
       const [projectId, setProjectId] = useState(currentConfig?.projectId || '');
 
       return (
-        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-5 space-y-4 border border-gray-200 text-xs">
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
               <span className="font-bold text-sm text-darkslate">Firebase Configuration</span>
@@ -3412,7 +3898,10 @@
       };
 
       return (
-        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-5 space-y-3 border border-gray-200 my-4 max-h-[85vh] flex flex-col font-normal text-xs">
             <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
               <div className="flex items-center space-x-2">
@@ -3436,7 +3925,7 @@
                   </div>
 
                   <div className="bg-sky-50/60 p-2.5 rounded-lg border border-sky-100 text-xs space-y-1.5 font-normal">
-                    <div className="font-normal text-darkslate">Gemini API Key Setup (Gemini 2.0 Flash)</div>
+                    <div className="font-normal text-darkslate">Use your Own API, to use your own Data & RAG.</div>
                     <div className="flex gap-2">
                       <input
                         type="password"
@@ -3474,6 +3963,158 @@
       );
     }
 
+    // --- USE MY API KEY MODAL ---
+    function UseApiKeyModal({ isOpen, onClose, onUpdateKey }) {
+      const [apiKeyVal, setApiKeyVal] = useState(() => localStorage.getItem('USER_GEMINI_API_KEY') || localStorage.getItem('aiceo_gemini_key') || '');
+      const [showKey, setShowKey] = useState(false);
+
+      if (!isOpen) return null;
+
+      const handleSave = () => {
+        const trimmed = apiKeyVal.trim();
+        localStorage.setItem('USER_GEMINI_API_KEY', trimmed);
+        localStorage.setItem('aiceo_gemini_key', trimmed);
+        if (onUpdateKey) onUpdateKey(!!trimmed);
+        alert('Gemini API Key saved successfully!');
+        onClose();
+      };
+
+      const handleReset = () => {
+        localStorage.removeItem('USER_GEMINI_API_KEY');
+        localStorage.removeItem('aiceo_gemini_key');
+        setApiKeyVal('');
+        if (onUpdateKey) onUpdateKey(false);
+        alert('API Key reset to default.');
+        onClose();
+      };
+
+      return (
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 bg-black/50 z-[300] flex items-center justify-center p-4 backdrop-blur-xs"
+        >
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-5 border border-gray-200 text-slate-800 space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
+              <h3 className="font-bold text-sm text-brandsky flex items-center gap-1.5">
+                🔑 If, Use my API Key
+              </h3>
+              <button onClick={onClose} className="text-slate-400 hover:text-darkslate text-xs font-normal cursor-pointer">✕</button>
+            </div>
+
+            <ul className="list-disc pl-4 space-y-1.5 text-[11.5px] text-slate-600 leading-relaxed font-normal">
+              <li>Your Key is never kept at server, so feel safe 100%.</li>
+              <li>Optimize Your CEO ActionNote with your own DB &amp; RAG setup, and Maximize Outcomes with Projects, Idea/ Insight, Study/ RnD, Mindset at CEO ActionNote.</li>
+              <li>If want to use system default key, leave empty this field.</li>
+            </ul>
+
+            <div className="space-y-1.5 pt-1">
+              <label className="block text-[11.5px] font-bold text-gray-800">LLM API Key (Gemini: AIzaSy...)</label>
+              <div className="relative flex items-center">
+                <input
+                  type={showKey ? 'text' : 'password'}
+                  value={apiKeyVal}
+                  onChange={(e) => setApiKeyVal(e.target.value)}
+                  placeholder="AIzaSy..."
+                  className="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-lg text-xs font-normal focus:outline-none focus:border-brandsky pr-16"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowKey(!showKey)}
+                  className="absolute right-2.5 text-[11px] text-slate-500 hover:text-slate-800 cursor-pointer"
+                >
+                  {showKey ? 'Hide' : 'Show'}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-3 py-1.5 border border-rose-200 text-rose-600 rounded-lg text-xs hover:bg-rose-50 cursor-pointer font-normal"
+              >
+                Reset to Default
+              </button>
+              <div className="flex space-x-2">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-slate-600 hover:bg-slate-50 cursor-pointer font-normal"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  className="px-4 py-1.5 bg-brandsky text-white rounded-lg text-xs font-bold hover:bg-sky-600 cursor-pointer"
+                >
+                  Save Key
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- API & MCP INFORMATION MODAL ---
+    function ApiMcpModal({ isOpen, onClose }) {
+      if (!isOpen) return null;
+
+      return (
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 bg-black/50 z-[300] flex items-center justify-center p-4 backdrop-blur-xs"
+        >
+          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-5 border border-gray-200 text-slate-800 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
+              <h3 className="font-bold text-sm text-brandsky flex items-center gap-1.5">
+                ⚡ API &amp; Model Context Protocol (MCP) Information
+              </h3>
+              <button onClick={onClose} className="text-slate-400 hover:text-darkslate text-xs font-normal cursor-pointer">✕</button>
+            </div>
+
+            <div className="space-y-3 text-[11.5px] text-slate-600 leading-relaxed font-normal">
+              <div>
+                <h4 className="font-bold text-slate-800 mb-1">1. Gemini REST API Integration</h4>
+                <p>
+                  CEO ActionNote integrates directly with Google&apos;s Gemini REST API endpoints (<code className="bg-slate-100 px-1 py-0.5 rounded text-slate-700">gemini-2.0-flash:generateContent</code>) to process executive prompts, synthesize projects, and generate intelligence briefing reports.
+                </p>
+              </div>
+
+              <div>
+                <h4 className="font-bold text-slate-800 mb-1">2. Custom RAG Context &amp; Memory</h4>
+                <p>
+                  When multi-selecting items and invoking CEO Actions, the workspace dynamically packages your selected Projects, Ideas/Insights, Study/RnD papers, and Mindset vectors into structured Markdown context for contextual AI generation.
+                </p>
+              </div>
+
+              <div>
+                <h4 className="font-bold text-slate-800 mb-1">3. Model Context Protocol (MCP) Support</h4>
+                <p>
+                  Designed for seamless interoperability with MCP servers, allowing secure context bridging between local workspace state and LLM intelligence layers without server-side credential persistence.
+                </p>
+              </div>
+
+              <div className="bg-sky-50 border border-sky-100 rounded-lg p-3 text-sky-900 text-[11px]">
+                💡 <strong>Tip:</strong> You can configure your custom LLM API key anytime using the <span className="font-bold">If, Use my API Key</span> button in the multi-check action bar.
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2 border-t border-gray-100">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-1.5 bg-brandsky text-white rounded-lg text-xs font-bold hover:bg-sky-600 cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     // --- MARKDOWN EXPORT MODAL ---
     function MarkdownExportModal({ data, onClose }) {
       const [copied, setCopied] = useState(false);
@@ -3496,7 +4137,10 @@
       };
 
       return (
-        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-5 space-y-3 border border-gray-200 my-4 max-h-[85vh] flex flex-col">
             <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
               <span className="font-bold text-sm text-brandsky">Export Selected Items (Markdown)</span>
@@ -3540,7 +4184,10 @@
       const [val, setVal] = useState(50);
 
       return (
-        <div className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 z-[60] modal-backdrop flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-5 space-y-4 border border-gray-200 text-xs">
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
               <span className="font-bold text-sm text-darkslate">Batch Update Progress (%)</span>
@@ -3674,18 +4321,18 @@
       };
 
       return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 text-[11.5px] font-normal">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 text-[11.5px] font-normal"
+        >
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
             
             {/* Modal Header */}
-            <div className="bg-darkslate text-white p-3.5 px-4 flex items-center justify-between border-b border-slate-700">
+            <div className="bg-green-600 text-white p-3.5 px-4 flex items-center justify-between border-b border-green-700">
               <div>
                 <h3 className="text-[11.5px] font-normal text-slate-100 flex items-center gap-1">
-                  CEO Actions, powered by Qubit Algorithm<sup className="align-super font-normal text-brandsky ml-0.5" style={{ fontSize: '2.5px' }}>TM</sup>
+                  CEO ActionNote, powered by Qubit Algorithm
                 </h3>
-                <p className="text-[10.5px] text-slate-400 font-normal mt-0.5">
-                  Dynamic Action Brain: Customize, add, or reorder executive actions in the floating bar
-                </p>
               </div>
               <button onClick={onClose} className="text-slate-400 hover:text-white text-base font-normal leading-none cursor-pointer">
                 ✕
@@ -3713,12 +4360,12 @@
                     <div
                       key={act.id}
                       className={`flex items-center justify-between p-2 rounded-lg border transition-colors ${
-                        editingId === act.id ? 'bg-sky-50 border-brandsky' : 'bg-slate-50 border-slate-200 hover:bg-slate-100/80'
+                        editingId === act.id ? 'bg-green-50 border-green-500' : 'bg-green-50 border-green-200 hover:bg-green-100/80'
                       }`}
                     >
                       <div className="flex items-center gap-2 overflow-hidden flex-1 mr-2">
-                        <span className={`px-2 py-0.5 rounded text-[10.5px] font-normal shrink-0 ${
-                          act.highlight ? 'bg-brandsky text-white' : act.danger ? 'bg-red-800 text-red-100' : 'bg-slate-700 text-white'
+                        <span className={`px-2 py-0.5 rounded text-[10.5px] font-normal shrink-0 border ${
+                          act.highlight ? 'bg-green-600 border-green-300 text-white' : act.danger ? 'bg-red-800 text-red-100' : 'bg-green-700 border-green-300 text-white'
                         }`}>
                           {act.title}
                         </span>
@@ -3852,7 +4499,7 @@
                       onChange={(e) => setFormData(prev => ({ ...prev, highlight: e.target.checked }))}
                       className="rounded text-brandsky focus:ring-0"
                     />
-                    <span>Highlight Button (Sky Blue)</span>
+                    <span>Highlight Button (Green)</span>
                   </label>
 
                   <label className="flex items-center gap-1.5 cursor-pointer">
@@ -3890,12 +4537,47 @@
               <button
                 type="button"
                 onClick={handleFinalSave}
-                className="px-4 py-1.5 bg-darkslate text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer font-normal"
+                className="px-4 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer font-normal"
               >
                 Save Action Changes
               </button>
             </div>
 
+          </div>
+        </div>
+      );
+    }
+
+    // Custom State-driven Confirmation Modal to bypass sandboxed iframe confirm dialog blocks
+    function ConfirmModal({ isOpen, title, message, confirmText, cancelText, onConfirm, onClose, isDanger }) {
+      if (!isOpen) return null;
+      return (
+        <div 
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          className="fixed inset-0 bg-black/50 z-[300] flex items-center justify-center p-4 backdrop-blur-xs"
+        >
+          <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-4 border border-gray-200 text-slate-800 space-y-3">
+            <h3 className={`font-bold text-sm ${isDanger ? 'text-rose-600' : 'text-brandsky'}`}>{title}</h3>
+            <p className="text-[11.5px] text-slate-600 leading-relaxed font-normal">{message}</p>
+            <div className="flex justify-end space-x-2 pt-2 border-t border-gray-100">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-2.5 py-1 border border-gray-200 rounded text-[11px] text-slate-600 hover:bg-slate-50 cursor-pointer"
+              >
+                {cancelText || 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  onConfirm();
+                  onClose();
+                }}
+                className={`px-3 py-1 rounded text-[11px] font-bold text-white cursor-pointer ${isDanger ? 'bg-rose-500 hover:bg-rose-600' : 'bg-brandsky hover:bg-sky-600'}`}
+              >
+                {confirmText || 'Confirm'}
+              </button>
+            </div>
           </div>
         </div>
       );
